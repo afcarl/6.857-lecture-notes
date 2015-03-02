@@ -1,0 +1,223 @@
+<h2>Atoms vs. Bits</h2>
+
+<ul>
+<li>Possessing value means what?</li>
+<li>How to transfer value?</li>
+</ul>
+
+<p>Bit-based system: bits can be copied (double spending)</p>
+
+<p>Token-based representation: like actual coins
+Account-based representation: like banks that store your value for you, you have to trust them</p>
+
+<p>Bit-coin is still an account-based system, but it's distributed and less trust needs to be put in. No central authority.</p>
+
+<p>Let's think of what an electronic system would look like</p>
+
+<ul>
+<li>User <code>u</code> has some public key <code>pk_u</code> and some secret key <code>sk_u</code>.</li>
+<li>The bank (one global bank) would have its own public key <code>pk_b</code> and secret key <code>sk_b</code> and can certify user <code>u</code>
+<ul>
+<li>it signs a certificate <code>cert(u, pk_u) = sign_{sk_b}(u | pk_u)</code></li>
+</ul></li>
+<li>What is a check?
+<ul>
+<li><code>sign_{sk_u}("Pay Bob $100, date, ser #")</code>
+<ul>
+<li>serial number is used to prevent a merchant from charging user <code>u</code> multiple times using the same check</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>Properties that a currency or monetary system might have that the check system above does not? Or properties in general!</p>
+
+<ul>
+<li>No trusted third party (like the bank above)</li>
+<li>anonymity (a check would reveals payer and payee)</li>
+<li>unique coins (not sure what difference they are pointing at here between this currency and the electronic system above)</li>
+<li>no single point of failure</li>
+<li>fast transactions</li>
+<li>control of money supply
+<ul>
+<li>interesting topic in itself</li>
+</ul></li>
+<li>no double spending</li>
+<li>cheap transactions</li>
+<li>scalable (handle millions of transactions a day)</li>
+<li>hard to forge (can't make new money, or new payments)</li>
+<li>need a way to reverse transactions (like chargeback)</li>
+<li>fraud management/detection</li>
+<li>variable denominations ($1, $2, $5, $10, $20)</li>
+<li>divisibility</li>
+<li>backup value (in Bitcoin losing your SK is disastrous) </li>
+<li>exchange w/ other systems</li>
+<li>DDOS resistance</li>
+<li>taxation/regulation?</li>
+<li>compelling for people to use?</li>
+<li>good for micropayments</li>
+</ul>
+
+<p>Can be hard to prevent system rollback, which can lead to double spending. Can you detect it?</p>
+
+<p>What would an electronic coin look like?</p>
+
+<ul>
+<li>TTP: bank</li>
+<li>Payer: Alice</li>
+<li>Payee: Bob</li>
+<li>Need authorization protocol for withdrawal</li>
+<li>Need protocol for payment</li>
+</ul>
+
+<p>Diagram:</p>
+
+<pre><code>                TTP (bank accounts)
+             /       *
+            /         \
+withdrawal /           \ deposit
+          /             \
+         *               \
+      Alice   -------&gt;   Bob
+              payment
+</code></pre>
+
+<p>Coin:</p>
+
+<ul>
+<li>some random number <code>R</code> that is the coin's ID with a digital signature from the bank <code>s = sign_{sk_bank}(R)</code>
+<ul>
+<li>the coin is <code>c = R,s</code> </li>
+</ul></li>
+<li>bank has to keep an <em>unspent coins DB</em> <code>{r1, r2, ...,}</code> to prevent double spending</li>
+<li>when Alice wants to pay Bob, she can just give the coin <code>c = R, s</code>
+<ul>
+<li>Bob cannot verify whether coin <code>c</code> is unspent, until it's too late</li>
+<li>Bank can tell if someone is double spending <code>c</code> but the bank cannot identify <em>who</em> is double spending the coin
+<ul>
+<li>it could be that Bob is double spending the coin <code>c</code> he got from Alice</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h2>Bitcoin</h2>
+
+<p>Mixes a few ideas
+ - electronic checks
+ - HashCash
+ - public ledger (blockchain) probably the most innovative idea</p>
+
+<p>The history of all transactions is public! Not maintained by trusted party, but via a broadcast system.</p>
+
+<p>How do you identify parties? What are the identities?</p>
+
+<ul>
+<li>Bitcoin uses public key crypto to identify people. </li>
+<li>Note one person can have multiple key pairs.</li>
+<li>The account name is the public key and has a value associated with it on the public ledger</li>
+</ul>
+
+<p>Public ledger: for each account, how much value is there in it?</p>
+
+<ul>
+<li>really it stores all transactions, so you can infer the value in each account</li>
+</ul>
+
+<p>Money is created by those maintaining the public ledger (miners)</p>
+
+<ul>
+<li>miners add new transactions to the ledger
+<ul>
+<li>they get rewarded some bitcoins when they solve the puzzle required for this</li>
+<li>no other way to create value in bitcoin (other than transaction fees?)</li>
+</ul></li>
+</ul>
+
+<p>Transaction details:</p>
+
+<ul>
+<li>Bitcoin transactions allow multiple input accounts (payers) and multiple output accounts (payees)
+<ul>
+<li>this is sometimes used to give change to yourself by setting one of the output accounts as your account
+<ul>
+<li>in practice people create new accounts and put their change in it, to preserve their anonymity</li>
+</ul></li>
+</ul></li>
+<li>you don't wanna make it to easy adding to the ledger, otherwise people add too much junk
+<ul>
+<li>HashCash scheme solves this</li>
+</ul></li>
+</ul>
+
+<p>Diagram:</p>
+
+<p>TODO: reorder these</p>
+
+<pre><code>head node (just added)
+
+         |---------------------|               |------------------------|
+-------&gt; | Block n-1           | ------------&gt; | Block n                |
+         | ---------           |               | -------                |
+         | h_{n-2}, nonce      |               | h_{n-1}, nonce'        |
+         | T1, T2, ..., Ti     |               | T1', T2', ..., Ti'     |
+         |---------------------|               |------------------------|
+
+         h_{n-1} = H(block_{n-1})              h_{n} = H(block_{n})
+         must have k leading 0's               must also have k leading 0's
+                                               and note that block_{n}
+                                               includes the previous h_{n-1}
+
+                                               miner has to adjust nonce'
+                                               until h_{n} has k leading 0's
+</code></pre>
+
+<p>Diagram for forking:</p>
+
+<pre><code>              |------------------------|                 |---------------------|
+------------&gt; | Block n-1              | --------------&gt; | Block n             |
+              | ---------              |                 | -------             |
+              | h_{n-2}, nonce         | ---\            | h_{n-1}, nonce      |
+              | T1, T2, ..., Ti        |     \           | T1, T2, ..., Ti     |
+              |------------------------|      \          |---------------------|
+                                               \
+                                                \                                 
+                                                 \       |---------------------|
+                                                  \----&gt; | Block n'            |
+                                                         |                     |
+                                                         | prev hash(n), nonce |
+                                                         | T1', T2', ..., Ti'  |
+                                                         |---------------------|
+</code></pre>
+
+<p>It can happen that two miners came up with a block at the same time and both add it, forking the chain</p>
+
+<pre><code>[] -&gt; [] -&gt; [] -&gt; [] -&gt;  [] 
+                     \
+           A-&gt;B       -&gt; []
+</code></pre>
+
+<p><strong>Rule of thumb:</strong> wait like 6 blocks to make sure the incorporated blocks are really there and are not part of a fork that died</p>
+
+<ul>
+<li>this is not that great though</li>
+</ul>
+
+<p>Scalability:</p>
+
+<ul>
+<li>BitCoin does like 7 transactions / second, VISA does like 3000/sec</li>
+<li>fee that miners are getting halves every year
+<ul>
+<li>TODO: How is this implemented?</li>
+</ul></li>
+<li>after no fees, transaction fees will be used to reward miners
+<ul>
+<li>but total # of bitcons will remain the same</li>
+<li>except people lose their wallets, so some bitcoins will be inaccessible => problems</li>
+</ul></li>
+<li>it's becoming harder to be a miner
+<ul>
+<li>monopoly on mining actually (Ghash holds half the supply of bitcoins?)</li>
+</ul></li>
+<li>cannot create money by loaning?</li>
+<li>"Majority is not enough" paper</li>
+</ul>
