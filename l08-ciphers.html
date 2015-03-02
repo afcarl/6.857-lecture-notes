@@ -4,3 +4,322 @@
 <li>Shamir's secret sharing</li>
 <li>Block ciphers (DES, AES, modes of operation)</li>
 </ul>
+
+<h2>Shamir's secret sharing</h2>
+
+<p>Problem: Don't want to put trust in a single person.</p>
+
+<p>If you have<code>N = 3</code>, then <code>t = 2</code> parties are sufficient to sign a document, spend money, etc.</p>
+
+<p>Notion: <em>Threshold capability</em></p>
+
+<p>Say Alice has a secret <code>S</code> and a number of friends she wants to distribute <em>shares of the secret <code>S</code></em> to <code>t</code> friends, <code>1 &lt;= t &lt;= n</code></p>
+
+<ul>
+<li>she gives each friend a share <code>s_i</code> of <code>S</code> </li>
+<li><strong>Goal:</strong> any <code>t</code> of the friends can reconstruct <code>S</code> from their <code>s_i</code>'s
+<ul>
+<li>any fewer than <code>t</code> have negligible chance of reconstructing <code>S</code></li>
+</ul></li>
+<li><em>Valid criticism:</em> at some point <em>you have to</em> reconstruct <code>S</code>, so it'll be vulnerable</li>
+</ul>
+
+<p>For <code>t=1</code> the problem is trivial: <code>s_i = S, \forall i</code>.</p>
+
+<p>For <code>t=n</code> the problem is trivial: <code>s_i = ith chunk of S</code>
+ + would not be that secure, because <code>n-1</code> people can guess the last chunk more easily (not negligible probability.
+ + <code>S = s_1 \xor s_2 \xor ... \xor s_{n-1} \xor s_{n}</code>
+   - result is random if you don't have all <code>s_i</code>'s
+   - need all people to generate <code>S</code></p>
+
+<p>For other <code>t</code>'s, use <em>polynomials</em>.</p>
+
+<ul>
+<li><code>t=2</code> points determine a line</li>
+<li><code>t=3</code> points determine a quadratic</li>
+<li><code>t=k</code> points determine a <code>t-1</code> degree polynomial</li>
+<li><code>f(x) = a_{t-1}x^{t-1} + a_{t-2}x^{t-2} + ... + a_1*x + a_0 (mod p)</code></li>
+<li>we define <code>f</code> over a finite field (because we're using computers which have limits)</li>
+<li>you can go efficiently between the two representations of <code>f</code>
+<ul>
+<li>the coefficient repr. <code>a_{t-1}, a_{t-2}, ..., a_1, a_0</code></li>
+<li>the set of (point, value) pairs: <code>{(x_i, y_i)}, \forall 1 &lt;= i &lt;= t</code></li>
+</ul></li>
+<li><em>Evaluation:</em> given an <code>x</code>, compute <code>f(x)</code>
+<ul>
+<li>easy to do</li>
+</ul></li>
+<li><em>Interpolation:</em> give a set of <code>t</code> points find a unique curve that runs through these points
+<ul>
+<li>easy to do</li>
+</ul></li>
+</ul>
+
+<p>To share a secret <code>S (0 &lt;= s &lt; p)</code></p>
+
+<ul>
+<li>let <code>a_0 = S</code></li>
+<li>pick <code>a_1, a_2, ..., a_{t-1}</code> at random from <code>Z_p</code>
+<ul>
+<li>this defines our <code>f</code> polynomial of degree <code>t</code></li>
+</ul></li>
+<li>let <code>s_i = (i, y_i)</code>, where <code>y_i = f(i), \forall 1 &lt;= i &lt;= n</code>
+<ul>
+<li>note that <code>s_0 = (0, y_0) = f(0) = a_0 = S</code></li>
+<li>but you never send <code>s_0</code>, you send <code>s_1, ..., s_n</code></li>
+<li>note that <code>s_i, i &gt;= 1</code> are completely uncorrelated to the secret <code>S</code>
+<ul>
+<li>they are picked randomly</li>
+<li>leak no info about <code>S</code></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>Now, let's see how <code>t</code> out of the <code>n</code> friends can reconstruct <code>S</code>.</p>
+
+<ul>
+<li>Given <code>(x_i, y_i)</code> for <code>1 &lt;= i &lt;= t</code></li>
+<li><code>f(x) = \sum_{i = 1, t} {y_i * f_i(x)}</code>, where
+<ul>
+<li><code>f_i(x) = { 1 at x = x_i || 0 at x = x_j, where j != i}</code></li>
+</ul></li>
+<li><code>f_i(x) = \prod_{j != i}{x - x_j}/\prod{j != i}{x_i - x_j}</code>
+<ul>
+<li>the numerator will be a degree <code>t-1</code> polynomial</li>
+<li>note this will satisfy the constraints above</li>
+</ul></li>
+<li><code>s = f(0) = \sum{i = 1, t} {y_i * f_i(x)} = replace</code></li>
+</ul>
+
+<p><strong>TODO:</strong> Why does this work?</p>
+
+<p>Why having fewer than <code>t</code> shares doesn't allow you to reconstruct the secret?</p>
+
+<ul>
+<li>just try determining a line with 1 point
+<ul>
+<li>or a quadratic graph with 2 points</li>
+<li>and so on...</li>
+</ul></li>
+<li>A degree <code>t-1</code> curve can be defined to go through the adversary's <code>t-1</code> points
+and through the point <code>(0,s)</code> for any <code>s</code></li>
+<li>This is information-theoretically secure because the adversary cannot "compute" his 
+way to finding <code>s</code>. <code>s</code> could be any point in <code>Z_p</code> and no information is leaked
+about <code>s</code> through those <code>t-1</code> points</li>
+</ul>
+
+<h2>Block ciphers</h2>
+
+<pre><code>            c = Enc(K, M)
+    Alice -------------*---------------------------&gt; Bob
+                        \
+                         \-&gt; Eve
+</code></pre>
+
+<p><strong>Problem:</strong> Message could be arbitrarily long. How do you build an encryption method to handle arbitrarily large messages?</p>
+
+<ul>
+<li>for starters, we build block ciphers for fixed-length messages</li>
+<li><p>then we chain the together wisely and handle arbitrarily long messages</p>
+
+<pre><code>                    p
+                    |
+                   \ /
+                    *
+                -----------
+     Key K ---&gt; |   Enc   |
+                -----------
+                    |
+                   \ /
+                    .
+                    C
+</code></pre></li>
+</ul>
+
+<p>Fixed length <code>P, C, K</code>:</p>
+
+<ul>
+<li>DES: <code>|P| = |C| = 64 bits</code>, <code>|K| = 56 bits</code> (8 of the 64 bits were used for parity)</li>
+<li>AES: <code>|P| = |C| = 128 bits</code>, <code>|K| = 128, 192, 256</code></li>
+</ul>
+
+<h2>DES (Data Encryption Standard)</h2>
+
+<p>Call put out for commercially usable data ciphers. DES came from IBM.</p>
+
+<p><code>m = L_0|R_0</code></p>
+
+<pre><code>               L_0                  R_0
+        -----------------     ------------------
+        |               |     |                |
+        -----------------     ------------------
+               |                      |
+               |                      |
+ round 1       +----------|f|----------
+               |            \----------------- k_i round key 48 bits
+                \                    /       
+                 \                  /
+                  \                /
+                    swap for next 
+                       round
+                         \   /
+                          \ /
+                          / \ 
+                         /   \
+                        /     \
+                       /       \ 
+                      /         \
+ round 16
+               L_15                  R_15
+        -----------------     ------------------
+        |               |     |                |
+        -----------------     ------------------
+</code></pre>
+
+<p><code>f</code> can be anything, and won't affect the <em>invertibility</em> of the cipher if you have the key.</p>
+
+<p>How do you design a <em>good <code>f</code> box</em> that doesn't leak <code>K</code> and <code>P</code>?</p>
+
+<ul>
+<li>Round key <code>k_i</code> is split into eight 6-bit chunks.</li>
+<li>Each chunk goes through a substitution box (S-box) and results in a 4-bit value</li>
+<li>Results are permuted</li>
+</ul>
+
+<h2>Differential attacks: 2^47 attack</h2>
+
+<ul>
+<li>You might assume the adversary has access to encryption/decryption oracle (CCA security) with a fixed but unknown key</li>
+<li>Brute force attack on 56-bit key, would take a while
+<ul>
+<li><code>2^56</code> different keys</li>
+</ul></li>
+<li>Here's an attack that gets us down to <code>2^48</code> tries in the CPA security model (i.e. with an encryption model)</li>
+</ul>
+
+<p>You can try tweaking the input plaintext and see what tweaks are caused on the output ciphertext.</p>
+
+<p><code>M' = M \xor \delta</code>, ask oracle to encrypt <code>M -&gt; C</code> and <code>M' -&gt; C' = C + \gamma</code>.</p>
+
+<p>At a high level: The differences between <code>delta</code> and <code>gamma</code> give you some information about the last round key.</p>
+
+<p>This requires about <code>2^47</code> chosen pairs</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Differential_cryptanalysis">Biham's PhD thesis</a>, advised by Adi Shamir</p>
+
+<h2>2^43 attack (Matsui)</h2>
+
+<pre><code>                        p
+                        |
+                       \ /
+                        *
+                    -----------
+         Key K ---&gt; |   Enc   |
+                    -----------
+                        |
+                       \ /
+                        .
+                        C
+</code></pre>
+
+<p>Could be that DES has attacks like: <code>M_3 \xor M_15 \xor C_2 \xor C_11 \xor K_7 \xor K_19 = 0</code>. This relates two bits of the key because you know the message and ciphertext bits.</p>
+
+<p>In practice, these kind of equations are not always true. Maybe they're true like half the time: <code>p = 1/2 + \epsilon</code></p>
+
+<p>Need <code>1/\epsilon^2</code> data points to solve equations like these.</p>
+
+<h2>AES (Advanced Encryption Standard), 1997-1999</h2>
+
+<p>Open public contest to design a cipher. Submit designs, attack them. Let the best win. International too, anyone in the world could submit.</p>
+
+<ul>
+<li>15 algorithms were submitted (after bad submissions were scrapped)
+<ul>
+<li>RC6 (Ron's favorite, lol)</li>
+<li>Mars</li>
+<li>Twofish</li>
+<li>Rijndael
+<ul>
+<li>designed by Belgian academics</li>
+</ul></li>
+<li>...</li>
+</ul></li>
+</ul>
+
+<p>Specs:</p>
+
+<ul>
+<li>128 bit plaintext/ciphertext blocks</li>
+<li>supported key sizes should be 128, 192, 256 bits</li>
+<li>10, 12 or 14 rounds
+<ul>
+<li>as you iterate you tend to get more strength</li>
+<li>longer key will let you do more rounds (more bits for a round)</li>
+</ul></li>
+<li>byte oriented design</li>
+<li>some <code>GF(2^8)</code> math used
+<ul>
+<li><code>GF(2^8)</code> means the finite field with 256 elements</li>
+</ul></li>
+</ul>
+
+<p>Basic structure is a 4 by 4 array/matrix of bytes, where each entry is 1 bytes => 16 bytes => 128 bits</p>
+
+<p>AES description:</p>
+
+<ol>
+<li>Derive 11 <em>round keys</em> of 128 bits from 128 bit key (<code>k_i</code>'s)</li>
+<li>Given M to encrypt represent it as <code>4x4x8</code> matrix</li>
+<li>Collection of rounds: for each round <code>r = 1, 2, ..., 10</code>
+<ul>
+<li>take message <code>m</code>, XOR in the round key (<code>m = m XOR k_i</code>)</li>
+<li>substitute bytes (as told by S-box)
+<ul>
+<li>derived using <code>GF(2^8)</code> table, modular inverses, etc.</li>
+<li>each byte <code>x = S-box(x)</code></li>
+</ul></li>
+<li>rotate row <code>i</code> left by <code>i</code> positions
+<ul>
+<li><code>a, b, c, d -&gt; b, c, d, a</code></li>
+<li>columns become diagonals</li>
+</ul></li>
+<li>mix each column with matrix
+<ul>
+<li>if <code>x</code> is a column, <code>x = Ax</code>, where <code>A</code> is a <code>4x4</code> matrix</li>
+</ul></li>
+</ul></li>
+<li>Final round replaces mixed column operation by another round key operation
+<ul>
+<li>as in, XOR the round key in</li>
+<li>because anyone can undo the mix (public operation, <code>A</code> is known)</li>
+</ul></li>
+</ol>
+
+<p><strong>Note:</strong> side channel attacks on S-box</p>
+
+<pre><code>                   L_0                   R_0
+            -----------------     ------------------
+            |               |     |                |
+            -----------------     ------------------
+                   |                      |
+                   |                      |
+     round 1       +----------|f|----------
+                   |            \----------------- k_i round key 48 bits
+                    \                    /       
+                     \                  /
+                      \                /
+                        swap for next 
+                           round
+                             \   /
+                              \ /
+                              / \ 
+                             /   \
+                            /     \
+                           /       \ 
+                          /         \
+     round 16
+                   L_15                  R_15
+            -----------------     ------------------
+            |               |     |                |
+            -----------------     ------------------
+</code></pre>
