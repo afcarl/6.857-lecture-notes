@@ -1,0 +1,269 @@
+<h1>Today: Ciphers II, Wed. March 4th, </h1>
+
+<ul>
+<li>Ideal block cipher: what might this be?</li>
+<li>Modes of operation
+<ul>
+<li>ECB, CTR, CBC (Cipher Block Chaining), CFB (Cipher Feedback Mode)</li>
+<li>Ideal (IND-CCA defn)</li>
+<li>Desai's "UFE" mode (Unbalanced Feistel Encryption)</li>
+</ul></li>
+<li>Project idea: "Program Obfuscation"</li>
+</ul>
+
+<p>Today's project idea: "Program obfuscation"</p>
+
+<ul>
+<li>How do you take a program $P$ and give it to $A$ so that $A$ can execute it but not reverse engineer it</li>
+</ul>
+
+<h2>Ideal block cipher</h2>
+
+<p>What should an ideal block cipher look like?</p>
+
+<p>Remember an ideal hash function was the "random oracle."</p>
+
+<p>$$
+    Enc(k, m): {0,1}^b \times {0,1}^b -> {0,1}^b
+$$</p>
+
+<p>What we want: for each key $k$: $Enc(K, \cdot)$ is a random permutation of the message space ${0,1}^b$</p>
+
+<p>Just like we assumed random oracles for hash functions, we also assume random block ciphers that are ideal!</p>
+
+<h2>Modes of operation</h2>
+
+<p>Better term would be <em>domain extension</em>.</p>
+
+<p>What definition can we give for security of a <em>mode of operation?</em></p>
+
+<p>We'll see that all these modes are hopefully bad under current definition of security.</p>
+
+<p>We assume a <em>fixed input length</em> block cipher that we want to transform into a variable input length encryption mode!</p>
+
+<h3>Electronic Code Book (ECB) mode</h3>
+
+<p>Let $m = m<em>1, m</em>2, \dots, \m_n$ after we divide it into $n$ equal sized chunks. </p>
+
+<p>In ECB, $c = E(m) = E(m<em>1), E(m</em>2), \dots, E(m_n)$</p>
+
+<p>If message length is not a multiple of cipher block size $b$ we can pad it out.</p>
+
+<ul>
+<li>Add $1$ and as many zeros as needed to get to multiple of $b$ bits.</li>
+<li>What if message actually finishes like this?
+<ul>
+<li>We always add the padding!</li>
+</ul></li>
+</ul>
+
+<p>TODO: Look into padding oracle attacks!</p>
+
+<ul>
+<li>ECB reveals $m<em>i = m</em>j$ because $c<em>i$ will equal $c</em>j$</li>
+<li>ECB doesn't hide the patterns across message blocks very well</li>
+</ul>
+
+<h4>Ciphertext stealing</h4>
+
+<ul>
+<li>$m = m<em>1, m</em>2, |m_2| \lt b$</li>
+<li>Encrypt the first block $c<em>1 = E(m</em>1)$ and steal part of it $p$ and include it in $c_2$</li>
+<li>$c<em>2 = E(m</em>2 | c_2)$</li>
+<li>Let $c<em>1'$ be $c</em>1$ without $p$ You output $c<em>2 | c</em>1'$ (you switch them)</li>
+</ul>
+
+<h3>Counter mode (CTR)</h3>
+
+<ul>
+<li>Let $i$ be our counter</li>
+<li>$c<em>i = E(i) \xor m</em>i$</li>
+<li>No padding issues because we can just XOR as many bits as we have in the last block</li>
+<li>$i$ value can be sent in the clear to allow people who have the key to decrypt</li>
+<li>You shouldn't reuse the $E(i), E(i+1), ...$ pad (just like in OTR)
+<ul>
+<li>This means use different $i$'s for different messages</li>
+<li><strong>Important:</strong> If you encrypt $n$ blocks with IV $i$, then your next IV should 
+be $\gt i + n$</li>
+</ul></li>
+<li>Note that since AES is a PRP, you will never see repetitions among
+the $E(i)$ pads</li>
+<li>If AES was a PRF, you would start seeing repeated $E(i)$'s after $\approx 2^64$ 
+encryptions</li>
+</ul>
+
+<h3>Cipher Block Chaining (CBC) mode</h3>
+
+<p>To encrypt:</p>
+
+<ul>
+<li>pick a random IV $i$</li>
+<li>$c<em>1 = E(m</em>1 \xor i)$</li>
+<li>$c<em>2 = E(m</em>2 \xor c_1)$</li>
+<li>$c<em>3 = E(m</em>3 \xor c_2)$</li>
+<li>...</li>
+</ul>
+
+<p>Note: You need padding if your last block is $\lt b$, where $b$ is the cipher's block size.</p>
+
+<p>To decrypt:</p>
+
+<ul>
+<li>note that we can parallelize</li>
+</ul>
+
+<p>IVs:</p>
+
+<ul>
+<li>$i = Enc(k, nonce)$
+<ul>
+<li>TODO: not clear this is a good idea, look into requirements for CBC IVs</li>
+</ul></li>
+</ul>
+
+<p>Cipher block chaining can be used for Message Authentication Codes (MACs).</p>
+
+<ul>
+<li>integrity and authentication of message can be a goal sometimes</li>
+<li>we want Bob to only accept a message if it was sent by Alice</li>
+</ul>
+
+<p>Example:</p>
+
+<pre><code>                m, MAC(k, m)                    k
+    Alice -----------------------------------&gt; Bob 
+      k              
+                                Bob checks if MAC is correct for k and m
+</code></pre>
+
+<p>What can we use a MAC? We sort of need a complicated function of every block
+of the message and the key $k$</p>
+
+<ul>
+<li>We can use the last block in CBC mode
+<ul>
+<li>Note: IV has to be set to zero!
+<ul>
+<li>TODO: lookup attack from SBU</li>
+</ul></li>
+</ul></li>
+<li>If you deal with variable length messages, you have to further tweak
+this by making the key for the last block different
+<ul>
+<li>TODO: why? prevents a certain class of attacks</li>
+</ul></li>
+</ul>
+
+<h4>Authentication and confidentiality</h4>
+
+<p>What can you do to get both? Encrypt plaintext $p$ into $c$. Then compute MAC over $c$.</p>
+
+<ul>
+<li>TODO: explain why MACing $p$ can be bad</li>
+</ul>
+
+<h3>Cipher Feedback (CFB) mode</h3>
+
+<ul>
+<li>$c<em>1 = m</em>1 \xor E(i)$</li>
+<li>$c<em>2 = m</em>2 \xor E(c_2)$</li>
+<li>...</li>
+<li>One advantage over CBC is that you don't need padding for CFB
+<ul>
+<li>It uses XOR to compute the ciphertext</li>
+</ul></li>
+</ul>
+
+<h2>Are these modes any good?</h2>
+
+<h3>Chosen ciphertext attack (IND-CCA)</h3>
+
+<p>IND-CCA2 game: </p>
+
+<ul>
+<li>key $k$ picked at random (adversary does not see it0
+<ul>
+<li>define $E, D$ operations for encrypting and decrypting under $k$
+<ul>
+<li>variable input length encryption</li>
+</ul></li>
+</ul></li>
+<li><strong>Phase I:</strong> Let the adversary play around w/ encryption, decryption boxes
+<ul>
+<li>will decrypt or encrypt or both anything the adversary wants</li>
+<li>at the end, adversary output two message $m<em>0$ and $m</em>1$ of the same length</li>
+</ul></li>
+<li><strong>Phase II:</strong>
+<ul>
+<li>Examiner picks $d \leftarrow {0,1}$ randomly</li>
+<li>examiner outputs $y = E(m<em>d)$ as the _challenge ciphertext</em></li>
+<li>adversary is given $y$ and access to $E$ and $D$
+<ul>
+<li>examiner will not let adversary decrypt $y$</li>
+<li>adversary should not be able to tell which message ($m<em>0$ or $m</em>1$) was encrypted</li>
+</ul></li>
+<li>adversary picks $d\hat when he's sure and outputs it
+<ul>
+<li>he wins if $d = d\hat$ or loses otherwise</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>Note: The encryption scheme better be randomized or <em>stateful</em> if it's gonna satisfy this</p>
+
+<ul>
+<li>randomized encryption will not let adversary to just encrypt $m<em>0$ and $m</em>1$ and do a simple
+equality test on $y$</li>
+<li>or it could be stateful and remember it encrypted $m$ before and output a different ciphertext the 2nd time</li>
+</ul>
+
+<p>LOL: We can do exams the same way: Have all students come up with a question and then let them take the exam.
+One student mentioned they can share questions and win the game. Ron said "yes, but you'd still have to solve them 
+so I would win because you would learn the material"</p>
+
+<p><strong>Definition:</strong> Encryption scheme is IND-CCA secure if adversary wins with probability $1/2 + \epsilon$ where 
+$\epsilon$ is negligible</p>
+
+<p>Which modes satisfy IND-CCA2?</p>
+
+<ul>
+<li>ECB mode is deterministic, so won't win</li>
+<li>CTR mode is bad because in Phase II adversary can take $y$, flip a bit and ask the examiner to decrypt it
+<ul>
+<li>examiner will do it</li>
+<li>adversary can see clearly whether result is $m<em>0$ and $m</em>1$</li>
+</ul></li>
+<li>CBC mode is bad because can flip bits in $c<em>1$ and encryptions of $c</em>2, c_3,  ...$ will stay the same</li>
+<li>Another attack is to take a prefix of the ciphertext and ask the decryption box to decrypt it
+<ul>
+<li>you can the tell between results</li>
+<li>Bad property that these modes have w.r.t/ IND-CCA2: decrypt prefix of ciphertext $\Rightarrow$ you get the prefix of message</li>
+</ul></li>
+</ul>
+
+<h4>How do we fix these modes?</h4>
+
+<ul>
+<li>Better be randomized</li>
+</ul>
+
+<h2>Unbalanced Feistel Encryption</h2>
+
+<p>We take an arbitrarily long message $m$ and we encrypt it by XORing it with a pad, that we obtain
+by running a block cipher in counter mode under some key $k_i$ and encrypting a random value $r$.</p>
+
+<ul>
+<li>TODO: Is the CTR mode box that generates the pad, is fixed input and variable output? Whaaaat?</li>
+</ul>
+
+<p>The problem with CTR mode was that the initial value for the counter was transmitted in the clear
+over the wire.
+ - TODO: what?</p>
+
+<p>We take a random value $r$ in ${0,1}^b$</p>
+
+<p>$c$ is CBC MAC'd under $k<em>2, k</em>3$ and XORs result with $r$ and obtains $\sigma$</p>
+
+<p>Ctext is $(c, \sigma)$</p>
+
+<p>How does he decrypt?</p>
