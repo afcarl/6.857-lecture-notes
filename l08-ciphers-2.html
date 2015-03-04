@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<h1 id="today-ciphers-ii-wed.-march-4th">Today: Ciphers II, Wed. March 4th,</h1>
+<ul>
+<li>Ideal block cipher: what might this be?</li>
+<li>Modes of operation</li>
+<li>ECB, CTR, CBC (Cipher Block Chaining), CFB (Cipher Feedback Mode)</li>
+<li>Ideal (IND-CCA defn)</li>
+<li>Desai’s “UFE” mode (Unbalanced Feistel Encryption)</li>
+<li>Project idea: “Program Obfuscation”</li>
+</ul>
+<p>Today’s project idea: “Program obfuscation”</p>
+<ul>
+<li>How do you take a program <span class="math">\(P\)</span> and give it to <span class="math">\(A\)</span> so that <span class="math">\(A\)</span> can execute it but not reverse engineer it</li>
+</ul>
+<h2 id="ideal-block-cipher">Ideal block cipher</h2>
+<p>What should an ideal block cipher look like?</p>
+<p>Remember an ideal hash function was the “random oracle.”</p>
+<p><span class="math">\[
+    Enc(k, m): {0,1}^b \times {0,1}^b -&gt; {0,1}^b
+\]</span></p>
+<p>What we want: for each key <span class="math">\(k\)</span>: <span class="math">\(Enc(K, \cdot)\)</span> is a random permutation of the message space <span class="math">\({0,1}^b\)</span></p>
+<p>Just like we assumed random oracles for hash functions, we also assume random block ciphers that are ideal!</p>
+<h2 id="modes-of-operation">Modes of operation</h2>
+<p>Better term would be <em>domain extension</em>.</p>
+<p>What definition can we give for security of a <em>mode of operation?</em></p>
+<p>We’ll see that all these modes are hopefully bad under current definition of security.</p>
+<p>We assume a <em>fixed input length</em> block cipher that we want to transform into a variable input length encryption mode!</p>
+<h3 id="electronic-code-book-ecb-mode">Electronic Code Book (ECB) mode</h3>
+<p>Let <span class="math">\(m = m_1, m_2, \dots, \m_n\)</span> after we divide it into <span class="math">\(n\)</span> equal sized chunks.</p>
+<p>In ECB, <span class="math">\(c = E(m) = E(m_1), E(m_2), \dots, E(m_n)\)</span></p>
+<p>If message length is not a multiple of cipher block size <span class="math">\(b\)</span> we can pad it out.</p>
+<ul>
+<li>Add <span class="math">\(1\)</span> and as many zeros as needed to get to multiple of <span class="math">\(b\)</span> bits.</li>
+<li>What if message actually finishes like this?</li>
+<li>We always add the padding!</li>
+</ul>
+<p>TODO: Look into padding oracle attacks!</p>
+<ul>
+<li>ECB reveals <span class="math">\(m_i = m_j\)</span> because <span class="math">\(c_i\)</span> will equal <span class="math">\(c_j\)</span></li>
+<li>ECB doesn’t hide the patterns across message blocks very well</li>
+</ul>
+<h4 id="ciphertext-stealing">Ciphertext stealing</h4>
+<ul>
+<li><span class="math">\(m = m_1, m_2, |m_2| \lt b\)</span></li>
+<li>Encrypt the first block <span class="math">\(c_1 = E(m_1)\)</span> and steal part of it <span class="math">\(p\)</span> and include it in <span class="math">\(c_2\)</span></li>
+<li><span class="math">\(c_2 = E(m_2 | c_2)\)</span></li>
+<li>Let <span class="math">\(c_1&#39;\)</span> be <span class="math">\(c_1\)</span> without <span class="math">\(p\)</span> You output <span class="math">\(c_2 | c_1&#39;\)</span> (you switch them)</li>
+</ul>
+<h3 id="counter-mode-ctr">Counter mode (CTR)</h3>
+<ul>
+<li>Let <span class="math">\(i\)</span> be our counter</li>
+<li><span class="math">\(c_i = E(i) \xor m_i\)</span></li>
+<li>No padding issues because we can just XOR as many bits as we have in the last block</li>
+<li><span class="math">\(i\)</span> value can be sent in the clear to allow people who have the key to decrypt</li>
+<li>You shouldn’t reuse the <span class="math">\(E(i), E(i+1), ...\)</span> pad (just like in OTR)</li>
+<li>This means use different <span class="math">\(i\)</span>’s for different messages</li>
+<li><strong>Important:</strong> If you encrypt <span class="math">\(n\)</span> blocks with IV <span class="math">\(i\)</span>, then your next IV should be <span class="math">\(\gt i + n\)</span></li>
+<li>Note that since AES is a PRP, you will never see repetitions among the <span class="math">\(E(i)\)</span> pads</li>
+<li>If AES was a PRF, you would start seeing repeated <span class="math">\(E(i)\)</span>’s after <span class="math">\(\approx 2^64\)</span> encryptions</li>
+</ul>
+<h3 id="cipher-block-chaining-cbc-mode">Cipher Block Chaining (CBC) mode</h3>
+<p>To encrypt:</p>
+<ul>
+<li>pick a random IV <span class="math">\(i\)</span></li>
+<li><span class="math">\(c_1 = E(m_1 \xor i)\)</span></li>
+<li><span class="math">\(c_2 = E(m_2 \xor c_1)\)</span></li>
+<li><span class="math">\(c_3 = E(m_3 \xor c_2)\)</span></li>
+<li>…</li>
+</ul>
+<p>Note: You need padding if your last block is <span class="math">\(\lt b\)</span>, where <span class="math">\(b\)</span> is the cipher’s block size.</p>
+<p>To decrypt:</p>
+<ul>
+<li>note that we can parallelize</li>
+</ul>
+<p>IVs:</p>
+<ul>
+<li><span class="math">\(i = Enc(k, nonce)\)</span></li>
+<li>TODO: not clear this is a good idea, look into requirements for CBC IVs</li>
+</ul>
+<p>Cipher block chaining can be used for Message Authentication Codes (MACs).</p>
+<ul>
+<li>integrity and authentication of message can be a goal sometimes</li>
+<li>we want Bob to only accept a message if it was sent by Alice</li>
+</ul>
+<p>Example:</p>
+<pre><code>                m, MAC(k, m)                    k
+    Alice -----------------------------------&gt; Bob 
+      k              
+                                Bob checks if MAC is correct for k and m</code></pre>
+<p>What can we use a MAC? We sort of need a complicated function of every block of the message and the key <span class="math">\(k\)</span></p>
+<ul>
+<li>We can use the last block in CBC mode</li>
+<li>Note: IV has to be set to zero!
+<ul>
+<li>TODO: lookup attack from SBU</li>
+</ul></li>
+<li>If you deal with variable length messages, you have to further tweak this by making the key for the last block different</li>
+<li>TODO: why? prevents a certain class of attacks</li>
+</ul>
+<h4 id="authentication-and-confidentiality">Authentication and confidentiality</h4>
+<p>What can you do to get both? Encrypt plaintext <span class="math">\(p\)</span> into <span class="math">\(c\)</span>. Then compute MAC over <span class="math">\(c\)</span>.</p>
+<ul>
+<li>TODO: explain why MACing <span class="math">\(p\)</span> can be bad</li>
+</ul>
+<h3 id="cipher-feedback-cfb-mode">Cipher Feedback (CFB) mode</h3>
+<ul>
+<li><span class="math">\(c_1 = m_1 \xor E(i)\)</span></li>
+<li><span class="math">\(c_2 = m_2 \xor E(c_2)\)</span></li>
+<li>…</li>
+<li>One advantage over CBC is that you don’t need padding for CFB</li>
+<li>It uses XOR to compute the ciphertext</li>
+</ul>
+<h2 id="are-these-modes-any-good">Are these modes any good?</h2>
+<h3 id="chosen-ciphertext-attack-ind-cca">Chosen ciphertext attack (IND-CCA)</h3>
+<p>IND-CCA2 game:</p>
+<ul>
+<li>key <span class="math">\(k\)</span> picked at random (adversary does not see it0</li>
+<li>define <span class="math">\(E, D\)</span> operations for encrypting and decrypting under <span class="math">\(k\)</span>
+<ul>
+<li>variable input length encryption</li>
+</ul></li>
+<li><strong>Phase I:</strong> Let the adversary play around w/ encryption, decryption boxes</li>
+<li>will decrypt or encrypt or both anything the adversary wants</li>
+<li>at the end, adversary output two message <span class="math">\(m_0\)</span> and <span class="math">\(m_1\)</span> of the same length</li>
+<li><strong>Phase II:</strong></li>
+<li>Examiner picks <span class="math">\(d \leftarrow {0,1}\)</span> randomly</li>
+<li>examiner outputs <span class="math">\(y = E(m_d)\)</span> as the <em>challenge ciphertext</em></li>
+<li>adversary is given <span class="math">\(y\)</span> and access to <span class="math">\(E\)</span> and <span class="math">\(D\)</span>
+<ul>
+<li>examiner will not let adversary decrypt <span class="math">\(y\)</span></li>
+<li>adversary should not be able to tell which message (<span class="math">\(m_0\)</span> or <span class="math">\(m_1\)</span>) was encrypted</li>
+</ul></li>
+<li>adversary picks <span class="math">\(d\hat when he&#39;s sure and outputs it  - he wins if \)</span>d = d$ or loses otherwise</li>
+</ul>
+<p>Note: The encryption scheme better be randomized or <em>stateful</em> if it’s gonna satisfy this</p>
+<ul>
+<li>randomized encryption will not let adversary to just encrypt <span class="math">\(m_0\)</span> and <span class="math">\(m_1\)</span> and do a simple equality test on <span class="math">\(y\)</span></li>
+<li>or it could be stateful and remember it encrypted <span class="math">\(m\)</span> before and output a different ciphertext the 2nd time</li>
+</ul>
+<p>LOL: We can do exams the same way: Have all students come up with a question and then let them take the exam. One student mentioned they can share questions and win the game. Ron said “yes, but you’d still have to solve them so I would win because you would learn the material”</p>
+<p><strong>Definition:</strong> Encryption scheme is IND-CCA secure if adversary wins with probability <span class="math">\(1/2 + \epsilon\)</span> where <span class="math">\(\epsilon\)</span> is negligible</p>
+<p>Which modes satisfy IND-CCA2?</p>
+<ul>
+<li>ECB mode is deterministic, so won’t win</li>
+<li>CTR mode is bad because in Phase II adversary can take <span class="math">\(y\)</span>, flip a bit and ask the examiner to decrypt it</li>
+<li>examiner will do it</li>
+<li>adversary can see clearly whether result is <span class="math">\(m_0\)</span> and <span class="math">\(m_1\)</span></li>
+<li>CBC mode is bad because can flip bits in <span class="math">\(c_1\)</span> and encryptions of <span class="math">\(c_2, c_3,  ...\)</span> will stay the same</li>
+<li>Another attack is to take a prefix of the ciphertext and ask the decryption box to decrypt it</li>
+<li>you can the tell between results</li>
+<li>Bad property that these modes have w.r.t/ IND-CCA2: decrypt prefix of ciphertext <span class="math">\(\Rightarrow\)</span> you get the prefix of message</li>
+</ul>
+<h4 id="how-do-we-fix-these-modes">How do we fix these modes?</h4>
+<ul>
+<li>Better be randomized</li>
+</ul>
+<h2 id="unbalanced-feistel-encryption">Unbalanced Feistel Encryption</h2>
+<p>We take an arbitrarily long message <span class="math">\(m\)</span> and we encrypt it by XORing it with a pad, that we obtain by running a block cipher in counter mode under some key <span class="math">\(k_i\)</span> and encrypting a random value <span class="math">\(r\)</span>.</p>
+<ul>
+<li>TODO: Is the CTR mode box that generates the pad, is fixed input and variable output? Whaaaat?</li>
+</ul>
+<p>The problem with CTR mode was that the initial value for the counter was transmitted in the clear over the wire. - TODO: what?</p>
+<p>We take a random value <span class="math">\(r\)</span> in <span class="math">\({0,1}^b\)</span></p>
+<p><span class="math">\(c\)</span> is CBC MAC’d under <span class="math">\(k_2, k_3\)</span> and XORs result with <span class="math">\(r\)</span> and obtains <span class="math">\(\sigma\)</span></p>
+<p>Ctext is <span class="math">\((c, \sigma)\)</span></p>
+<p>How does he decrypt?</p>
+</body>
+</html>
