@@ -5,8 +5,290 @@
 <ul>
 <li>Definitions</li>
 <li>RC4 and Spritz</li>
-<li>ChaCha</li>
+<li>ChaCha
+<ul>
+<li>Dan Bernstein</li>
+</ul></li>
 </ul></li>
 </ul>
 
+<h2>PRNGS</h2>
+
+<p>If you remember the One-time pad (OTP), we had a message <code>m</code> of length 
+<code>n</code> and a pad <code>p</code> of length <code>n</code> and we computed the ciphertext <code>c</code> by 
+computing <code>c = m \xor p</code> for all <code>n</code> bits.</p>
+
+<p>However, it's very hard to come up with the pad.</p>
+
+<p><strong>TODO:</strong> transmitting a secert as long as the message is equivalent
+to transmitting the message</p>
+
+<pre><code>        pseudo-random generator G
+
+                   ----- 
+    key or seed -&gt; | G | -&gt; pad
+                   -----
+        {0,1}^n             {0,1}^l(n)
+                             l(n) &gt; n
+</code></pre>
+
+<p><strong>Definition:</strong> <code>G</code> is a <em>pseudo-random generator (PRG)</em> if no adversary can 
+distinguish between a string <code>x</code> drawn randomly from <code>{0,1}^l(n)</code> 
+(ideal situation) and the output of the program <code>G(s)</code>, 
+where <code>s &lt;- {0,1}^n</code> with probability better than <code>1/2 + negl(n)</code></p>
+
+<ul>
+<li>Remember <code>negl(n)</code> is a function that goes to zero faster than any
+inverse polynomial function of <code>n</code></li>
+</ul>
+
 <h2>Stream ciphers</h2>
+
+<p>Stream cipher is a PRG</p>
+
+<ul>
+<li>but has a long-term <code>K</code> from short-term key (nonce)</li>
+</ul>
+
+<p>May be counter based:</p>
+
+<pre><code>        -----
+        | i | &lt;- + 1
+        -----
+          |
+         \ /
+          .
+        -----
+    k -&gt;| G |
+        -----
+          |
+         \ /
+          .
+        Output 
+         pad
+</code></pre>
+
+<p>May be state based:</p>
+
+<pre><code>               &lt;-----------------------\
+        ---------                       \
+        | state |    next state fn f    |
+        ---------                       |
+                \-----------------------/
+            |
+           \ /          initial state
+            .           is the key K
+        ---------
+        |   G   |
+        ---------
+            |
+           \ /
+            .
+        output bytes
+</code></pre>
+
+<h2>Spritz - A spongy RC4-like stream cipher</h2>
+
+<h3>RC4</h3>
+
+<ul>
+<li>Was a 1987 design.</li>
+<li>Works for any set of <code>N</code> bytes: <code>Z_n = {0, 1, ..., N-1}</code>
+(All math is <code>mod N</code>). Default <code>N = 256</code></li>
+<li>State consists of 
+<ul>
+<li>Two <em>mod N pointers</em> <code>i</code> and <code>j</code></li>
+<li>a permutation <code>S</code> of <code>Z_n</code></li>
+</ul></li>
+<li>one of the purpose of designing RC4 was for it to have a lot
+of state so that you couldn't build a chip that can store it</li>
+<li>Key Setup Algorithm initializes <code>S</code> from key <code>K</code></li>
+<li>PRG updates state and generate output</li>
+</ul>
+
+<p>RC4-PRG:</p>
+
+<pre><code>RC4_PRG():
+    i = i + 1               // update state
+    j = j + S[i]
+    Swap(S[i], S[j])
+    z = S[S[i]+S[j]]        // generate output
+    return z
+</code></pre>
+
+<ul>
+<li>Heuristically designed</li>
+<li>No proof of security here</li>
+<li>Note this is an invertible function, so this is <em>not good</em> because
+given a state, an attacker could trace back and figure out previous
+states, ultimately leading to the key
+<ul>
+<li>Fortunately, it's hard to get the state</li>
+</ul></li>
+</ul>
+
+<p>RC4-KSA (key K = <code>L</code> values on <code>N</code> bits (<code>|k| = L</code> bytes when <code>N = 256</code>)):</p>
+
+<pre><code>RC4_KSA(k):
+    S[0 ... N-1] = [0 ... N-1]
+    j = 0
+    for i = 0; to N-1:
+        j = j + S[i] + K[i mod L]
+        Swap(S[i], S[j])
+    i = j = 0
+</code></pre>
+
+<p>Vulnerabilities:</p>
+
+<ul>
+<li>Key-dependent biases of initial output</li>
+<li>Key collisions (producing same internal state) is possible</li>
+<li>Key recovery possible from known internal state</li>
+<li>Related-key attacks (WEP)</li>
+<li>State recovery from known output (feasible?)
+<ul>
+<li>i.e. given a million bytes of output, can your recover the
+internal state?</li>
+<li>so far doesn't seem feasible</li>
+</ul></li>
+<li>Output biases <code>=&gt;</code> distinguishers</li>
+</ul>
+
+<h3>Spritz</h3>
+
+<ul>
+<li>Design started after CRYTPO2013 (Really after AlFarden, ..., and 
+Schuldt, USENIX 2013)</li>
+<li>Design retained the RC4 style (a few registers plus a permutation 
+<code>S</code>)</li>
+<li>Goal is to minimize statistical vulnerabilities</li>
+<li>Redo key setup entirely
+<ul>
+<li>Expand API to have "spongy" interface</li>
+<li>TODO: Absorb entropy?</li>
+</ul></li>
+<li>Design for Spritz did a computer-aided search w/ statistic testing
+to find a good function <code>G</code></li>
+</ul>
+
+<p>Code:</p>
+
+<pre><code>SPRITZ_PRG():
+    i = i + w
+    j = k + S[j + S[i]]
+    k = i + k + S[j]
+    Swap(S[i], S[j])
+    z = S[j + S[i + S[z+k]]]
+    return z
+</code></pre>
+
+<ul>
+<li><code>w</code> is always relatively prime to <code>N</code></li>
+<li><code>z</code> is used as feedback (see line before <code>return z</code>)</li>
+</ul>
+
+<p>Initialization:</p>
+
+<ul>
+<li><code>S</code> is the identity permutation</li>
+<li><code>i = j = k = 0</code></li>
+<li><code>z = 0</code></li>
+<li>"Number of nibbles absorbed" var. <code>a</code> set to 0</li>
+<li>Step size <code>w</code> is initialized to 1</li>
+</ul>
+
+<p>Code:</p>
+
+<pre><code>SQUEEZE(r):
+    if a &gt; 0:
+        SHUFFLE()
+    P = new array of size r
+    for v = 0 to r-1
+        p[v] = SPRITZ_PRG
+    return p
+
+ENCRYPT(k, m):
+    KEYSETUP(K)
+    C = M + SQUEEZE(M.length)
+    return C
+KEYSETUP(k):
+    InitializeState()
+    ABSORB(k)
+</code></pre>
+
+<ul>
+<li><code>Absorb</code> takes an arbitrary sequence of <code>k</code> bytes as input </li>
+</ul>
+
+<p>Spritz can also be used as a hash function!</p>
+
+<h3>ChaCha</h3>
+
+<ul>
+<li>Recently picked-up by Google as a replacement for RC4 in OpenSSL</li>
+<li><p>Nice and simple designs</p>
+
+<pre><code>    --------------
+   |512 bit state |
+    --------------
+         |
+         | &lt;-----
+         |      |
+      ChaCha|   |
+         |      |
+        ---     |
+       | + |-----
+        ---
+         |
+        \ /
+         .
+</code></pre></li>
+</ul>
+
+<p>State is <code>4 x 4 x 32 bit</code> matrix, each cell indexed from <code>0, ..., 15</code></p>
+
+<pre><code>c | c | c | c  constant 128bit
+-- --- --- --
+k | k | k | k  key 256bit
+-- --- --- -- 
+k | k | k | k
+-- --- --- --
+n | n | n | n  nonce counter 128bit
+</code></pre>
+
+<p>It's called ChaCha20 because it has 20 rounds, broken up into quarter rounds (QRs).</p>
+
+<p>This is a style of design called ARX design: Additions, Rotations and XOR</p>
+
+<ul>
+<li>nice to use ARX because operations are constant time and you do not
+tend to be vulnerable to timing or side channel attacks</li>
+</ul>
+
+<p>Code:</p>
+
+<pre><code>QR(a,b,c,d):
+    a += b; d ^= a; d &lt;&lt;&lt;= 16
+    c += d; b ^= c; b &lt;&lt;&lt;= 12
+    a += b; d ^= a; d &lt;&lt;&lt;= 8
+    c += d; b ^= c; b &lt;&lt;&lt;= 7
+</code></pre>
+
+<p>You can imagine applying this to a column of this matrix.</p>
+
+<pre><code>Round 1:
+QR(0, 4, 8, 12)   # the first column
+QR(1, 5, 9, 13)   
+QR(2, 6, 10, 14)
+QR(3, 7, 11, 15)
+
+Round 2
+QR(0, 5, 10, 15)  # the main diagonal
+QR(1, 6, 11, 12)  # just above the main diagonal
+QR(2, 7, 8, 13)
+QR(3, 4, 9, 14)
+</code></pre>
+
+<p>Round 1 and round 2 are a <em>double round</em></p>
+
+<p>ChaCha20 has 10 double rounds</p>
