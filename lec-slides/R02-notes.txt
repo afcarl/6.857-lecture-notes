@@ -1,0 +1,7 @@
+Recitation 2:
+Analysis of One Time Pad improperly used. We looked at a proposal which would xor the message with the xor of two different sources of randomness. The idea is that the simple xor recovery trick for a reused one time pad would not work. The randomness are R,G,B. The outputs are R xor G, B xor G, (R xor B) xor m. The way to decrypt without the keys is to xor all three messages together.
+
+Proof that Perfect Secrecy implies the keyspace is at least as big as the message space. The proof is in Katz-Lindell. The main steps are to first assume that it is not true and fix the message distribution to be uniform, this guarantees that every message occurs with nonzero probability. For a given ciphertext, we take the set of possible decryptions for that cipher under each possible key in the keyspace and call this set M(c). We note that |M(c)| <= |K| because every decryption comes from a key. Since |M(c)| < M, then there is a message which is in the message space, but not a valid decryption. This violates the perfect secrecy which states that P(m | c) = P(m).
+
+Floyd's Two Finger Algorithm. This algorithm finds a hash collision. The full description can be found at http://courses.csail.mit.edu/6.857/2012/files/L11-hash-fns.pdf
+
