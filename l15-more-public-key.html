@@ -9,3 +9,206 @@
 <li>making RSA IND-CCA2 secure</li>
 <li>other aspects of RSA security</li>
 </ul>
+
+<h2>IND-CCA2: Indistinguishability under chosen-ciphertext attack</h2>
+
+<pre><code>Phase I: 
+    keygen -&gt; (pk, sk)
+    adversary can use encryption oracle
+    adversary can use decryption oracle
+        except on the challenge ctexts
+
+    adversary produces two message of the 
+    same length m0, m1 and some state s
+
+Phase II:
+    examiner flips a coin b \in {0,1}
+    examiner encrypts one of the messages, computes c* = Enc(m_b)
+    examiner sends c* to the advesary
+
+    adversary has to figure out in time polynomial in the security
+    parameter whether c* is the encryption of m0 or m1
+
+    adversary outputs b* and wins if b = b*
+</code></pre>
+
+<p>This is the strongest notion of security nowadays.</p>
+
+<p>Basic ElGamal does not satisfy this security definition because ciphertexts
+can be rerandomized and given to the decryption oracle.</p>
+
+<p>What if the decryption function only decrypts messages that it <em>knows</em> it was
+created by the encryption box, as opposed to other things: like playing with bits,
+playing with the homomorphic property, etc.</p>
+
+<h2>Cramer-Shoup</h2>
+
+<p>An extension of ElGamal.</p>
+
+<p>We have <code>G_q</code> a group of prime order <code>q</code> (remember <code>g^q = 1</code>).</p>
+
+<pre><code>Keygen(G_q):
+    g1, g2           &lt;--R-- G_q
+    x1,x2, y1,y2, z  &lt;--R-- Z_q (additive group mod q)
+    c &lt;- g1^x1 * g2^x2
+    d &lt;- g1^y1 * g2^y2
+    h &lt;- g1^z           (ElGamal-like feature)
+
+    pk = (g1, g2,  c,  d, h)
+    sk = (x1, x2, y1, y2, z)
+
+    Let H be a hash function which maps G_q triples to Z_q
+
+Enc(m \in G_q):
+    r &lt;--R--- Z_q
+    u1 &lt;- g1^r          (ElGamal-like)
+    u2 &lt;- g2^r          (for the checking portion)
+    e  &lt;- m * h^r       (ElGamal-like)
+    \alpha &lt;- H(u1, u2, e)
+    v  &lt;- c^r * d^(r*\alpha)
+
+    ctext = (u1, u2, e, v)
+
+
+Decrypt(ctext = u1, u2, e, v):
+    \alpha = H(u1, u2, e)
+
+    [ u1^x1 u2^x2 = g^rx1 g^rx2 = c^r ]
+    [ u1^y1 u2^y2 = d^r ]
+    [ u1^(x1+y1*\alpha) * u2^(x2*y2*\alpha) = 
+    checks that u1^(x1+y1*\alpha) * u2^(x2*y2*\alpha) == v
+        if not equal, then reject
+
+    [ need to invert h^r to get m out of e ]
+    [ don't have r, have z, so have h = g1^z ]
+    [ u1 = g1^r, u1^z = (g1^z)^r = h^r ]
+    return e/u1^z
+</code></pre>
+
+<p><strong>Theorem:</strong> Cramer-Shoup is IND-CCA2 secure, assuming:</p>
+
+<ul>
+<li>Decisional Diffie-Hellman (CDH) is hard in <code>G_q</code> (Why not CDH? Not clear,
+maybe read paper?)</li>
+<li>H is "target collision resistant"
+<ul>
+<li><strong>TODO</strong> Is this assuming less than <em>one-way hash functions</em> exist?</li>
+</ul></li>
+</ul>
+
+<p>This is really cool because at the time it solved an open-problem of whether
+IND-CCA2-secure public key encryption schemes exist.</p>
+
+<h2>RSA (1977)</h2>
+
+<pre><code>Z_n* = all numbers &lt; n relatively prime to n
+
+Keygen: 
+    find large *random* primes p, q
+    n &lt;- pq
+
+    \phi(n) = |Z_n*| = (p-q)(q-1)
+        this is unknown to the adversary
+        knowing \phi(n) &lt;=&gt; knowing factorization of n
+
+    e &lt;--R-- Z*_\phi(n)
+        just means that gcd(e, \phi(n)) = 1
+
+    d &lt;- e^-1 (mod \phi(n))
+        compute using extended Euclidian Algorithm
+
+    pk &lt;- (n, e)
+    sk &lt;- (p, q, d)
+
+Enc(m \in Z_n*):
+    c = m^e (mod n)
+
+Dec(c \in Z_n*):
+    m = c^d (mod n)
+</code></pre>
+
+<p><strong>Note:</strong> <code>m</code> and <code>c</code> need to be <code>\in Z_n* =&gt;</code> need to be relatively prime to
+<code>n</code>, so certain messages cannot be encrypted? Why is that not a problem? The
+only messages that cannot be encrypted are <code>p</code> and <code>q</code> and their multiples and 
+if you knew those, then you would know the secret key.</p>
+
+<p>Chinese Remainder Theorem:</p>
+
+<pre><code>\forall x,y \in Z_n, x = y (mod n) &lt;=&gt; x = y (mod p) AND x = y (mod q)
+</code></pre>
+
+<p>We know, by definition, that <code>e*d = 1 (mod \phi(n)) =&gt; e*d = 1 + t*(p-1)(q-1) =&gt;
+e*d = 1 (mod p-1) =&gt; d = e^-1 (mod p-1)</code> </p>
+
+<p>We want to show that <code>(m^e)^d = m (mod n)</code></p>
+
+<p>Suffices to show that <code>(m^e)^d = m (mod p)</code> and then use the Chinese Remainder
+Theorem.</p>
+
+<p><em>Case 1:</em> <code>m = 0 (mod p) =&gt; 0^ed = 0 (mod p)</code> q.e.d.</p>
+
+<p><em>Case 2:</em> <code>m != 0 (mod p), m \in Z_p*</code></p>
+
+<pre><code>m^(p-1) = 1 (mod p)     [ element of group raised to group order == identity]
+                        [ or Fermat's theorem ]
+m^(ed) = m^(1 + u*(p-1)) = m*(m^(p-1))^u = m*1^u = m (mod p)
+</code></pre>
+
+<h2>Security of RSA</h2>
+
+<p>Relies on assumption that <code>n = pq</code> is hard to factor when <code>p</code> and <code>q</code> are large
+primes.</p>
+
+<p>Best factoring algorithms today have running time <code>exp(c*(ln(n))^(1/3) * ln(ln(n))^(2/3))</code>, 
+where <code>n</code> is what??</p>
+
+<ul>
+<li>the number of bits in the <code>N = pq</code> number?</li>
+<li>or <code>n = N = pq</code>?</li>
+</ul>
+
+<p>According to Wikipedia, it's the number of bits in <code>n</code>.</p>
+
+<h2>OAEP: Optimal Asymmetric Encryption Padding</h2>
+
+<p>Assume G and H are random oracles</p>
+
+<pre><code>|       m       |       0^k1    |       |   r   |
+---------------------------------       ---------
+       \------&gt; | &lt;------/                  |
+                / t+k1                      / k0
+                |                           |
+               \|                          \| 
+                + &lt;---------- | G | &lt;-------*
+                |                           |
+               \|                           |
+                +-----------&gt; | H | ------&gt; +
+                |                           |
+               \|                          \|
+            |                   |               |
+            ------------------------------------- x
+                                |
+                            | RSA   |
+                            ---------
+                                |
+                            x^e (mod n)
+</code></pre>
+
+<p>Decryption: </p>
+
+<ul>
+<li>invert <code>RSA</code>, get <code>x</code></li>
+<li>invert OAEP Feistel, get <code>m</code> and <code>0^k1</code></li>
+<li>reject if <code>0^k1</code> are not present</li>
+<li>else output <code>m</code></li>
+</ul>
+
+<p><strong>Theorem:</strong> RSA+OEAP is IND-CCA2 secure assuming</p>
+
+<ul>
+<li>RSA is hard to invert on random output
+<ul>
+<li><strong>TODO:</strong> What?? Why the <em>random</em> restriction?</li>
+</ul></li>
+<li>random oracles exist and we can construct <code>G</code> and <code>H</code></li>
+</ul>
