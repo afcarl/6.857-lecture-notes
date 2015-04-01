@@ -167,7 +167,7 @@ Finite fields & number theory
    + `a*(b+c) = a*b + a*c`
    + `(b+c)*a = b*a + c*a`
 
-`GF(p)` - finite fields (Galois fields) on `p` elements `{0, 1, ..., p-1}`
+`GF(p)` - finite fields (a.k.a. Galois fields) on `p` elements `{0, 1, ..., p-1}`
 
     ax + b = 0 (mod p) => 
     x = -b * a^-1
@@ -176,17 +176,19 @@ Finite fields & number theory
     3x = 1 (mod 7) => (5 = 3^-1 (mod 7))
     x = 5 
 
-`GF(q)` finite field where `|S| = q`. When do finite fields exists, for what `q's`
+`GF(q)` finite field where `|S| = q`. When do finite fields exists, for what `q's`?
 
-**Theorem:** `GF(q)` exists iff `q = p^k` for some prime `p, k >= 1`
+**Theorem:** `GF(q)` exists iff `q = p^k` for some prime `p, k >= 1` (see [here](http://mathworld.wolfram.com/FiniteField.html) for more info)
+
+**TODO: Proof:**
 
 How do we create a `GF(p^k)` field, where `k > 1`?
 
 We work with (univariate) polynomials of degree `< k` with coefficients in `GF(p)`
 
-    a_k-1 x^k-1 + a_k-2 x^k-2 + ... + a_1 x + a0
+    f(x) = a_k-1 x^k-1 + a_k-2 x^k-2 + ... + a_1 x + a0
 
-There's `k` coefficients, so there's `p^k` such polynomials, `=> p^k` elements in `S`
+There are `k` coefficients, so there's `p^k` such polynomials, `=> p^k` elements in `S`
  - 
 
 Does it respect the definition of a field?
@@ -195,14 +197,15 @@ Does it respect the definition of a field?
  - multiplication: we do it _modulo an irreducible polynomial of degree `k`_
    + irreducible means the polynomial doesn't factor into a product of two smaller polynomials
 
-Example: `GF(4) = GF(2^2)` has 4 polynomials (4 elements): 
+Example: `GF(4) = GF(2^2), p = 2, k = 2` is the set of univariate polynomials of 
+degree `< 2` with coefficients in `GF(2)`. Thus `GF(4)` has 4 polynomials (4 elements): 
 
  - `0`
  - `1`
  - `x`
  - `x + 1`
 
-Multiplying them, we work modulo `p(x) = x^2 + x + 1, p(x) = 0 => x^2 = -x-1 => (GF2 -x = x, -1 = 1) => x^2 = x + 1` 
+Multiplying them, we work modulo `p(x) = x^2 + x + 1, p(x) = 0 => x^2 = -x-1 => (in GF(2) -x = x, -1 = 1) => x^2 = x + 1` 
 
      *  |   0       1      x    x+1
      --------------------------------
@@ -212,6 +215,7 @@ Multiplying them, we work modulo `p(x) = x^2 + x + 1, p(x) = 0 => x^2 = -x-1 => 
     x+1 |   0      x+1     1     x  
 
 
+    x * x = x^2 = x+1
     x * (x + 1) = x^2 + x = (x+1) + x = 1
     (x+1)(x+1) = x^2 + x + x + 1 = x^2 + 1 = (x+1) + 1 = x
 

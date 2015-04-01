@@ -204,7 +204,7 @@ idea because the MAC could leak plaintext information</p>
    + <code>a*(b+c) = a*b + a*c</code>
    + <code>(b+c)*a = b*a + c*a</code></p>
 
-<p><code>GF(p)</code> - finite fields (Galois fields) on <code>p</code> elements <code>{0, 1, ..., p-1}</code></p>
+<p><code>GF(p)</code> - finite fields (a.k.a. Galois fields) on <code>p</code> elements <code>{0, 1, ..., p-1}</code></p>
 
 <pre><code>ax + b = 0 (mod p) =&gt; 
 x = -b * a^-1
@@ -214,18 +214,20 @@ x = -b * a^-1
 x = 5
 </code></pre>
 
-<p><code>GF(q)</code> finite field where <code>|S| = q</code>. When do finite fields exists, for what <code>q's</code></p>
+<p><code>GF(q)</code> finite field where <code>|S| = q</code>. When do finite fields exists, for what <code>q's</code>?</p>
 
-<p><strong>Theorem:</strong> <code>GF(q)</code> exists iff <code>q = p^k</code> for some prime <code>p, k &gt;= 1</code></p>
+<p><strong>Theorem:</strong> <code>GF(q)</code> exists iff <code>q = p^k</code> for some prime <code>p, k &gt;= 1</code> (see <a href="http://mathworld.wolfram.com/FiniteField.html">here</a> for more info)</p>
+
+<p><strong>TODO: Proof:</strong></p>
 
 <p>How do we create a <code>GF(p^k)</code> field, where <code>k &gt; 1</code>?</p>
 
 <p>We work with (univariate) polynomials of degree <code>&lt; k</code> with coefficients in <code>GF(p)</code></p>
 
-<pre><code>a_k-1 x^k-1 + a_k-2 x^k-2 + ... + a_1 x + a0
+<pre><code>f(x) = a_k-1 x^k-1 + a_k-2 x^k-2 + ... + a_1 x + a0
 </code></pre>
 
-<p>There's <code>k</code> coefficients, so there's <code>p^k</code> such polynomials, <code>=&gt; p^k</code> elements in <code>S</code>
+<p>There are <code>k</code> coefficients, so there's <code>p^k</code> such polynomials, <code>=&gt; p^k</code> elements in <code>S</code>
  - </p>
 
 <p>Does it respect the definition of a field?</p>
@@ -238,7 +240,8 @@ x = 5
 </ul></li>
 </ul>
 
-<p>Example: <code>GF(4) = GF(2^2)</code> has 4 polynomials (4 elements): </p>
+<p>Example: <code>GF(4) = GF(2^2), p = 2, k = 2</code> is the set of univariate polynomials of 
+degree <code>&lt; 2</code> with coefficients in <code>GF(2)</code>. Thus <code>GF(4)</code> has 4 polynomials (4 elements): </p>
 
 <ul>
 <li><code>0</code></li>
@@ -247,7 +250,7 @@ x = 5
 <li><code>x + 1</code></li>
 </ul>
 
-<p>Multiplying them, we work modulo <code>p(x) = x^2 + x + 1, p(x) = 0 =&gt; x^2 = -x-1 =&gt; (GF2 -x = x, -1 = 1) =&gt; x^2 = x + 1</code> </p>
+<p>Multiplying them, we work modulo <code>p(x) = x^2 + x + 1, p(x) = 0 =&gt; x^2 = -x-1 =&gt; (in GF(2) -x = x, -1 = 1) =&gt; x^2 = x + 1</code> </p>
 
 <pre><code> *  |   0       1      x    x+1
  --------------------------------
@@ -257,6 +260,7 @@ x = 5
 x+1 |   0      x+1     1     x  
 
 
+x * x = x^2 = x+1
 x * (x + 1) = x^2 + x = (x+1) + x = 1
 (x+1)(x+1) = x^2 + x + x + 1 = x^2 + 1 = (x+1) + 1 = x
 </code></pre>

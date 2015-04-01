@@ -126,9 +126,9 @@ How to find `a^-1`:
 Order of elements
 -----------------
 
-Define: What is the order of an element in a group like `Z*_p` or `Z*_n`
+Notion: The order of an element in a group like `Z*_p` or `Z*_n`
 
-Definition: `order_n(a) = least t s.t. a^t = 1 (mod n)`, if `a \in Z*_n`
+**Definition:** `order_n(a) = smallest t s.t. a^t = 1 (mod n)`, if `a \in Z*_n`
 
 If `n=p` prime, then `t=p-1`
 
