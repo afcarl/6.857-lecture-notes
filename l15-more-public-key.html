@@ -128,19 +128,23 @@ Dec(c \in Z_n*):
 </code></pre>
 
 <p><strong>Note:</strong> <code>m</code> and <code>c</code> need to be <code>\in Z_n* =&gt;</code> need to be relatively prime to
-<code>n</code>, so certain messages cannot be encrypted? Why is that not a problem? The
-only messages that cannot be encrypted are <code>p</code> and <code>q</code> and their multiples and 
-if you knew those, then you would know the secret key.</p>
+<code>n</code>, so certain messages cannot be encrypted? The
+only messages that cannot be encrypted are <code>p</code> and <code>q</code> and their multiples. Note
+that if an adversary wanted to encrypt such messages, he would <em>literally</em> have
+the factorization of <code>n</code></p>
 
-<p>Chinese Remainder Theorem:</p>
+<p>We can prove using the <em>Chinese Remainder Theorem</em> that RSA works even for 
+<code>m \notin Z_n*, but m \in Z_n (i.e. m does not need to be coprime to n)</code></p>
 
-<pre><code>\forall x,y \in Z_n, x = y (mod n) &lt;=&gt; x = y (mod p) AND x = y (mod q)
+<p><em>Chinese Remainder Theorem:</em></p>
+
+<pre><code>n=pq, \forall x,y \in Z_n*, x = y (mod n) &lt;=&gt; x = y (mod p) AND x = y (mod q)
 </code></pre>
 
 <p>We know, by definition, that <code>e*d = 1 (mod \phi(n)) =&gt; e*d = 1 + t*(p-1)(q-1) =&gt;
 e*d = 1 (mod p-1) =&gt; d = e^-1 (mod p-1)</code> </p>
 
-<p>We want to show that <code>(m^e)^d = m (mod n)</code></p>
+<p>We want to show that <code>(m^e)^d = m (mod n), \forall m \in Z_n</code></p>
 
 <p>Suffices to show that <code>(m^e)^d = m (mod p)</code> and then use the Chinese Remainder
 Theorem.</p>
@@ -160,14 +164,8 @@ m^(ed) = m^(1 + u*(p-1)) = m*(m^(p-1))^u = m*1^u = m (mod p)
 primes.</p>
 
 <p>Best factoring algorithms today have running time <code>exp(c*(ln(n))^(1/3) * ln(ln(n))^(2/3))</code>, 
-where <code>n</code> is what??</p>
-
-<ul>
-<li>the number of bits in the <code>N = pq</code> number?</li>
-<li>or <code>n = N = pq</code>?</li>
-</ul>
-
-<p>According to Wikipedia, it's the number of bits in <code>n</code>.</p>
+where <code>n</code> is the number of bits in the <code>N = pq</code> number, subexponential time. (According to Wikipedia, 
+it's the number of bits in <code>n</code>.)</p>
 
 <h2>OAEP: Optimal Asymmetric Encryption Padding</h2>
 

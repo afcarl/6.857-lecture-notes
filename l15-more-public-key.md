@@ -123,18 +123,22 @@ RSA (1977)
         m = c^d (mod n)
 
 **Note:** `m` and `c` need to be `\in Z_n* =>` need to be relatively prime to
-`n`, so certain messages cannot be encrypted? Why is that not a problem? The
-only messages that cannot be encrypted are `p` and `q` and their multiples and 
-if you knew those, then you would know the secret key.
+`n`, so certain messages cannot be encrypted? The
+only messages that cannot be encrypted are `p` and `q` and their multiples. Note
+that if an adversary wanted to encrypt such messages, he would _literally_ have
+the factorization of `n`
 
-Chinese Remainder Theorem:
+We can prove using the _Chinese Remainder Theorem_ that RSA works even for 
+`m \notin Z_n*, but m \in Z_n (i.e. m does not need to be coprime to n)`
 
-    \forall x,y \in Z_n, x = y (mod n) <=> x = y (mod p) AND x = y (mod q)
+_Chinese Remainder Theorem:_
+
+    n=pq, \forall x,y \in Z_n*, x = y (mod n) <=> x = y (mod p) AND x = y (mod q)
 
 We know, by definition, that `e*d = 1 (mod \phi(n)) => e*d = 1 + t*(p-1)(q-1) =>
 e*d = 1 (mod p-1) => d = e^-1 (mod p-1)` 
 
-We want to show that `(m^e)^d = m (mod n)`
+We want to show that `(m^e)^d = m (mod n), \forall m \in Z_n`
 
 Suffices to show that `(m^e)^d = m (mod p)` and then use the Chinese Remainder
 Theorem.
@@ -154,12 +158,8 @@ Relies on assumption that `n = pq` is hard to factor when `p` and `q` are large
 primes.
 
 Best factoring algorithms today have running time `exp(c*(ln(n))^(1/3) * ln(ln(n))^(2/3))`, 
-where `n` is what??
-
- - the number of bits in the `N = pq` number?
- - or `n = N = pq`?
-
-According to Wikipedia, it's the number of bits in `n`.
+where `n` is the number of bits in the `N = pq` number, subexponential time. (According to Wikipedia, 
+it's the number of bits in `n`.)
 
 OAEP: Optimal Asymmetric Encryption Padding
 -------------------------------------------
