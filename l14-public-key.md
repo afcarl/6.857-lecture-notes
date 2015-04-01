@@ -216,6 +216,25 @@ a more restricting requirement." -- Wikipedia
 
 _Theorem:_ ElGamal is semantically secure `<=>` DDH holds in `G`
 
+<a href="#elgamalproofsketch" />
+_Proof `<=`:_ Suppose you have a way to break the IND-CPA game for ElGamal `=>`
+then you can solve a DDH instance. Let's see how:
+
+Being able to break the IND-CPA means that given a ciphertext `c*`, either of 
+`m1` or of `m2` (where `m1` and `m2` are chosen by you).
+
+    c1 = Enc(g^x, m1) = (g^k1, m1*(g^x)^k1)
+    c2 = Dec(g^x, m2) = (g^k2, m2*(g^x)^k2)
+
+    c* = c1 or c2
+
+...you have an algorithm `A` that is able to tell which one of `m1` or `m2` is
+encrypted in `c*`
+
+We'll see how you can build another algorithm `D` that can solve the DDH problem
+given an algorithm for `A`
+
+
 Back to ElGamal
 ---------------
 

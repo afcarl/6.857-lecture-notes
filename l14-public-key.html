@@ -252,6 +252,25 @@ a more restricting requirement." -- Wikipedia</p>
 
 <p><em>Theorem:</em> ElGamal is semantically secure <code>&lt;=&gt;</code> DDH holds in <code>G</code></p>
 
+<p><a href="#elgamalproofsketch" />
+<em>Proof <code>&lt;=</code>:</em> Suppose you have a way to break the IND-CPA game for ElGamal <code>=&gt;</code>
+then you can solve a DDH instance. Let's see how:</p>
+
+<p>Being able to break the IND-CPA means that given a ciphertext <code>c*</code>, either of 
+<code>m1</code> or of <code>m2</code> (where <code>m1</code> and <code>m2</code> are chosen by you).</p>
+
+<pre><code>c1 = Enc(g^x, m1) = (g^k1, m1*(g^x)^k1)
+c2 = Dec(g^x, m2) = (g^k2, m2*(g^x)^k2)
+
+c* = c1 or c2
+</code></pre>
+
+<p>...you have an algorithm <code>A</code> that is able to tell which one of <code>m1</code> or <code>m2</code> is
+encrypted in <code>c*</code></p>
+
+<p>We'll see how you can build another algorithm <code>D</code> that can solve the DDH problem
+given an algorithm for <code>A</code></p>
+
 <h2>Back to ElGamal</h2>
 
 <p>ElGamal has nice properties, like homomorphism.</p>
