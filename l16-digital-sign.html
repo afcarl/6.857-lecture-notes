@@ -1,0 +1,282 @@
+<h1>Today: Digital signatures, Monday, April 6th</h1>
+
+<p>Digital signature</p>
+
+<ul>
+<li>Definition</li>
+<li>Security definition</li>
+<li>Hash &amp; sign</li>
+<li>RSA PKCS &amp; PSS</li>
+<li>ElGamal</li>
+<li>Digital Signature Algorithm (DSA)</li>
+</ul>
+
+<h2>Digital signatures</h2>
+
+<p>An amazing development first due to Diffie and Hellman ("New directions in
+public key cryptography" paper)</p>
+
+<pre><code>Alice           m, s = sig(SK, m)           Bob
+    ----------------------------------------&gt;   verify(m, PK, s)
+</code></pre>
+
+<p>Original Diffie Hellman idea: public key maps a plaintext to a ciphertext, and
+secret key unmaps.</p>
+
+<pre><code>Keygen(1^l) -&gt; PK (verification key), SK (signing key)
+
+Sign(SK, m) -&gt; s_SK(m)
+ - this process may be randomized
+ - apparently no reason to have deterministic signatures
+
+Verify(PK, m, s) -&gt; true/false
+
+\forall m, Verify(PK, m, Sign(SK, m)) -&gt; true
+</code></pre>
+
+<h3>(Weak) existential unforgeability under an adaptive chosen message attack</h3>
+
+<p>Game:</p>
+
+<ol>
+<li>Challenger generates <code>(PK, SK)</code> keypair, sends <code>PK</code> to adversary</li>
+<li>Adversary can get signatures to messages of his choice
+<ul>
+<li><code>m1, m2, ..., mq</code></li>
+<li>he can repeat messages, no requirements</li>
+<li>he gets back <code>s_i = Sign(SK, m)</code> for each <code>m_i</code></li>
+</ul></li>
+<li>Here <code>q = poly(l)</code>, <code>m_i</code> may depend on signatures to previous messages</li>
+<li>Adversary outputs his attempt at a forgery: a pair <code>(m, s*)</code></li>
+<li>Adversary wins if Bob accepts it: <code>Verify(PK, m, s*) \and m \notin</code> the set
+of previously queried messages</li>
+</ol>
+
+<p>This scheme is secure if <code>Prob[Adversary wins] = negl(l)</code></p>
+
+<p>The <strong>strong</strong> version, allows the message of the forgery to be one of the
+messages the adversary previously asked for as long as the forged signature
+is different than the one the adversary received.</p>
+
+<h2>Hash &amp; sign</h2>
+
+<p>Early on it became obvious that you should not encrypt or sign full messages,
+because public key schemes were slow <code>=&gt;</code> sign <code>h(m)</code> rather than <code>m</code></p>
+
+<p>As long as the hash function is <em>collision-resistant</em>, and it's hard to find <code>m1
+&amp; m2</code>, s.t. <code>h(m1) = h(m2)</code>, a signature for <code>m1</code> is guaranteed to be for <code>m1</code>
+only.</p>
+
+<h2>RSA-PKCS (public key cryptography standards)</h2>
+
+<p>To sign <code>M</code>, compute <code>m = h(M)</code>. Need to create a particular message that will
+fit into an RSA block.</p>
+
+<p>We can define <code>pad(m) = 0x 00 01 FF .. FF 00 || hash_name || m</code></p>
+
+<ul>
+<li>we need a way to specify the hash function, so that Bob will know what
+hash function to use to verify the signature
+<ul>
+<li>hash functions could be changed because they get broken (like MD5)</li>
+</ul></li>
+<li><code>hash_name</code> is in ASN.1 (abstract syntax notation 1) form</li>
+</ul>
+
+<p>Signing:</p>
+
+<pre><code>RsaSign(SK = (d, n), m) = pad(m)^d (mod n)
+</code></pre>
+
+<p>No proof of security here... Not that used much anymore, because OAEP has a proof
+of security.</p>
+
+<h2>Probabilistic signature scheme (PSS), by Bellare and Rogaway, 1996</h2>
+
+<ul>
+<li>One of the first one that met the security definition</li>
+<li>RSA based</li>
+<li>Randomized</li>
+</ul>
+
+<p>Diagram:</p>
+
+<pre><code>    -----------------       ---------
+    |       m       |       |   r   |
+    -----------------       ---------
+        \                       /
+         \                     /| 
+        -----                 / |
+        | h | &lt;--------------/  |
+        -----                   |
+          |      /----| g1 |---&gt;+ 
+         \|     /               |
+          w----/                |
+          \                    \|
+           \                    r*
+            \---------------------------&gt; | g2 |
+                                            |
+                                           \|
+    ---------------------------------------------
+    0       w                   r*          g2(w)
+    ---------------------------------------------
+                        |
+                        |y
+                       \|
+                       -----
+                      | RSA |
+                       -----
+                        |
+                       \|
+
+                       Sign(m) = y^d (mod n)
+</code></pre>
+
+<p>Anytime you see a little bit of randomization you have to ask the question of 
+what will happen if the users don't have good enough random generators.</p>
+
+<p>Sign, <code>|w| = k, |r| = k0</code>:</p>
+
+<pre><code>r &lt;-R- {0,1}^k_0
+w &lt;- h(M||r)
+r* &lt;- g1(w) \xor r
+y &lt;- 0 || w || r* || g2(w)
+output s(m) = y^d mod n
+</code></pre>
+
+<p>Verify:</p>
+
+<pre><code>y &lt;- s(m)^e (mod n)
+parse y as b || w || r* || g2w
+r &lt;- r* \xor g1(w)
+return true if b = 0 &amp;&amp; h(m||r) == w &amp;&amp; g2(w) == g2w
+</code></pre>
+
+<p><strong>Theorem:</strong> PSS is weakly-existentially unforgeable under an adaptive chosen
+message attack in the Random Oracle Model if RSA is not invertible on random 
+inputs</p>
+
+<h2>ElGamal Digital Signatures</h2>
+
+<pre><code>large prime p, generator g of Z_p*
+    - public
+
+h is collision-resistant, outputs value in Z_p-1
+
+Keygen(1^l):
+    x &lt;-R- {0, 1, ..., p-2}
+    sk &lt;- x
+    pk &lt;- y = g^x (mod p)
+
+Sign(M):
+    m = h(M)
+    k &lt;- R - Z_{p-1}*, s.t. gcd(k, p-1) = 1
+     - because we will need to compute the multiplicative inverse of k
+       in Z_{p-1}*
+    r = g^k (mod p)
+    s = (m-r*x)/k (mod p-1)
+     - sort of shifting domains here
+
+    s(M) = (r, s)
+
+Verify(M, y = g^x, (r, s)):
+    ensure that 0 &lt; r &lt; p
+    ensure that y^r * r^s = g^m (mod p)
+</code></pre>
+
+<p>Why does verification work?</p>
+
+<pre><code>y^r = g^rx
+r^s = (g^k)^s
+
+y^r * r^s = g^(rs + sk) = ??? = g^m (mod p)
+
+&lt;=&gt; rs + sk = m (mod p-1) &lt;=&gt; s = (m-rx)/k
+</code></pre>
+
+<p>Why the p-1? The order of <code>g</code> is <code>p-1</code>, so things repeat after raising <code>g^{p-1} = 1</code></p>
+
+<p>Can you forge signatures? Yes you can. </p>
+
+<p>Note that the identity function is CR hash function.</p>
+
+<p><strong>Theorem:</strong> ElGamal digital signatures are existentially forgeable.
+<strong>Proof:</strong> </p>
+
+<ul>
+<li>Pick <code>h(x) = x</code> as the hash function</li>
+<li>Pick <code>e &lt;-R- Z_p-1</code></li>
+<li>Pick <code>r &lt;- g^e * y (mod p)</code> (<code>y = g^x</code> is the PK of the guy whose signature we are forging)</li>
+<li>Pick <code>s &lt;- -r (mod p)</code></li>
+<li>Claim that <code>(r, s)</code> is a valid signature for <code>e*s</code></li>
+</ul>
+
+<p>Is <code>y^r * r^s = g^m</code>? <code>g^xr * (g^e * y)^-r = g^-er = g^es = g^m</code></p>
+
+<p>This is bad. It seems that we need more from our hash function, not just CR.</p>
+
+<p><strong>Fix:</strong>  </p>
+
+<pre><code>Sign(M):
+    k &lt;- R - Z_{p-1}*, s.t. gcd(k, p-1) = 1
+     - because we will need to compute the multiplicative inverse of k
+       in Z_{p-1}*
+    r = g^k (mod p)
+    m = h(M||r)
+    s = (m-r*x)/k (mod p-1)
+     - sort of shifting domains here
+
+    s(M) = (r, s)
+</code></pre>
+
+<p><strong>Theorem:</strong> Modified ElGamal is existentially unforgeable against adaptive
+chosen message attack in the Random Oracle Model assuming discrete log problem
+(DLP) is hard.</p>
+
+<p>Foundation for other schemes, such as the DSA scheme.</p>
+
+<h2>Digital Signature Algorithm</h2>
+
+<ul>
+<li>DSA (NIST 1991)</li>
+<li>based on ElGamal</li>
+<li>had the same bug as ElGamal</li>
+<li>assuming DLP is hard</li>
+</ul>
+
+<p>Diagram:</p>
+
+<pre><code>p = nq+1, p is a large prime
+|q| = 160 bits
+|p| = 1024 bits
+
+end up with 320-bit signature
+
+g0 generates Z_p*
+g = g0^n generates subgroup G_q of order q
+ - hard to tell appart G_q and Z_p*, given a random element
+
+x &lt;- R - Z_q        // 160 bits
+y &lt; g^x mod p       // 1024 bits
+
+SK = x, PK = y
+
+Sign():
+    k &lt;-R- Z_q*     // 1 &lt;= k &lt; q
+    r &lt;- ((g^k mod p) mod q)    // |r| = 160 bits
+
+    m &lt;- h(M)
+
+    s &lt;- (m+rx)/k mod q     // + instead of -, |s| = 160 bits
+    redo if r = 0 or s = 0
+
+    output (r, s)
+
+Verify():
+    check that 0 &lt; r &lt; q &amp; 0 &lt; s &lt; q 
+    check that y^(r/s) g^(m/s) (mod p)(mod q) = r
+        g^(rx + m)/s = r (mod p)(mod q)
+        note that k = (rx + m)/s and r = g^k
+</code></pre>
+
+<p>As before, it's forgeable with certain hash functions. Fix is the same.</p>
