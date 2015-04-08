@@ -1,0 +1,210 @@
+<h1>Today: Bilinear maps, April 8th</h1>
+
+<ul>
+<li>"Gap groups" &amp; bilinear maps</li>
+<li>BLS (Boneh, Lynn, Shacham) signatures
+<ul>
+<li>very simple</li>
+<li>short signatures</li>
+</ul></li>
+<li><a href="http://cgi.di.uoa.gr/~aggelos/crypto/page4/assets/joux-tripartite.pdf">3-way key agreement</a> (Joux)
+<ul>
+<li>Joux brought bilinear maps into the crypto world</li>
+</ul></li>
+<li>Identity-based encryption (IBE) (by Boneh, Franklin)
+<ul>
+<li>Example: encrypt using your email address as your public key</li>
+</ul></li>
+</ul>
+
+<h2>"Gap groups" and bilinear maps</h2>
+
+<p>"Gap groups"</p>
+
+<ul>
+<li>you've got a pair of groups and can do nice things between them</li>
+<li>based on elliptic curves</li>
+</ul>
+
+<p><strong>Definition:</strong> A <em>gap group</em> is a group where Decisional Diffie Hellman (DDH) is <em>easy</em> but where Computational Diffie Hellman is <em>hard</em></p>
+
+<p>How do you construct one? Using this notion of a bilinear map.</p>
+
+<p>Suppose we have a main group <code>G1</code> and a shadow group <code>G2</code>.</p>
+
+<pre><code>G1 is a group of prime order q, has generator g (main group)
+G2 is a group of prime order q, has generator h (shadow group)
+</code></pre>
+
+<p>We have a pairing function <code>e</code>, or a bilinear map, such that it
+takes two elements from <code>G1</code> and gives you one in <code>G2</code>:</p>
+
+<pre><code>    e : G1 x G1 -&gt; G2
+    e(g,g) = h
+</code></pre>
+
+<p>Picture to illustrate this shadowing operation:</p>
+
+<pre><code>G1  g   g^a     g^b     g^b     g^ab
+    |    |       |       |       |
+   \|   \|      \|      \|      \|
+G2  h   h^a     h^b     h^b     h^ab
+(except the mapping function takes two args, not one)
+
+\forall (a,b), e(g^a, g^b) = h^ab
+
+The shadowing operation can be implemented as:
+e(g, g) = h
+e(g^a, g) = h^a
+e(g^b, g) = h^b
+e(g^a, g^b) = h^ab
+</code></pre>
+
+<p>Google for <a href="http://www.larc.usp.br/~pbarreto/pblounge.html">"pairing-based crypto lounge"</a>, to see
+applications of bilinear maps.</p>
+
+<p>In practice <code>G1</code> is an elliptic curve group and <code>G2</code> is a finite field like
+<code>Z_{p^6}</code>. Won't go into a discussion of what the bilinear map actually is (complicated apparently).</p>
+
+<p>You can compute a pairing function in like 25ms apparently.</p>
+
+<p><strong>Theorem:</strong> DDH is easy in G1, if you have G2 and a bilinear map from G1 to G2.</p>
+
+<p>To check if <code>g^a, g^b</code> and <code>g^c (could be g^r or g^ab)</code> are related, we can check if <code>e(g^a, g^b) = e(g, g^c)</code> (i.e., if <code>h^ab = h^c &lt;=&gt; ab = c (mod q)</code>)</p>
+
+<p>Properties:</p>
+
+<pre><code>e(g^a,g^b) = e(g^a, g)^b = e(g, g)^ab, = e(g, g^b)^a
+</code></pre>
+
+<p><strong>Note:</strong> If DLP is easy in <code>G2</code> it is also easy in <code>G1</code> (can map <code>g^a =&gt; h^a</code>, can compute <code>a</code> from <code>h^a =&gt;</code> have <code>a</code> from <code>g^a</code>) . </p>
+
+<p>Q: Why do you need a prime order <code>q</code> group?</p>
+
+<h3>How to implement a gap group</h3>
+
+<p><code>G1</code> is an elliptic curve group, a <em>supersingular</em> one (terminology?)</p>
+
+<pre><code>y^2 = x^3 + ax + b (mod p)
+</code></pre>
+
+<p>To make it supersingular, you need <code>p = 2 (mod 3), p &gt; 5, a = 0, b \in Z_p*</code></p>
+
+<pre><code>y^2 = x^3 + 1 (mod p)
+</code></pre>
+
+<p><code>G2</code> is a finite field <code>F*_{p^k}</code> for some small <code>k</code></p>
+
+<p>We need groups of prime order <code>q</code>, so we use subgroups of prime order <code>q</code>, <code>|q| = 160 bits</code> from <code>G1</code> and <code>G2</code></p>
+
+<p>The bilinear map can be the "Weil pairing" or "Tate pairing"</p>
+
+<h2>BLS (Boneh, Lynn, Shacham) signatures</h2>
+
+<p>We're gonna have a setup sort of like ElGamal. Assume all notation from previous section.</p>
+
+<p>Let <code>H : messages -&gt; G1</code> be collision-resistant (CR) hash function that maps messages to our <code>G1</code> group.</p>
+
+<p>Secret key is some value <code>x, 0 &lt; x &lt; q</code> picked randomly.
+Public key is <code>g^x</code> (in <code>G1</code>)</p>
+
+<p>To sign <code>M</code>, output <code>s_x(M) = (H(M))^x</code></p>
+
+<p>How to verify? Let <code>m = H(M)</code>, signature will be <code>m^x</code></p>
+
+<pre><code>g   g^x     m       m^x
+\   \-------/       /
+ \-----------------/
+</code></pre>
+
+<p>Check that <code>e(g, m^x) = e(g^x, m) &lt;=&gt; e(g, g^tx) = e(g^x, g^t) &lt;=&gt; h^tx = h^tx
+&lt;=&gt; tx = tx</code> (note that since <code>m \in G1 =&gt; m = g^t</code>, for some <code>t</code>, we don't need
+to find <code>t</code>, we just use it here to show that we should get equality)</p>
+
+<p>A general remark about elliptic curves, is that the DLP problem gets harder faster
+relative to the size of the group (compared to <code>Z_p*</code>)</p>
+
+<p>For a point on an elliptic curve, you've got two values, the <code>x</code> and <code>y</code> coords.</p>
+
+<pre><code>|p| = 160 bits
+point on curve is (x,y), 320 bits
+</code></pre>
+
+<p>Claim: we can represent a point with only 160 bits. Given <code>(x, y)</code> can represent
+it as <code>x</code>, and for <code>y</code>, I can just compute it (there are only two possible, for
+this particular curve) and give you a + or - bit to distinguish which <code>y</code> is 
+the good one</p>
+
+<p>Isn't taking square roots hard? Depends on what the prime <code>p</code> is congruent to <code>1
+(mod 4)</code> then it's easy, if it's congruent to <code>3 (mod 4)</code> then it's a little
+harder, but still fast using some randomization.</p>
+
+<p><strong>Theorem:</strong> BLS signatures are secure against existential forgery under chosen
+message attack in the random-oracle model (ROM) and assuming CDH is hard in <code>G1</code></p>
+
+<h2>3-way key agreement (Joux)</h2>
+
+<p>We saw the original Diffie-Hellman problem where Alice and Bob can agree on a key.</p>
+
+<p>Alice, Bob and Charles want to agree on a key. We can do this with DH but with
+a lot of message passing: gotta send <code>g^ab, g^ac, g^bc</code> to each other and compute
+<code>g^abc</code> as the shared key.</p>
+
+<p>Faster using bilinear maps</p>
+
+<pre><code>A   g^a     
+B   g^b     
+C   g^c
+</code></pre>
+
+<p>Can take <code>e(g^a, g^b)^c = h^abc</code>
+Can take <code>e(g^b, g^c)^a = h^abc</code>
+Can take <code>e(g^c, g^a)^b = h^abc</code></p>
+
+<p>If we want 4-way agreement, maybe a <em>trilinear map</em> could be of use.</p>
+
+<h2>Identity-based encryption, Boneh and Franklin, 2001</h2>
+
+<p>Suppose I want to send you a message, and all I have is your email address. Is
+there a way for me to use that as a public key?</p>
+
+<p><strong>Note:</strong> If there's a public key => there needs to be secret key => who computes 
+it? Clearly it can't be you, because if you can simply compute it, then so can
+anyone else => Seems like we need a trusted third party (TTP) to compute the
+secret keys.</p>
+
+<p>TTP has a secret <code>s</code> and a public key <code>y = g^s \in G1</code>. Everybody knows the TTP's
+public key.</p>
+
+<p>We have:</p>
+
+<pre><code>H1 : names -&gt; G1* (CR hash fn)
+H2 : G2 -&gt; {0,1}^* (an element in G2 can be used to generate a keystream)
+</code></pre>
+
+<p>You want to encrypt a message <code>M</code> to <code>name</code> using <code>y</code> as the public key of the
+TTP.</p>
+
+<pre><code>encrypt(M, name, y):
+    r &lt;-R- Z_q*
+    Q_A &lt;- H1(name), Q_A \in G1
+    g_A &lt;- e(Q_A, y), g_A \in G2
+
+    ctext &lt;- (g^r, M \xor H2(g_A^r))
+
+my secret is sk = d_A = Q_A^s
+    gotta get it from the TTP, because I don't know s
+
+decrypt(d_A = Q_A^s, (u = g^r, v = M \xor H2(g_A^r))):
+    I have g, g^r, Q_A^s
+
+    v \xor H2(e(d_A, u)) = v \xor H2(e(Q_A^s, g^r))
+
+    e(Q_A^s, g^r) = e(Q_A, g)^rs = e(Q_A, g^s)^r = g_A^r
+
+    can now do v \xor g_A^r and get the message back
+</code></pre>
+
+<p><strong>Note:</strong> You can encrypt to me, before I even have my secret...</p>
+
+<p>Can be shown to be semantically secure in the ROM</p>
