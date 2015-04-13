@@ -1,0 +1,240 @@
+<h1>Today: Zero-knowledge proofs, Monday, April 13th </h1>
+
+<p>Today:</p>
+
+<ul>
+<li>zero-knowledge proofs</li>
+<li>interactive proofs, ZK</li>
+<li><strong>Examples:</strong> Sudoku, 3-colorability, graph iso, hamiltonian cycle (HC), 
+discrete log (DL)</li>
+<li>any problem in NP has a ZK proof</li>
+</ul>
+
+<h2>Zero-knowledge proof</h2>
+
+<p>We have a <em>prover</em> (Peggy) and a <em>verifier</em> (Victor) and some common input 
+<code>x</code> which is the statement to be proved.</p>
+
+<p>It's going to be an interactive proof, where Peggy and Victor are exchanging
+messages over multiple rounds. At the end, the Victor can accept the proof
+or reject it.</p>
+
+<pre><code>P   ----------------&gt;   V
+    &lt;----------------
+
+    ----------------&gt; 
+    &lt;----------------
+
+    ----------------&gt; 
+    &lt;----------------
+
+                        (P,V)(x) = True/False
+</code></pre>
+
+<p>The prover may be powerful (large computation power, or more commonly he knows
+something about why the statement <code>x</code> is true and he can use that).</p>
+
+<h3>Basic properties</h3>
+
+<ul>
+<li>Completeness, if <code>x</code> is a true statement, then <code>V</code> accepts</li>
+<li>Soundness, if <code>x</code> is false, then <code>V</code> rejects with prob <code>&gt; 0</code></li>
+<li>Zero-knowledge, <code>V</code> learns nothing beyond fact of whether <code>x</code> is true or not </li>
+</ul>
+
+<h3>"Quality control"</h3>
+
+<ul>
+<li>widget factory</li>
+<li>either widgets are perfect (A) <em>or</em> 1 in <code>k</code> of them are bad (B)</li>
+<li>pick <code>t*k</code> widgets to test</li>
+<li>probability that you find no defective widgets given that 1 in <code>k</code> of them are
+bad is <code>(1 - 1/k)^tk ~= (e^(-1/k))^tk = e^-t</code>
+<ul>
+<li><code>P(no bad widgets | B)</code></li>
+</ul></li>
+</ul>
+
+<h3>Commitments</h3>
+
+<pre><code>c = commit(v, r)
+open(c) -&gt; (v, r)
+</code></pre>
+
+<p>We wanted two properties out of a commitment scheme</p>
+
+<ul>
+<li><em>Hiding:</em> seeing <code>c</code> should reveal no information about <code>v</code></li>
+<li><em>Binding:</em> sender can only open the commitment up in one way</li>
+<li>we saw Pedersen commitments
+<ul>
+<li><code>c = g^v * h^r</code>, <code>g,h</code> generators, <code>r</code> random </li>
+<li>it was perfectly hiding and computationally binding</li>
+</ul></li>
+</ul>
+
+<h2>Sudoku example</h2>
+
+<pre><code>*---*---*---*
+|   |   |   |
+*---*---*---*
+|   |   |   |
+*---*---*---*
+|   |   |   |
+*---*---*---*
+</code></pre>
+
+<p>How can I convince you I know a solution to a Sudoku puzzle, without telling you
+anything about the solution?</p>
+
+<p>Suppose we make up codes for the numbers, s.t. each number is a letter</p>
+
+<pre><code>1 2 3 4 5 6 7 8 9 
+O B F H I E G C A
+</code></pre>
+
+<p>But this is a one to one mapping, so if we just translated our solution to this
+the verifier can just extract the solution and learn it.</p>
+
+<p>If we use commitments for each letter, then we can hide the solution.</p>
+
+<p>A challenge can be "open a commitment to a row/column/block". Note that know 
+the verifier will learn some mappings. So now the verifier will want to ask again,
+which means you'd better remap so that he does not start learning the actual
+numbers.</p>
+
+<p>The prover can't cheat because he commits himself to a certain "ciphertext" of
+the Sudoku so he has to make sure that his commitment is an actual solution, because
+the verifier could query it anywhere (block, row, column) and since the prover
+is committed he won't be able "change" or "tune" his answer.</p>
+
+<p>Stages:</p>
+
+<ul>
+<li>commit to random table mapping numbers to letters</li>
+<li>commit to the 9x9 table, each square is a commitment to a letter</li>
+<li>send all these commitments to the verifier along with the Sudoku problem</li>
+<li>verifier wants to check that all letters in a block/row/column
+are different and that the letters match the numbers in the original
+Sudoku problem
+<ul>
+<li>verifier can only do only one check in this round</li>
+<li>he can do another in the next round, where you remap the numbers to letters
+to prevent him from learning anything</li>
+</ul></li>
+</ul>
+
+<p>Note: seems like you need to make sure a unique set of 9 letters are used, otherwise
+the prover might use extra letters to cheat</p>
+
+<h2>Graph 3-colorability</h2>
+
+<p>Prover has a graph and knows a 3-coloring of the graph, where each vertex is
+assigned a color out of 3 colors s.t. no two adjacent vertices have the same color.</p>
+
+<p>The prover's solution is the mapping from vertex to color.</p>
+
+<p>Phase I:</p>
+
+<ul>
+<li>prover commits to all colors and sends it to the verifier</li>
+<li>verifier picks an edge and asks prover to open the two commitments
+and the commitments of the colors</li>
+<li>note that the verifier could learn the vertex colors if we just repeat this</li>
+<li>we permute the colors (B -> G, R -> B, G -> R)</li>
+<li>now verifier has no idea if the "red" in round 1 was also a "red" in some
+later round</li>
+</ul>
+
+<p>If the prover does not know a coloring, then whatever I commit to has to be 
+bad on some edge <code>=&gt;</code> verifier will discover it at some point</p>
+
+<p>Note that the transcript of the zero-knowledge exchange looks random. It'll have a 
+list of random vertices and random colors, so it seems no one should be able to
+learn anything from it.</p>
+
+<h2>Graph ismorphism</h2>
+
+<p>Hard to solve for two big graphs <code>G</code> and <code>H</code>.</p>
+
+<p>The solution is a mapping from the vertex #s of the first graph to the vertex #s 
+of the second graph: <code>(1-&gt;c, 2-&gt;d, 4-&gt;a, 3-&gt;b)</code></p>
+
+<p>As a prover, if I know the isomorphism, I can come up with a third graph <code>J</code> that is
+isomorphic to both of them (by just reordering the vertices randomly).</p>
+
+<pre><code>1 -&gt; c -&gt; u
+2 -&gt; d -&gt; t
+4 -&gt; a -&gt; r
+3 -&gt; b -&gt; s
+</code></pre>
+
+<p>Verifier can now ask you to reveal the isomorphism from <code>G</code> to <code>J</code> or from
+<code>H</code> to <code>J</code>, but not both.</p>
+
+<p>ZK is complete </p>
+
+<p>ZK is sound. Suppose G and H are not isomorphic, or you don't know the isomorphism.
+You will have to pick one of G or H to derive J from. Suppose you pick G and H. 
+If the verifier asks you for the isomorphism between J and H, you do not know
+it and sending a fake one will not pass the verifier's check.</p>
+
+<h2>Hamiltonian cycle</h2>
+
+<p>Prover and verifier have a graph G and prover knows a hamiltonian cycle in it.</p>
+
+<ul>
+<li>generate a random isomorphic copy H of G</li>
+<li>verifier asks for either the Hamiltonian cycle in H or the isomorphism between
+G and H</li>
+<li>repeat</li>
+</ul>
+
+<h2>Discrete log</h2>
+
+<p>Schnorr protocol for showing knowledge of the discrete log.</p>
+
+<ul>
+<li><code>p</code> is a prime, <code>p = 2q+1</code>, <code>q</code> is prime, <code>g</code> generates <code>G_q</code></li>
+<li>secret key <code>x</code></li>
+<li>public key <code>y = g^x</code></li>
+</ul>
+
+<p>Schnorr protocol:</p>
+
+<pre><code>    P                                   V
+
+k &lt;-R- Z_q
+a = g^k                 a
+            ------------------------&gt;
+                        c
+            &lt;------------------------ c &lt;-R- Z_q
+r = cx + k              r
+            ------------------------&gt;
+                                      is y^c * a = g^r &lt;=&gt;
+                                        g^(cx+k) = g^r
+</code></pre>
+
+<p>If I don't know <code>x</code> what are your chances of catching me? </p>
+
+<p>Equivalent:</p>
+
+<ul>
+<li>I don't know <code>x =&gt;</code> I can't play the game</li>
+<li>I can play game <code>=&gt;</code> I know <code>x</code></li>
+</ul>
+
+<p>If can play the game, I know <code>x</code>:</p>
+
+<pre><code>a = g^k
+r = cx + k
+r' = cx' + k
+-------------
+x = (r-r')/(c-c')
+</code></pre>
+
+<p><strong>Theorem:</strong> Protocol is zero-knowledge.</p>
+
+<p><strong>Proof:</strong> After a round is over, verifier has <code>a, c, r</code> and they are all
+random elements of <code>Z_q</code>. Prover hasn't given verifier any info because
+the verifier could compute <code>a</code> given <code>c</code> and <code>r</code>.</p>
