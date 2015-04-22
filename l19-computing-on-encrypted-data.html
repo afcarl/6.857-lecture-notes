@@ -1,0 +1,287 @@
+<h1>Today: Computing on Encrypted Data, Wed., April 22nd</h1>
+
+<p>Guest lecture by Vinod Vaikuntanathan</p>
+
+<h2>Intro</h2>
+
+<p>Traditional encryption is "all-or-nothing": put the secret message in a locked
+box, send it to the person. If he has the key he can decrypt, otherwise he can't
+do anything.</p>
+
+<p>Non-malleable encryption: if adversary intercepts ciphertext he cannot do anything
+(flip bits, etc) or learn anything from it.</p>
+
+<h2>Encryption for cloud computing</h2>
+
+<p>You want to compute a function <code>F</code> over the encrypted data of an user. But the
+user wants its privacy.</p>
+
+<p>Fully homomorphic encryption (FHE), by Rivest, Adleman, Dertouzos (1978):</p>
+
+<pre><code>                Enc(Data)
+            &lt;--------------    
+Cloud                           user
+                Enc(F(Data))
+            ---------------&gt;
+</code></pre>
+
+<p>They had no solution for FHE, just an idea that it might be possible.</p>
+
+<p>Classes of computation:</p>
+
+<ul>
+<li>fully = any function F
+<ul>
+<li>for the moment, we think about circuits as the model of computation
+<ul>
+<li>(boolean, arithmetic, doesn't matter)</li>
+<li>doesn't support loops whose condition depends on input variables</li>
+<li>but can get around it by trying a loop for 10 iterations on the FHE
+side, then client-side can tell FHE side that it did not get the 
+correct answer (not clear how it would verify correctness?) => then
+FHE side can retry</li>
+</ul></li>
+</ul></li>
+<li>additive = only additions</li>
+<li>multiplicative = only multiplications</li>
+<li>somewhat = circuits of small depth</li>
+</ul>
+
+<p>Gentry, 2009 introduced the first FHE construction.</p>
+
+<h2>Outline</h2>
+
+<ul>
+<li>multiplicative homorphism (ElGamal)
+<ul>
+<li><code>E(x1), E(x2) =&gt; E(x1+x2)</code></li>
+</ul></li>
+<li>additive homomorphisms (Goldwasser Micalli)
+<ul>
+<li><code>E(x1), E(x2) =&gt; E(x1*x2)</code></li>
+</ul></li>
+<li>FHE</li>
+</ul>
+
+<p>If we have addition and multiplication, then we have FHE.</p>
+
+<p>For over 30 years we knew how to do addition and multiplication, but within 
+different encryption schemes => no FHE</p>
+
+<h2>ElGamal</h2>
+
+<p>We've seen it before in class.</p>
+
+<pre><code>Enc(m1): (g^r1, y^r1*m1)
+Enc(m2): (g^r2, y^r2*m1)
+------------------------
+Enc(m2*m2): (g^(r2*r1), y^(r2*r1)*m1*m2)
+</code></pre>
+
+<h2>GM</h2>
+
+<p>Public key: <code>N = pq, y = non-square mod N</code>
+Secret key: factorization of <code>N</code></p>
+
+<p>In <code>Z_N*</code> some numbers can be written as squares and others can't.</p>
+
+<ul>
+<li><code>Z_n*</code> is the set of all numbers <code>x, s.t gcd(x,n) = 1</code></li>
+</ul>
+
+<p>Encryption:</p>
+
+<pre><code>Enc(0): r^2 mod N
+Enc(1): y* r^2 mod N
+</code></pre>
+
+<p>Computationally hard to distinguish between squares and non-squares in <code>Z_N*</code>,
+unless you know the factorization of <code>N</code></p>
+
+<p>XOR homomorphic, just multiply the ciphertexts:</p>
+
+<ul>
+<li>square(0) * square(0) = square(0)</li>
+<li>non-square(1) * square(0)  = non-square(1)</li>
+<li>square(0) * non-square(1) = square(1)</li>
+<li>non-square(1) * non-square(1) = square(0)</li>
+</ul>
+
+<h2>Other HE schemes</h2>
+
+<p>Additive for numbers larger than 1 bit</p>
+
+<ul>
+<li>Paillier</li>
+<li>Damgard-Jurik</li>
+</ul>
+
+<p>Additions + a single multiplication</p>
+
+<ul>
+<li>Boneh-Goh-Nissim (based on gap groups)</li>
+</ul>
+
+<h2>How to construct an FHE scheme</h2>
+
+<p>Step 1: Somewhat homomorphic encryption (SwHE): We know how to do additions and just
+one multiplications. Can we extend it to 10 multiplications? Or more?</p>
+
+<ul>
+<li><code>n</code> security parameter, SwHE lets you compute circuits of depth <code>d = \epsilon*log(n)</code></li>
+</ul>
+
+<p>Step 2: Bootstrapping theorem (Gentry 2009): Says that "homomorphic-enough" encryption <code>=&gt;*</code> FHE</p>
+
+<p>Homomorphic-enough means that the scheme can evaluate a deep enough circuit. Deep
+enough means the scheme can evaluate its own decryption circuits (plus some).
+Note that decryption circuits are well-defined and don't have unbounded loops.</p>
+
+<p>Step 3: Depth boosting / Modulus reduction: Takes a SwHE scheme that can
+compute <code>log(n)</code> circuits and boosts it to <code>O(n)</code> circuits.</p>
+
+<h2>The NTRU encryption scheme</h2>
+
+<p>Central characters: ring (add and multiply) of polynomials modulo <code>q</code> of bounded
+degree (when you multiply two polynomials, the degree grows, but reduction modulo <code>q</code> helps reduce it)</p>
+
+<p>Polynomials of degree less than <code>n</code></p>
+
+<p>Example (q = 11):</p>
+
+<ul>
+<li>addition is modulo 11 for the coefficients</li>
+<li>multiplications is modulo (11, x^4 + 1)</li>
+</ul>
+
+<p>Ring: <code>R_q := Z_q[X] / (x^n + 1)</code></p>
+
+<pre><code>KeyGen():
+    sample two "small" polynomials, `f, g \in R_q` with coefficients `&lt;= B` ,
+    s.t. `f=1 mod 2`
+
+    secret key = f, public key = h = 2g/f
+    (sample again if f has no inverse)
+    (multiplying the public key by f, almost "kills" h in the sense
+     that the product is small)
+
+Encryption(m \in {0,1}): 
+    sample "small" polynomials s,e \in R_q
+    output C = hs + m (mod q, x^n+1)
+        (s sort of randomizes the encryption)
+    is this semantically secure? you have to add randomness cleverly.
+    if m = 0, (hs + m) * h^-1 = s + m*h^-1 = s (small)
+    if m = 1, (hs + m) * h^-1 = s + m*h^-1 = s + h^-1 (not small)
+      =&gt; not semantically secure
+
+    output C = hs + 2e + m (mod q, x^n+1)
+        (s sort of randomizes the encryption)
+    if m = 0, (hs + 2e + m) * h^-1 = s + 2eh^-1 + m*h^-1 (large)
+    if m = 1, (hs + 2e + m) * h^-1 = s + 2eh^-1 + m*h^-1 (large)
+
+Decryption(C):
+
+    output fC (mod q, X^n+1) mod 2
+    fC = f(hs + 2e + m) = 2(gs + fe) + fm (mod q, x^n+1)
+    (can't just take the mod 2 of this because ((mod q) mod 2) does not commute)
+
+    this polynomial has small coefficients though, so the mod q has no effect
+    if |2(gs+fe) + fm)| &lt; q/2, taking mod 2 gives m
+</code></pre>
+
+<p>You can show that this scheme is as secure as solving the shortest vector problem
+on lattices (SVP)</p>
+
+<p>Note that there's no factoring, no discrete logarithm. This relies on the fact
+that if I give you a bunch of linear equations for ciphertexts in this scheme,
+it is hard to extract the secret or the messages.</p>
+
+<pre><code>\vecS = (s1, ..., sn) \in Z_2^n
+
+I can give you:
+\veca1, a1 \cdot s
+...
+\veca1, am \cdot s
+
+Your goal is to find s. You can do this with Gaussian elimination.
+
+
+However, if I give you noisy equations with e_i, where P(e_i = 1) = p:
+\veca1, a1 \cdot s + e_1
+...
+\veca1, am \cdot s + e_m
+
+The only solution is to check all possible assignments of \vecS and see
+if the distribution of the e_i's you get out matches P(e_i)
+</code></pre>
+
+<p>Additive homomorphism for NTRU:</p>
+
+<pre><code>c1 = hs1 + 2e1 + m1
+c2 = hs2 + 2e2 + m2
+----
+c1+c2 = h(s1+s2) + 2(e1+e2) + m1+m2
+</code></pre>
+
+<p>Note that you cannot do too many additions because <code>e</code> needs to be a small
+polynomial => this is a SwHE scheme</p>
+
+<p>What happens when I decrypt these ciphertexts?</p>
+
+<pre><code>fc1 = 2E1 + fm1
+fc2 = 2E2 + fm2
+</code></pre>
+
+<p>What about decrypting the sum?</p>
+
+<pre><code>f(c1+c2) = 2(E1+E2) + f(m1+m2)
+f(c1+c2) = 2(E1+E2) + f(m1+m2)
+</code></pre>
+
+<p>Multiplication?</p>
+
+<pre><code>f(c1*c2) = 2(E1m2 + E2m1 + 2E1E2) + f^2(m1*m2)
+             \---------|--------/
+                       E
+=&gt; I need to use a different secret (f^2) to retrieve m1 * m2
+</code></pre>
+
+<p>Problem: these errors grow, and they cannot grow beyond a certain amount (<code>q/2</code> or
+<code>q/4</code> or the wraparound will not allow you to decrypt)</p>
+
+<p>Let's look at addition:</p>
+
+<pre><code>f(c1+c2) = 2(E1+E2) + f(m1+m2)
+the noise is at most 2*B, if E1 &lt; B and E2 &lt; B
+
+f(c1*c2) = 2(E1m2 + E2m1 + 2E1E2) + f^2(m1*m2)
+norm of E1E2 is at most nB^2 (due to the reduction in R_q)
+
+after d levels, noise is (nB)^(2^d)
+
+if noise &lt;= q/2 &lt;= B * 2^(n^\epsilon) we re good
+=&gt; d &lt;= log(log q) - log(log nB) &lt;=~ \epsilon log(n) - log(log(n))
+</code></pre>
+
+<h2>The bootstrapping method</h2>
+
+<p>Theorem: If you can homomorphically evaluate circuits of depth d and the
+depth of your decryption circuit &lt; d then you can convert it into an FHE
+scheme.</p>
+
+<p>How? What is the best possible noise reduction algorithm that you can think of?
+DECRYPTION!!</p>
+
+<p>You encrypt your data, server computes, gets too much noise, now server needs
+to decrypt! But that would break security! The next best thing: "homomorphic 
+decryption": I have a scheme which can compute circuits of small depths, and
+the decryption algorithm is of small depth => Can decrypt "homomorphically" =>
+get back a reencrypted plain text. But I would need the secret key to know
+the decryption circuit. Maybe the encrypted secret key suffices.</p>
+
+<p>Assume you can use the public key to encrypt the secret key (circular secure).</p>
+
+<p>TODO: kind of weird how the Dec(ctext, sk) is turned into Dec(ctext, enc_pk(sk))</p>
+
+<p>We need the noise we get out of the homomorphic decryption to be independent 
+of the noise in the input ciphertext. </p>
