@@ -1,0 +1,13 @@
+<h1>Today: Project presentations, Wednesday, April 29th</h1>
+
+<h2>Timing attacks</h2>
+
+<ul>
+<li>timing attacks, how to protect against them</li>
+<li><a href="https://github.com/agl/ctgrind">ctgrind</a>, a valgrind-based tool to check
+for timing attacks</li>
+<li>timing attacks against individual instructions: <code>imul</code> and <code>idiv</code> on Intel
+are not constant time apparently</li>
+<li>their work: patch valgrind to detect when these instructions are executed
+on secret input</li>
+</ul>
