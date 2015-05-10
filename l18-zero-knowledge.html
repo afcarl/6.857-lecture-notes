@@ -192,27 +192,28 @@ G and H</li>
 
 <h2>Discrete log</h2>
 
-<p>Schnorr protocol for showing knowledge of the discrete log.</p>
+<p>Schnorr protocol for showing knowledge of the discrete log of <code>y = g^x</code>.</p>
 
 <ul>
-<li><code>p</code> is a prime, <code>p = 2q+1</code>, <code>q</code> is prime, <code>g</code> generates <code>G_q</code></li>
-<li>secret key <code>x</code></li>
-<li>public key <code>y = g^x</code></li>
+<li><code>p</code> is a prime, <code>p = 2q+1</code>, <code>q</code> is prime, <code>g</code> generates <code>Z_q</code></li>
+<li>secret key <code>x</code> (in <code>Z_p</code> or <code>Z_q</code>?)</li>
+<li>public key <code>y = g^x</code> (<code>\in Z_q</code> because <code>g</code> generates <code>Z_q</code>?)</li>
 </ul>
 
 <p>Schnorr protocol:</p>
 
 <pre><code>    P                                   V
 
-k &lt;-R- Z_q
+k &lt;--R-- Z_q
 a = g^k                 a
             ------------------------&gt;
                         c
-            &lt;------------------------ c &lt;-R- Z_q
+            &lt;------------------------ c &lt;--R-- Z_q
 r = cx + k              r
-            ------------------------&gt;
-                                      is y^c * a = g^r &lt;=&gt;
-                                        g^(cx+k) = g^r
+            ------------------------&gt; checks if
+                                        y^c * a = g^r &lt;=&gt;
+                                        (g^x)^c * g^k = g^(cx + k) &lt;=&gt;
+                                        g^(cx+k) = g^(cx+k)
 </code></pre>
 
 <p>If I don't know <code>x</code> what are your chances of catching me? </p>
@@ -226,9 +227,12 @@ r = cx + k              r
 
 <p>If can play the game, I know <code>x</code>:</p>
 
+<p><strong>Attack:</strong> If the prover uses the same <code>k</code> twice, then the verifier can extract <code>x</code>.</p>
+
 <pre><code>a = g^k
+
 r = cx + k
-r' = cx' + k
+r' = c'x + k
 -------------
 x = (r-r')/(c-c')
 </code></pre>

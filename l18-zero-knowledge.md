@@ -174,25 +174,26 @@ Prover and verifier have a graph G and prover knows a hamiltonian cycle in it.
 Discrete log
 ------------
 
-Schnorr protocol for showing knowledge of the discrete log.
+Schnorr protocol for showing knowledge of the discrete log of `y = g^x`.
 
- - `p` is a prime, `p = 2q+1`, `q` is prime, `g` generates `G_q`
- - secret key `x`
- - public key `y = g^x`
+ - `p` is a prime, `p = 2q+1`, `q` is prime, `g` generates `Z_q`
+ - secret key `x` (in `Z_p` or `Z_q`?)
+ - public key `y = g^x` (`\in Z_q` because `g` generates `Z_q`?)
 
 Schnorr protocol:
 
         P                                   V
 
-    k <-R- Z_q
+    k <--R-- Z_q
     a = g^k                 a
                 ------------------------>
                             c
-                <------------------------ c <-R- Z_q
+                <------------------------ c <--R-- Z_q
     r = cx + k              r
-                ------------------------>
-                                          is y^c * a = g^r <=>
-                                            g^(cx+k) = g^r
+                ------------------------> checks if
+                                            y^c * a = g^r <=>
+                                            (g^x)^c * g^k = g^(cx + k) <=>
+                                            g^(cx+k) = g^(cx+k)
 
 If I don't know `x` what are your chances of catching me? 
 
@@ -203,9 +204,12 @@ Equivalent:
 
 If can play the game, I know `x`:
 
+**Attack:** If the prover uses the same `k` twice, then the verifier can extract `x`.
+
     a = g^k
+
     r = cx + k
-    r' = cx' + k
+    r' = c'x + k
     -------------
     x = (r-r')/(c-c')
 
