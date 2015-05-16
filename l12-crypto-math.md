@@ -185,7 +185,7 @@ Theorem: `Z*_n` has generator iff `n` is 2, 4, `p^m`, `2*p^m`, where `p` is an o
  
  - we call such groups which have generators _cyclic groups_
 
-Theorem: If `p` prim, then # of generators = `\phi(p-1)`
+Theorem: If `p` prime, then # of generators = `\phi(p-1)`
 
  - `p=7 => \phi(6) = |{1,5}| = 2`
  - `p=11 => \phi(10) = |{1,3,7,9}| = 4`
@@ -224,7 +224,7 @@ Test (TODO: what's going on here?)
     g^q != 1 (mod p)
     g^2q = 1 (mod p) (Fermat's little theorem)
 
-Theorem: If `p` safe, then # generators is `\phi(p-1) = q-1`
+Theorem: If `p` is a safe prime, then # generators is `\phi(p-1) = q-1`
 
 General theorem: If `p` prime, then # of generators is `\phi(p-1) >= (p-1)/(6*ln(ln(p-1)))`
 
