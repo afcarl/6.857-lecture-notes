@@ -1,1 +1,38 @@
+<h1>Today: Crypto math II</h1>
 
+<p>Today:</p>
+
+<ul>
+<li>group theory review</li>
+<li>Diffie-Hellman (DH) key exchane</li>
+<li>Five crypto groups:
+<ul>
+<li><code>Z*_p</code></li>
+<li><code>Q_p</code></li>
+<li><code>Z*_n</code></li>
+<li><code>Q_n</code></li>
+<li>elliptic curves</li>
+</ul></li>
+</ul>
+
+<h2>Group theory review</h2>
+
+<p>(Multiplicative groups)</p>
+
+<p><code>(G, *)</code> is a finite abelian group of size <code>t</code> if:</p>
+
+<ul>
+<li><code>\exists</code> identity <code>1</code> s.t. <code>\forall a \in G a*1 = 1*a = a</code></li>
+<li><code>\forall a     \in G, \exists b \in G</code> s.t. <code>a*b = 1</code></li>
+<li><code>\forall a,b,c \in G, a*(b*c) = (a*b)*c</code></li>
+<li><code>\forall a,b   \in G, a*b = b*a</code></li>
+</ul>
+
+<p><em>Definition:</em> The order of <code>a</code> in <code>G</code> is <code>order(a)</code> = least <code>u</code> s.t. <code>a^u = 1</code></p>
+
+<p><em>Lagrange's theorem:</em> In a finite abelian group of size <code>t</code>, for all <code>a \in G</code>,
+<code>order(a) | t</code></p>
+
+<p><em>Theorem:</em> In a finite abelian group of size <code>t</code>, <code>\forall a \in G, a^t = 1</code></p>
+
+<p>Example: <code>a^(p-1) = 1, \forall a \in Z*_p</code> because <code>|Z*_p| = 1</code></p>

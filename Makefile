@@ -1,11 +1,19 @@
-SRCS=$(wildcard *.md)
+MD_SRCS=$(wildcard *.md)
+TEX_SRCS=$(wildcard *.tex)
 
-HTMLS=$(SRCS:.md=.html)
+HTMLS=$(MD_SRCS:.md=.html)
+PDFS=$(TEX_SRCS:.tex=.pdf)
 
 %.html: %.md
-	@echo "Compiling $< -> $*.html"
+	@echo "Markdown compiling $< -> $*.html"
 	markdown $< >$*.html
 
-all: $(HTMLS)
-	@echo "HTMLs: $(HTMLS)"
-	@echo "MDs: $(SRCS)"
+all: $(HTMLS) $(PDFS)
+	@echo "MDs: $(MD_SRCS)"
+	@echo "TeXs: $(TEX_SRCS)"
+
+%.pdf: %.tex
+	@echo "TeX compiling $< -> $*.pdf"
+	texi2pdf $<
+
+pdf: *.pdf

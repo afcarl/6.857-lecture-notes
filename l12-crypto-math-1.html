@@ -225,7 +225,10 @@ odd prime &amp; <code>m &gt;= 1</code></p>
 
 <h3>How to find generators</h3>
 
-<p>Factor <code>\phi(p) = p-1</code>.</p>
+<p><em>Idea:</em> Need to factor the size of our group <code>\phi(p) = p-1</code> so that we'll know
+what are all the possible subgroup sizes we can get from a generator. Then, we
+make sure our randomly-picked generator does not generate the other
+smaller-sized subgroups.</p>
 
 <p>Definition: If <code>p,q</code> primes, <code>p=2q+1</code> then <code>p</code> is a <em>safe prime</em> and <code>q</code> is a
 <em>Sophie Germain prime</em></p>

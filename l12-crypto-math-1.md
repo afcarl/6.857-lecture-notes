@@ -202,7 +202,10 @@ _Theorem:_ If `p` prime, then # of generators in `Z*_p` is  `\phi(p-1)`
 
 ### How to find generators
 
-Factor `\phi(p) = p-1`.
+_Idea:_ Need to factor the size of our group `\phi(p) = p-1` so that we'll know
+what are all the possible subgroup sizes we can get from a generator. Then, we
+make sure our randomly-picked generator does not generate the other
+smaller-sized subgroups.
 
 Definition: If `p,q` primes, `p=2q+1` then `p` is a _safe prime_ and `q` is a
 _Sophie Germain prime_
