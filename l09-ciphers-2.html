@@ -1,4 +1,4 @@
-<h1>Today: Ciphers II, Wed. March 4th, </h1>
+<h1>Today: Ciphers II, Wed. March 4th, 2015 </h1>
 
 <ul>
 <li>Ideal block cipher: what might this be?</li>
@@ -217,9 +217,10 @@ equality test on $y$</li>
 <li>or it could be stateful and remember it encrypted $m$ before and output a different ciphertext the 2nd time</li>
 </ul>
 
-<p>LOL: We can do exams the same way: Have all students come up with a question and then let them take the exam.
-One student mentioned they can share questions and win the game. Ron said "yes, but you'd still have to solve them 
-so I would win because you would learn the material"</p>
+<p>LOL: We can do exams the same way: Have all students come up with a question and
+then let them take the exam.  One student mentioned they can share questions and
+win the game. Ron said "yes, but you'd still have to solve them so I would win
+because you would learn the material"</p>
 
 <p><strong>Definition:</strong> Encryption scheme is IND-CCA secure if adversary wins with probability $1/2 + \epsilon$ where 
 $\epsilon$ is negligible</p>
@@ -249,21 +250,21 @@ $\epsilon$ is negligible</p>
 
 <h2>Unbalanced Feistel Encryption</h2>
 
-<p>We take an arbitrarily long message $m$ and we encrypt it by XORing it with a pad, that we obtain
-by running a block cipher in counter mode under some key $k_i$ and encrypting a random value $r$.</p>
+<p>We take an arbitrarily long message $m$ and we encrypt it by XORing it with a
+pad, that we obtain by running a block cipher in counter mode under some key
+$k_i$ and encrypting a random value $r$.</p>
+
+<p>The problem with CTR mode was that the initial value for the counter was
+transmitted in the clear over the wire.</p>
 
 <ul>
-<li>TODO: Is the CTR mode box that generates the pad, is fixed input and variable output? Whaaaat?</li>
+<li>TODO: Problem as in overhead?</li>
 </ul>
-
-<p>The problem with CTR mode was that the initial value for the counter was transmitted in the clear
-over the wire.
- - TODO: what?</p>
 
 <p>We take a random value $r$ in ${0,1}^b$</p>
 
-<p>$c$ is CBC MAC'd under $k<em>2, k</em>3$ and XORs result with $r$ and obtains $\sigma$</p>
+<p>$c$ is CBC MAC'd under $k<em>2, k</em>3$ and result is XORed with $r$, obtaining $\sigma$</p>
 
-<p>Ctext is $(c, \sigma)$</p>
+<p>Ciphertext is $(c, \sigma)$</p>
 
 <p>How does he decrypt?</p>

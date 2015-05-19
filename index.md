@@ -17,7 +17,10 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
    public ledger, multiple-in multiple out (MIMO) transactions, 
  * Lecture 8: [Ciphers I](l08-ciphers-1.html): Shamir's secret sharing, block
    ciphers, DES, AES
- * Lecture 9: [Ciphers II](l09-ciphers-2.html):
+ * Lecture 9: [Ciphers II](l09-ciphers-2.html): ideal block cipher, modes of 
+   operation, electronic codebook mode (ECB), counter mode (CTR), cipher-block 
+   chaining mode (CBC), cipher feedback mode (CFB), indistinguishability under
+   chosen-ciphertext attack (IND-CCA), unbalanced feistel encryption
  * Lecture 10: [Stream ciphers](l10-stream-ciphers.html):
  * Lecture 11: [Message authentication codes](l11-macs.html):
  * Lecture 12: [Crypto math I](l12-crypto-math-1.html):
@@ -42,4 +45,5 @@ TODOs
 -----
 
  * Lecture 6: MD5 drawing
+ * Lecture 13: write from scratch
 

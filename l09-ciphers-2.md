@@ -1,5 +1,5 @@
-Today: Ciphers II, Wed. March 4th, 
-=================
+Today: Ciphers II, Wed. March 4th, 2015 
+=======================================
 
  - Ideal block cipher: what might this be?
  - Modes of operation
@@ -163,9 +163,10 @@ Note: The encryption scheme better be randomized or _stateful_ if it's gonna sat
  + or it could be stateful and remember it encrypted $m$ before and output a different ciphertext the 2nd time
 
 
-LOL: We can do exams the same way: Have all students come up with a question and then let them take the exam.
-One student mentioned they can share questions and win the game. Ron said "yes, but you'd still have to solve them 
-so I would win because you would learn the material"
+LOL: We can do exams the same way: Have all students come up with a question and
+then let them take the exam.  One student mentioned they can share questions and
+win the game. Ron said "yes, but you'd still have to solve them so I would win
+because you would learn the material"
 
 **Definition:** Encryption scheme is IND-CCA secure if adversary wins with probability $1/2 + \epsilon$ where 
 $\epsilon$ is negligible
@@ -188,20 +189,20 @@ Which modes satisfy IND-CCA2?
 Unbalanced Feistel Encryption
 -----------------------------
 
-We take an arbitrarily long message $m$ and we encrypt it by XORing it with a pad, that we obtain
-by running a block cipher in counter mode under some key $k_i$ and encrypting a random value $r$.
+We take an arbitrarily long message $m$ and we encrypt it by XORing it with a
+pad, that we obtain by running a block cipher in counter mode under some key
+$k_i$ and encrypting a random value $r$.
  
- - TODO: Is the CTR mode box that generates the pad, is fixed input and variable output? Whaaaat?
+The problem with CTR mode was that the initial value for the counter was
+transmitted in the clear over the wire.
 
-The problem with CTR mode was that the initial value for the counter was transmitted in the clear
-over the wire.
- - TODO: what?
+ - TODO: Problem as in overhead?
 
 We take a random value $r$ in ${0,1}^b$
 
-$c$ is CBC MAC'd under $k_2, k_3$ and XORs result with $r$ and obtains $\sigma$
+$c$ is CBC MAC'd under $k_2, k_3$ and result is XORed with $r$, obtaining $\sigma$
 
-Ctext is $(c, \sigma)$
+Ciphertext is $(c, \sigma)$
 
 How does he decrypt?
 
