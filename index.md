@@ -42,17 +42,23 @@ Papers
 
 Papers we read in 6.857 ([directory here](papers/)):
 
- * [Bitcoin](papers/bitcoin.pdf)
- * [Research Perspectives and Challenges for Bitcoin and Cryptocurrencies](papers/princeton-bitcoin-overview.pdf)
+ * [Bitcoin](papers/bitcoin.pdf), Satoshi Nakamoto
+ * [Research Perspectives and Challenges for Bitcoin and Cryptocurrencies](papers/princeton-bitcoin-overview.pdf), Princeton University
  * [AES Proposal: Rijndael](papers/rijndael.pdf)
- * [How to share a secret](papers/shamir-secret-sharing.pdf), by Adi Shamir
+ * [How to share a secret](papers/shamir-secret-sharing.pdf), Adi Shamir
  * [The EAX mode of operation](papers/eax.pdf)
- * [How to choose an authenticated encryption mode](papers/how-to-choose-an-ae-mode.pdf)
- * [New paradigms for constructing symmetric encryption schemes secure under CCA](papers/desai.pdf), (via Unbalanced Feistel Encryption)
- * [Spritz](papers/spritz-slides.pdf) slides
+ * [New paradigms for constructing symmetric encryption schemes secure under CCA](papers/desai.pdf), via Unbalanced Feistel Encryption
  * [Unlinkable serial transactions: Protocol and applications](papers/unlinkable-serial-transactions.pdf)
- * [Twenty years of attacks on the RSA cryptosystem](papers/rsa-attacks.pdf)
- * [New directions in cryptography](papers/diffie-hellman.pdf) (public-key crypto)
+ * [Twenty years of attacks on the RSA cryptosystem](papers/rsa-attacks.pdf), Dan Boneh
+ * [New directions in cryptography](papers/diffie-hellman.pdf), Diffie-Hellman
+ * [Sequences of Games: A Tool for Taming Complexity in Security Proofs](papers/games.pdf)
+
+Slides, articles
+----------------
+ 
+ * [Spritz](papers/spritz-slides.pdf) slides
+ * [How to choose an authenticated encryption mode](papers/how-to-choose-an-ae-mode.pdf), Matthew Green
+ * [Intro to Bilinear Maps](papers/bilinear-maps.pdf)
 
 TODOs
 -----
