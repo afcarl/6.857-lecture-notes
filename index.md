@@ -13,7 +13,8 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
  * Lecture 6: [Hash functions II](l06-hash-2.html): puzzles, Hashcash ('97), 
    Merkle's public-key crypto using puzzles, Merkle-Damgaard construction, 
    Davies-Meyer construction, MD5
- * Lecture 7: [Cryptocurrencies](l07-bitcoin.html): atoms vs. bits, Bitcoin
+ * Lecture 7: [Cryptocurrencies](l07-bitcoin.html): atoms vs. bits, Bitcoin,
+   public ledger, multiple-in multiple out (MIMO) transactions, 
  * Lecture 8:
  * Lecture 9:
  * Lecture 10:

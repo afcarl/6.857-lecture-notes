@@ -102,7 +102,7 @@ How do you identify parties? What are the identities?
  - Note one person can have multiple key pairs.
  - The account name is the public key and has a value associated with it on the public ledger
 
-Public ledger: for each account, how much value is there in it?
+**Public ledger:** for each account, how much value is there in it?
  
  - really it stores all transactions, so you can infer the value in each account
 
@@ -114,16 +114,18 @@ Money is created by those maintaining the public ledger (miners)
 
 Transaction details:
 
- - Bitcoin transactions allow multiple input accounts (payers) and multiple output accounts (payees)
-   - this is sometimes used to give change to yourself by setting one of the output accounts as your account
-     + in practice people create new accounts and put their change in it, to preserve their anonymity
- - you don't wanna make it to easy adding to the ledger, otherwise people add too much junk
+ - Bitcoin transactions allow multiple input accounts (payers) and multiple
+   output accounts (payees)
+   - This is sometimes used to give change to yourself by setting one of the
+     output accounts as your account
+     + in practice people create new accounts and put their change in it, to
+       preserve their anonymity
+ - you don't wanna make it to easy adding to the ledger, otherwise people add
+   too much junk
    + HashCash scheme solves this
 
 Diagram:
 
-TODO: reorder these
-    
     head node (just added)
 
              |---------------------|               |------------------------|
@@ -159,14 +161,16 @@ Diagram for forking:
                                                              | T1', T2', ..., Ti'  |
                                                              |---------------------|
 
-It can happen that two miners came up with a block at the same time and both add it, forking the chain
+It can happen that two miners came up with a block at the same time and both add
+it, forking the chain
 
 
     [] -> [] -> [] -> [] ->  [] 
                          \
                A->B       -> []
 
-**Rule of thumb:** wait like 6 blocks to make sure the incorporated blocks are really there and are not part of a fork that died
+**Rule of thumb:** wait like 6 blocks to make sure the incorporated blocks are
+really there and are not part of a fork that died
 
  - this is not that great though
 
@@ -177,7 +181,8 @@ Scalability:
    + TODO: How is this implemented?
  - after no fees, transaction fees will be used to reward miners
    + but total # of bitcons will remain the same
-   + except people lose their wallets, so some bitcoins will be inaccessible => problems
+   + except people lose their wallets, so some bitcoins will be inaccessible =>
+     problems
  - it's becoming harder to be a miner
    + monopoly on mining actually (Ghash holds half the supply of bitcoins?)
  - cannot create money by loaning?

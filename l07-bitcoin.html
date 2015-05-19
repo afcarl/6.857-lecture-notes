@@ -129,7 +129,7 @@ via a broadcast system.</p>
 <li>The account name is the public key and has a value associated with it on the public ledger</li>
 </ul>
 
-<p>Public ledger: for each account, how much value is there in it?</p>
+<p><strong>Public ledger:</strong> for each account, how much value is there in it?</p>
 
 <ul>
 <li>really it stores all transactions, so you can infer the value in each account</li>
@@ -148,22 +148,24 @@ via a broadcast system.</p>
 <p>Transaction details:</p>
 
 <ul>
-<li>Bitcoin transactions allow multiple input accounts (payers) and multiple output accounts (payees)
+<li>Bitcoin transactions allow multiple input accounts (payers) and multiple
+output accounts (payees)
 <ul>
-<li>this is sometimes used to give change to yourself by setting one of the output accounts as your account
+<li>This is sometimes used to give change to yourself by setting one of the
+output accounts as your account
 <ul>
-<li>in practice people create new accounts and put their change in it, to preserve their anonymity</li>
+<li>in practice people create new accounts and put their change in it, to
+preserve their anonymity</li>
 </ul></li>
 </ul></li>
-<li>you don't wanna make it to easy adding to the ledger, otherwise people add too much junk
+<li>you don't wanna make it to easy adding to the ledger, otherwise people add
+too much junk
 <ul>
 <li>HashCash scheme solves this</li>
 </ul></li>
 </ul>
 
 <p>Diagram:</p>
-
-<p>TODO: reorder these</p>
 
 <pre><code>head node (just added)
 
@@ -201,14 +203,16 @@ via a broadcast system.</p>
                                                          |---------------------|
 </code></pre>
 
-<p>It can happen that two miners came up with a block at the same time and both add it, forking the chain</p>
+<p>It can happen that two miners came up with a block at the same time and both add
+it, forking the chain</p>
 
 <pre><code>[] -&gt; [] -&gt; [] -&gt; [] -&gt;  [] 
                      \
            A-&gt;B       -&gt; []
 </code></pre>
 
-<p><strong>Rule of thumb:</strong> wait like 6 blocks to make sure the incorporated blocks are really there and are not part of a fork that died</p>
+<p><strong>Rule of thumb:</strong> wait like 6 blocks to make sure the incorporated blocks are
+really there and are not part of a fork that died</p>
 
 <ul>
 <li>this is not that great though</li>
@@ -225,7 +229,8 @@ via a broadcast system.</p>
 <li>after no fees, transaction fees will be used to reward miners
 <ul>
 <li>but total # of bitcons will remain the same</li>
-<li>except people lose their wallets, so some bitcoins will be inaccessible => problems</li>
+<li>except people lose their wallets, so some bitcoins will be inaccessible =>
+problems</li>
 </ul></li>
 <li>it's becoming harder to be a miner
 <ul>
