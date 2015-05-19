@@ -1,0 +1,206 @@
+<h1>Today: Security of voting systems, Monday, April 27th</h1>
+
+<p>Interesting application of cryptography. Challenging primarily because of the
+need for a secret ballot (how individual people voted).</p>
+
+<p>Voting is not just about producing an answer, but also evidence that the
+answer is correct: convince losers that they lost fair and square</p>
+
+<h2>Voting tech survey</h2>
+
+<ul>
+<li>public voting
+<ul>
+<li>no secrecy of ballot</li>
+<li>Problem: You can sell your vote, or be coerced</li>
+</ul></li>
+<li>paper ballots
+<ul>
+<li>initially could have different ballots for each vote</li>
+<li>then "Australian" ballot came in, 1893</li>
+<li>same ballot, and people had to read the candidate names
+and write down their vote
+<ul>
+<li>controversial at the time because not all people could read and write</li>
+</ul></li>
+</ul></li>
+<li>lever machines
+<ul>
+<li>easy to manipulate and increase counts</li>
+<li>See "Behind the freedom curtain" (1957)</li>
+</ul></li>
+<li>punch cards
+<ul>
+<li>invented in 1960s based on computerized punch card</li>
+<li>now illegal due to HAVA (Help America Vote Act) of 2002</li>
+<li>the famous "butterfly ballot"
+<ul>
+<li>human interface design for voting systems is critical</li>
+</ul></li>
+</ul></li>
+<li>optical scan</li>
+<li><p>Direct Recording by Electronics (DRE)</p>
+
+<ul>
+<li>first used in 1970s</li>
+<li>essentially a standalone computer</li>
+<li>no state other than counts, produces no evidence</li>
+</ul></li>
+<li><p>DRE + Voter-verified Paper Audit Trail (VVPAT)</p>
+
+<ul>
+<li>"really terrible technology"</li>
+</ul></li>
+<li>Vote by mail
+<ul>
+<li>Often used for absentee voting, but some states use it as default</li>
+<li>Typically uses opscan ballots</li>
+<li>suffers from retail fraud
+<ul>
+<li>voters can be coerced by boss/wife/etc</li>
+</ul></li>
+<li>chain of custody
+<ul>
+<li>maybe vote gets lost</li>
+<li>can confirm vote got there using a code, but not that your vote stayed
+the same</li>
+</ul></li>
+</ul></li>
+<li>internet voting
+<ul>
+<li>doesn't seem like we have the technology for this</li>
+<li>risks combining the worst features of vote-by-mail (coercion) with the
+problems of DRE's (software security) and then adding new vulnerabilities
+(DDOS, foreign power attacks)</li>
+<li>Why?
+<ul>
+<li>Because we can?</li>
+<li>More people will show up?
+<ul>
+<li>Political scientists say this is actually insignificant: when voting
+methods are changed, turnout stays about the same</li>
+</ul></li>
+</ul></li>
+<li>Helios, Ben Adida</li>
+<li>Civitas, Clarkson, Chong, Myers</li>
+</ul></li>
+<li>etc.</li>
+</ul>
+
+<p>Questions to ask of every voting system:</p>
+
+<ul>
+<li>Does it produce the right answer?</li>
+<li>Does the voter vote in private?</li>
+<li>Does it produce evidence that the outcome is correct?</li>
+</ul>
+
+<p>Retail fraud vs. wholesale fraud</p>
+
+<ul>
+<li>retail fraud: by vote one by one</li>
+<li>wholesale fraud: get hold of computers and change the counts (1000s of vote
+at the same time)</li>
+</ul>
+
+<h2>Voting requirements</h2>
+
+<ul>
+<li>Voter registration: each eligible voter votes at most once</li>
+<li>Voter privacy: no one can tell how any voter voted, even if voter
+wants it (to discourage selling of votes). no "receipt" for voter</li>
+<li>Integrity: votes can't be changed, added or deleted; tally is accurate</li>
+<li>Availability: voting systems is available for use when needed</li>
+<li>Ease of use</li>
+<li>Accessibility: for voters with disabilities</li>
+<li>Assurance: verifiable integrity</li>
+</ul>
+
+<h2>Security threads</h2>
+
+<p>Adversaries:</p>
+
+<ul>
+<li>Political zealots</li>
+<li>Voters may wish to sell votes</li>
+<li>Election officials may be partisan</li>
+<li>Vendors may have evil insider</li>
+<li>Foreign powers because result can affect them</li>
+<li>...really anybody</li>
+</ul>
+
+<p>Threats:</p>
+
+<ul>
+<li>dead people voting</li>
+<li>ballot-box stuffing by election officials with votes from people who did not
+show up</li>
+<li>coercion/intimidation/buying votes</li>
+<li>replacing votes or memory cards</li>
+<li>miscount</li>
+<li>malicious software</li>
+<li>viruses</li>
+</ul>
+
+<p>Strategies:</p>
+
+<ul>
+<li>can voter have a receipt? that won't work if her receipt has her vote in
+plaintext because voter can sell vote now</li>
+</ul>
+
+<p>Software independence (SI): a voting system is software dependent if an undetected
+error in the software can cause an undetectable change in the reported election
+outcome</p>
+
+<h2>New voting system proposals: "end to end"</h2>
+
+<ul>
+<li>uses web so voter can check that here ballot was counted as she intended</li>
+</ul>
+
+<p>Properties:</p>
+
+<ul>
+<li>votes verifiably cast as intended</li>
+<li>votes verifiably collected as cast </li>
+<li>votes verifiably counted as collected</li>
+</ul>
+
+<p>VVPAT only gets the first: once ballot is cast, "chain of custody" determines 
+what happens</p>
+
+<h3>Twin (Rivest and Smith)</h3>
+
+<ul>
+<li>"academic" proposal</li>
+<li>each paper ballot has a copy made that is put in mixer bin</li>
+<li>voter casts original paper ballot (which is scanned and published
+on web) and takes home from mixr bin a copy of some previous voter's ballot
+as a receipt</li>
+<li>then voter can check that the receipt he got is on the web</li>
+<li>can detect fraud, but you'd better have a plan for what to do</li>
+</ul>
+
+<p>Twin has all the "end-to-end" properties.</p>
+
+<h2>Scantegrity II (Chaum et al)</h2>
+
+<ul>
+<li>marries traditional opscan with modern crypto end-to-end methods</li>
+<li>uses 
+<ul>
+<li>invisible ink for "confirmation codes"
+<ul>
+<li>special pens reveal confirmation codes when you mark your candidate</li>
+<li>voters copy and take home CCs</li>
+<li>officials post revealed CCs</li>
+<li>voters can confirm posting (uses ballot serial number for lookup) and
+protest if incorrect</li>
+</ul></li>
+<li>web  site</li>
+<li>crypto in the back end</li>
+</ul></li>
+<li>ballots can be scanned by ordinary scanners</li>
+<li>ballots can be recounted by hand as usual</li>
+</ul>

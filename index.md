@@ -33,9 +33,9 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
  * Lecture 15: [Public key crypto II](l15-more-public-key.html):
  * Lecture 16: [Digital signatures](l16-digital-sign.html):
  * Lecture 17: [Bilinear maps](l17-bilinear-maps.html):
- * Lecture 18: [Zero knowledge proofs](l17-zero-knowledge.html):
+ * Lecture 18: [Zero knowledge proofs](l18-zero-knowledge.html):
  * Lecture 19: **Computing on encrypted data** _[guest lecture](l19-computing-on-encrypted-data.html)_ by Vinod Vaikuntanathan: 
- * Lecture 20: [Electronic voting](l20-electronic-voting):
+ * Lecture 20: [Electronic voting](l20-electronic-voting.html):
 
 Papers
 ------
