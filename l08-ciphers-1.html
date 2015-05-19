@@ -7,13 +7,15 @@
 
 <h2>Shamir's secret sharing</h2>
 
-<p>Problem: Don't want to put trust in a single person.</p>
+<p><strong>Problem:</strong> Don't want to put trust in a single person.</p>
 
-<p>If you have<code>N = 3</code>, then <code>t = 2</code> parties are sufficient to sign a document, spend money, etc.</p>
+<p>If you have<code>N = 3</code>, then <code>t = 2</code> parties are sufficient to sign a document,
+spend money, etc.</p>
 
 <p>Notion: <em>Threshold capability</em></p>
 
-<p>Say Alice has a secret <code>S</code> and a number of friends she wants to distribute <em>shares of the secret <code>S</code></em> to <code>t</code> friends, <code>1 &lt;= t &lt;= n</code></p>
+<p>Say Alice has a secret <code>S</code> and a number of friends she wants to distribute
+<em>shares of the secret <code>S</code></em> to <code>t</code> friends, <code>1 &lt;= t &lt;= n</code></p>
 
 <ul>
 <li>she gives each friend a share <code>s_i</code> of <code>S</code> </li>
@@ -21,13 +23,15 @@
 <ul>
 <li>any fewer than <code>t</code> have negligible chance of reconstructing <code>S</code></li>
 </ul></li>
-<li><em>Valid criticism:</em> at some point <em>you have to</em> reconstruct <code>S</code>, so it'll be vulnerable</li>
+<li><em>Valid criticism:</em> at some point <em>you have to</em> reconstruct <code>S</code>, so it'll be
+vulnerable</li>
 </ul>
 
 <p>For <code>t=1</code> the problem is trivial: <code>s_i = S, \forall i</code>.</p>
 
 <p>For <code>t=n</code> the problem is trivial: <code>s_i = ith chunk of S</code>
- + would not be that secure, because <code>n-1</code> people can guess the last chunk more easily (not negligible probability.
+ + would not be that secure, because <code>n-1</code> people can guess the last chunk more
+   easily (not negligible probability.
  + <code>S = s_1 \xor s_2 \xor ... \xor s_{n-1} \xor s_{n}</code>
    - result is random if you don't have all <code>s_i</code>'s
    - need all people to generate <code>S</code></p>
@@ -36,7 +40,7 @@
 
 <ul>
 <li><code>t=2</code> points determine a line</li>
-<li><code>t=3</code> points determine a quadratic</li>
+<li><code>t=3</code> points determine a quadratic polynomial</li>
 <li><code>t=k</code> points determine a <code>t-1</code> degree polynomial</li>
 <li><code>f(x) = a_{t-1}x^{t-1} + a_{t-2}x^{t-2} + ... + a_1*x + a_0 (mod p)</code></li>
 <li>we define <code>f</code> over a finite field (because we're using computers which have limits)</li>
@@ -49,7 +53,8 @@
 <ul>
 <li>easy to do</li>
 </ul></li>
-<li><em>Interpolation:</em> give a set of <code>t</code> points find a unique curve that runs through these points
+<li><em>Interpolation:</em> give a set of <code>t</code> points find a unique curve that runs
+through these points
 <ul>
 <li>easy to do</li>
 </ul></li>
@@ -103,9 +108,9 @@
 </ul></li>
 <li>A degree <code>t-1</code> curve can be defined to go through the adversary's <code>t-1</code> points
 and through the point <code>(0,s)</code> for any <code>s</code></li>
-<li>This is information-theoretically secure because the adversary cannot "compute" his 
-way to finding <code>s</code>. <code>s</code> could be any point in <code>Z_p</code> and no information is leaked
-about <code>s</code> through those <code>t-1</code> points</li>
+<li>This is information-theoretically secure because the adversary cannot
+"compute" his way into finding <code>s</code>. <code>s</code> could be any point in <code>Z_p</code> and no
+information is leaked about <code>s</code> through those <code>t-1</code> points</li>
 </ul>
 
 <h2>Block ciphers</h2>
@@ -116,7 +121,8 @@ about <code>s</code> through those <code>t-1</code> points</li>
                          \-&gt; Eve
 </code></pre>
 
-<p><strong>Problem:</strong> Message could be arbitrarily long. How do you build an encryption method to handle arbitrarily large messages?</p>
+<p><strong>Problem:</strong> Message could be arbitrarily long. How do you build an encryption
+method to handle arbitrarily large messages?</p>
 
 <ul>
 <li>for starters, we build block ciphers for fixed-length messages</li>
@@ -139,7 +145,8 @@ about <code>s</code> through those <code>t-1</code> points</li>
 <p>Fixed length <code>P, C, K</code>:</p>
 
 <ul>
-<li>DES: <code>|P| = |C| = 64 bits</code>, <code>|K| = 56 bits</code> (8 of the 64 bits were used for parity)</li>
+<li>DES: <code>|P| = |C| = 64 bits</code>, <code>|K| = 56 bits</code> (8 of the 64 bits were used for
+parity)</li>
 <li>AES: <code>|P| = |C| = 128 bits</code>, <code>|K| = 128, 192, 256</code></li>
 </ul>
 
@@ -176,7 +183,8 @@ about <code>s</code> through those <code>t-1</code> points</li>
         -----------------     ------------------
 </code></pre>
 
-<p><code>f</code> can be anything, and won't affect the <em>invertibility</em> of the cipher if you have the key.</p>
+<p><code>f</code> can be anything, and won't affect the <em>invertibility</em> of the cipher if you
+have the key.</p>
 
 <p>How do you design a <em>good <code>f</code> box</em> that doesn't leak <code>K</code> and <code>P</code>?</p>
 
@@ -205,7 +213,8 @@ about <code>s</code> through those <code>t-1</code> points</li>
 
 <p>This requires about <code>2^47</code> chosen pairs</p>
 
-<p><a href="https://en.wikipedia.org/wiki/Differential_cryptanalysis">Biham's PhD thesis</a>, advised by Adi Shamir</p>
+<p><a href="https://en.wikipedia.org/wiki/Differential_cryptanalysis">Biham's PhD thesis</a>,
+advised by Adi Shamir</p>
 
 <h2>2^43 attack (Matsui)</h2>
 
@@ -222,15 +231,19 @@ about <code>s</code> through those <code>t-1</code> points</li>
                         C
 </code></pre>
 
-<p>Could be that DES has attacks like: <code>M_3 \xor M_15 \xor C_2 \xor C_11 \xor K_7 \xor K_19 = 0</code>. This relates two bits of the key because you know the message and ciphertext bits.</p>
+<p>Could be that DES has attacks like: <code>M_3 \xor M_15 \xor C_2 \xor C_11 \xor K_7
+\xor K_19 = 0</code>. This relates two bits of the key because you know the message
+and ciphertext bits.</p>
 
-<p>In practice, these kind of equations are not always true. Maybe they're true like half the time: <code>p = 1/2 + \epsilon</code></p>
+<p>In practice, these kind of equations are not always true. Maybe they're true
+like half the time: <code>p = 1/2 + \epsilon</code></p>
 
 <p>Need <code>1/\epsilon^2</code> data points to solve equations like these.</p>
 
 <h2>AES (Advanced Encryption Standard), 1997-1999</h2>
 
-<p>Open public contest to design a cipher. Submit designs, attack them. Let the best win. International too, anyone in the world could submit.</p>
+<p>Open public contest to design a cipher. Submit designs, attack them. Let the
+best win. International too, anyone in the world could submit.</p>
 
 <ul>
 <li>15 algorithms were submitted (after bad submissions were scrapped)
@@ -263,9 +276,10 @@ about <code>s</code> through those <code>t-1</code> points</li>
 </ul></li>
 </ul>
 
-<p>Basic structure is a 4 by 4 array/matrix of bytes, where each entry is 1 bytes => 16 bytes => 128 bits</p>
+<p>Basic structure is a 4 by 4 array/matrix of bytes, where each entry is 1 bytes
+=> 16 bytes => 128 bits</p>
 
-<p>AES description:</p>
+<h3>AES description</h3>
 
 <ol>
 <li>Derive 11 <em>round keys</em> of 128 bits from 128 bit key (<code>k_i</code>'s)</li>

@@ -7,23 +7,27 @@ Today
 Shamir's secret sharing
 -----------------------
 
-Problem: Don't want to put trust in a single person.
+**Problem:** Don't want to put trust in a single person.
 
-If you have`N = 3`, then `t = 2` parties are sufficient to sign a document, spend money, etc.
+If you have`N = 3`, then `t = 2` parties are sufficient to sign a document,
+spend money, etc.
 
 Notion: _Threshold capability_
 
-Say Alice has a secret `S` and a number of friends she wants to distribute _shares of the secret `S`_ to `t` friends, `1 <= t <= n`
+Say Alice has a secret `S` and a number of friends she wants to distribute
+_shares of the secret `S`_ to `t` friends, `1 <= t <= n`
 
  - she gives each friend a share `s_i` of `S` 
  - **Goal:** any `t` of the friends can reconstruct `S` from their `s_i`'s
    + any fewer than `t` have negligible chance of reconstructing `S`
- - _Valid criticism:_ at some point _you have to_ reconstruct `S`, so it'll be vulnerable
+ - _Valid criticism:_ at some point _you have to_ reconstruct `S`, so it'll be
+   vulnerable
 
 For `t=1` the problem is trivial: `s_i = S, \forall i`.
 
 For `t=n` the problem is trivial: `s_i = ith chunk of S`
- + would not be that secure, because `n-1` people can guess the last chunk more easily (not negligible probability.
+ + would not be that secure, because `n-1` people can guess the last chunk more
+   easily (not negligible probability.
  + `S = s_1 \xor s_2 \xor ... \xor s_{n-1} \xor s_{n}`
    - result is random if you don't have all `s_i`'s
    - need all people to generate `S`
@@ -31,7 +35,7 @@ For `t=n` the problem is trivial: `s_i = ith chunk of S`
 For other `t`'s, use _polynomials_.
 
  - `t=2` points determine a line
- - `t=3` points determine a quadratic
+ - `t=3` points determine a quadratic polynomial
  - `t=k` points determine a `t-1` degree polynomial
  - `f(x) = a_{t-1}x^{t-1} + a_{t-2}x^{t-2} + ... + a_1*x + a_0 (mod p)`
  - we define `f` over a finite field (because we're using computers which have limits)
@@ -40,7 +44,8 @@ For other `t`'s, use _polynomials_.
    + the set of (point, value) pairs: `{(x_i, y_i)}, \forall 1 <= i <= t`
  - _Evaluation:_ given an `x`, compute `f(x)`
    + easy to do
- - _Interpolation:_ give a set of `t` points find a unique curve that runs through these points
+ - _Interpolation:_ give a set of `t` points find a unique curve that runs
+   through these points
    + easy to do
  
 To share a secret `S (0 <= s < p)`
@@ -74,9 +79,9 @@ Why having fewer than `t` shares doesn't allow you to reconstruct the secret?
    + and so on...
  - A degree `t-1` curve can be defined to go through the adversary's `t-1` points
    and through the point `(0,s)` for any `s`
- - This is information-theoretically secure because the adversary cannot "compute" his 
-   way to finding `s`. `s` could be any point in `Z_p` and no information is leaked
-   about `s` through those `t-1` points
+ - This is information-theoretically secure because the adversary cannot
+   "compute" his way into finding `s`. `s` could be any point in `Z_p` and no
+   information is leaked about `s` through those `t-1` points
 
 Block ciphers
 -------------
@@ -86,7 +91,8 @@ Block ciphers
                             \
                              \-> Eve
 
-**Problem:** Message could be arbitrarily long. How do you build an encryption method to handle arbitrarily large messages?
+**Problem:** Message could be arbitrarily long. How do you build an encryption
+method to handle arbitrarily large messages?
  
  + for starters, we build block ciphers for fixed-length messages
  + then we chain the together wisely and handle arbitrarily long messages
@@ -106,7 +112,8 @@ Block ciphers
 
 Fixed length `P, C, K`:
  
- - DES: `|P| = |C| = 64 bits`, `|K| = 56 bits` (8 of the 64 bits were used for parity)
+ - DES: `|P| = |C| = 64 bits`, `|K| = 56 bits` (8 of the 64 bits were used for
+   parity)
  - AES: `|P| = |C| = 128 bits`, `|K| = 128, 192, 256`
 
 DES (Data Encryption Standard)
@@ -142,7 +149,8 @@ Call put out for commercially usable data ciphers. DES came from IBM.
             |               |     |                |
             -----------------     ------------------
 
-`f` can be anything, and won't affect the _invertibility_ of the cipher if you have the key.
+`f` can be anything, and won't affect the _invertibility_ of the cipher if you
+have the key.
 
 How do you design a _good `f` box_ that doesn't leak `K` and `P`?
 
@@ -166,7 +174,8 @@ At a high level: The differences between `delta` and `gamma` give you some infor
 
 This requires about `2^47` chosen pairs
 
-[Biham's PhD thesis](https://en.wikipedia.org/wiki/Differential_cryptanalysis), advised by Adi Shamir
+[Biham's PhD thesis](https://en.wikipedia.org/wiki/Differential_cryptanalysis),
+advised by Adi Shamir
 
 2^43 attack (Matsui)
 --------------------
@@ -183,16 +192,20 @@ This requires about `2^47` chosen pairs
                             .
                             C
 
-Could be that DES has attacks like: `M_3 \xor M_15 \xor C_2 \xor C_11 \xor K_7 \xor K_19 = 0`. This relates two bits of the key because you know the message and ciphertext bits.
+Could be that DES has attacks like: `M_3 \xor M_15 \xor C_2 \xor C_11 \xor K_7
+\xor K_19 = 0`. This relates two bits of the key because you know the message
+and ciphertext bits.
 
-In practice, these kind of equations are not always true. Maybe they're true like half the time: `p = 1/2 + \epsilon`
+In practice, these kind of equations are not always true. Maybe they're true
+like half the time: `p = 1/2 + \epsilon`
 
 Need `1/\epsilon^2` data points to solve equations like these.
 
 AES (Advanced Encryption Standard), 1997-1999
 ---------------------------------------------
 
-Open public contest to design a cipher. Submit designs, attack them. Let the best win. International too, anyone in the world could submit.
+Open public contest to design a cipher. Submit designs, attack them. Let the
+best win. International too, anyone in the world could submit.
 
  - 15 algorithms were submitted (after bad submissions were scrapped)
    + RC6 (Ron's favorite, lol)
@@ -213,9 +226,10 @@ Specs:
  - some `GF(2^8)` math used
    + `GF(2^8)` means the finite field with 256 elements
 
-Basic structure is a 4 by 4 array/matrix of bytes, where each entry is 1 bytes => 16 bytes => 128 bits
+Basic structure is a 4 by 4 array/matrix of bytes, where each entry is 1 bytes
+=> 16 bytes => 128 bits
 
-AES description:
+### AES description
  
  1. Derive 11 _round keys_ of 128 bits from 128 bit key (`k_i`'s)
  2. Given M to encrypt represent it as `4x4x8` matrix
