@@ -1,6 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{fullpage}
 \usepackage{parskip}    % do not indent paragraphs
+\usepackage{amsmath}    % \begin{gather*}
 \usepackage{amsfonts}
 \usepackage{mathabx}    % \divides, \notdivides
 %\usepackage{graphicx}
@@ -100,5 +101,18 @@ false since $t$ is prime.
 
 \theorem If $\G$ is a cyclic group of order $t$ and generator $g$ then the relation
 $x \leftrightarrow g^x$ is one-to-one between $[0, 1, \dots, t-1]$ and $\G$.
+\begin{align*}
+x \mapsto g^x & \text{ : exponentiation, "powering-up"}\\
+g^x \mapsto x & \text{ : discrete logarithm (DL)}
+\end{align*}
 
+Computing \emph{discrete logarithms} (the DL problem) is commonly assumed to be
+hard/infeasible for well-chosen groups $\G$ (e.g. $\Zp$ for $p$ a large randomly
+chosen prime).
+
+In practice, we need to be able to translate \emph{bits of data} or
+\emph{messages} from a message space $M$ to group elements of $\G$. We need an
+one-to-one correspondence (injective, and surjective) function $f : M
+\rightarrow \G$ such that $f(m) \in \G$ can be chosen to represent message $m
+\in M$.
 \end{document}
