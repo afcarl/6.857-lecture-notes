@@ -195,7 +195,7 @@ odd prime & `m >= 1`
  
  - we call such groups which have generators **cyclic groups**
 
-_Theorem:_ If `p` prime, then # of generators = `\phi(p-1)`
+_Theorem:_ If `p` prime, then # of generators in `Z*_p` is  `\phi(p-1)`
 
  - `p=7 => \phi(6) = |{1,5}| = 2`
  - `p=11 => \phi(10) = |{1,3,7,9}| = 4`
@@ -221,7 +221,25 @@ Examples:
 _Lagrange's theorem_: The order of any subgroup divides the order of its parent
 group. (See more [here](http://groupprops.subwiki.org/wiki/Lagrange%27s_theorem))
 
-    order_p(a) = {1, 2, q, 2q}, a \in Z*_p
+_Theorem:_ If `p` is a safe prime (then `p-1 = 2q`), then the size of `Z_p`'s sub
+groups can be either `1, 2, q, 2q` (because they have to divide the size of `Z_p`
+which is `p-1 = 2q`)
+
+    \forall a \in Z*p, order_p(a) \in {1, 2, q, 2q}
+
+To generate `Z*_p` we need a generator `a` s.t. `order_p(a) = p-1 = 2q`
+
+_Fermat's little theorem_ (generalization of Euler's theorem): `a^(p-1) = 1 (mod
+p)`, if `p` prime
+
+Euler's theorem: `a^\phi(n) = 1 (mod n), \forall n and a, s.t. gcd(a,n) = 1`
+
+Note that according to Fermat/Euler, we can check a potential generator `a
+\in Z*_p` for what size subgroup it generates by checking if `a^(guessed size) = 1
+(mod p)`. But that's not enough. We need to check that `a^(potential smaller
+size) != 1 (mod p)` or we could be picking a smaller group of size `s'` which 
+divides the desired size `s` (i.e. if `a^2q = 1`, that could be because `a^2 = 1`
+and `a` generates a subgroup of size 2).
 
 Finding generators in `Z*_p` (`p` is a safe prime):
 
@@ -229,12 +247,12 @@ Finding generators in `Z*_p` (`p` is a safe prime):
         g <- Z*_p
     until |<g>| = p-1
 
-Test (TODO: What's going on here?)
+How do we know that `|<g>| = p-1`? We check that:
 
     g != 1 (mod p)
     g^2 != 1 (mod p)
     g^q != 1 (mod p)
-    g^2q = 1 (mod p) (Fermat's little theorem)
+    g^2q = 1 (mod p) (p-1 = 2q and Fermat's little theorem)
 
 _Theorem:_ If `p` is a safe prime, then # generators is `\phi(p-1) = q-1`
 

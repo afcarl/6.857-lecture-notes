@@ -216,7 +216,7 @@ odd prime &amp; <code>m &gt;= 1</code></p>
 <li>we call such groups which have generators <strong>cyclic groups</strong></li>
 </ul>
 
-<p><em>Theorem:</em> If <code>p</code> prime, then # of generators = <code>\phi(p-1)</code></p>
+<p><em>Theorem:</em> If <code>p</code> prime, then # of generators in <code>Z*_p</code> is  <code>\phi(p-1)</code></p>
 
 <ul>
 <li><code>p=7 =&gt; \phi(6) = |{1,5}| = 2</code></li>
@@ -247,8 +247,26 @@ p = 59, q = 29
 <p><em>Lagrange's theorem</em>: The order of any subgroup divides the order of its parent
 group. (See more <a href="http://groupprops.subwiki.org/wiki/Lagrange%27s_theorem">here</a>)</p>
 
-<pre><code>order_p(a) = {1, 2, q, 2q}, a \in Z*_p
+<p><em>Theorem:</em> If <code>p</code> is a safe prime (then <code>p-1 = 2q</code>), then the size of <code>Z_p</code>'s sub
+groups can be either <code>1, 2, q, 2q</code> (because they have to divide the size of <code>Z_p</code>
+which is <code>p-1 = 2q</code>)</p>
+
+<pre><code>\forall a \in Z*p, order_p(a) \in {1, 2, q, 2q}
 </code></pre>
+
+<p>To generate <code>Z*_p</code> we need a generator <code>a</code> s.t. <code>order_p(a) = p-1 = 2q</code></p>
+
+<p><em>Fermat's little theorem</em> (generalization of Euler's theorem): <code>a^(p-1) = 1 (mod
+p)</code>, if <code>p</code> prime</p>
+
+<p>Euler's theorem: <code>a^\phi(n) = 1 (mod n), \forall n and a, s.t. gcd(a,n) = 1</code></p>
+
+<p>Note that according to Fermat/Euler, we can check a potential generator <code>a
+\in Z*_p</code> for what size subgroup it generates by checking if <code>a^(guessed size) = 1
+(mod p)</code>. But that's not enough. We need to check that <code>a^(potential smaller
+size) != 1 (mod p)</code> or we could be picking a smaller group of size <code>s'</code> which 
+divides the desired size <code>s</code> (i.e. if <code>a^2q = 1</code>, that could be because <code>a^2 = 1</code>
+and <code>a</code> generates a subgroup of size 2).</p>
 
 <p>Finding generators in <code>Z*_p</code> (<code>p</code> is a safe prime):</p>
 
@@ -257,12 +275,12 @@ group. (See more <a href="http://groupprops.subwiki.org/wiki/Lagrange%27s_theore
 until |&lt;g&gt;| = p-1
 </code></pre>
 
-<p>Test (TODO: What's going on here?)</p>
+<p>How do we know that <code>|&lt;g&gt;| = p-1</code>? We check that:</p>
 
 <pre><code>g != 1 (mod p)
 g^2 != 1 (mod p)
 g^q != 1 (mod p)
-g^2q = 1 (mod p) (Fermat's little theorem)
+g^2q = 1 (mod p) (p-1 = 2q and Fermat's little theorem)
 </code></pre>
 
 <p><em>Theorem:</em> If <code>p</code> is a safe prime, then # generators is <code>\phi(p-1) = q-1</code></p>
