@@ -17,18 +17,18 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
    public ledger, multiple-in multiple out (MIMO) transactions, 
  * Lecture 8: [Ciphers I](l08-ciphers-1.html): Shamir's secret sharing, block
    ciphers, DES, AES
- * Lecture 9:
- * Lecture 10:
- * Lecture 11:
- * Lecture 12:
- * Lecture 13:
- * Lecture 14:
- * Lecture 15:
- * Lecture 16:
- * Lecture 17:
- * Lecture 18:
- * Lecture 19:
- *
+ * Lecture 9: [Ciphers II](l09-ciphers-2.html):
+ * Lecture 10: [Stream ciphers](l10-stream-ciphers.html):
+ * Lecture 11: [Message authentication codes](l11-macs.html):
+ * Lecture 12: [Crypto math I](l12-crypto-math-1.html):
+ * Lecture 13: [Crypto math II](l13-crypto-math-2.html):
+ * Lecture 14: [Public key crypto I](l14-public-key.html):
+ * Lecture 15: [Public key crypto II](l15-more-public-key.html):
+ * Lecture 16: [Digital signatures](l16-digital-sign.html):
+ * Lecture 17: [Bilinear maps](l17-bilinear-maps.html):
+ * Lecture 18: [Zero knowledge proofs](l17-zero-knowledge.html):
+ * Lecture 19: **Computing on encrypted data** _[guest lecture](l19-computing-on-encrypted-data.html)_ by Vinod Vaikuntanathan: 
+ * Lecture 20: [Electronic voting](l20-electronic-voting):
 
 Papers
 ------
