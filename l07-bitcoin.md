@@ -1,3 +1,6 @@
+Cryptocurrencies
+================
+
 Atoms vs. Bits
 --------------
 

@@ -15,7 +15,7 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
    Davies-Meyer construction, MD5
  * Lecture 7: [Cryptocurrencies](l07-bitcoin.html): atoms vs. bits, Bitcoin,
    public ledger, multiple-in multiple out (MIMO) transactions, 
- * Lecture 8: [Ciphers I](l06-ciphers-1.html): Shamir's secret sharing, block
+ * Lecture 8: [Ciphers I](l08-ciphers-1.html): Shamir's secret sharing, block
    ciphers, DES, AES
  * Lecture 9:
  * Lecture 10:

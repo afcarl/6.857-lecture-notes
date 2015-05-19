@@ -1,5 +1,5 @@
-Today
-=====
+Today: Secret sharing and block ciphers
+=======================================
 
  - Shamir's secret sharing
  - Block ciphers (DES, AES, modes of operation)
