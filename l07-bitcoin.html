@@ -7,16 +7,19 @@
 
 <p>Bit-based system: bits can be copied (double spending)</p>
 
-<p>Token-based representation: like actual coins
-Account-based representation: like banks that store your value for you, you have to trust them</p>
+<p><strong>Token-based representation:</strong> like actual coins</p>
 
-<p>Bit-coin is still an account-based system, but it's distributed and less trust needs to be put in. No central authority.</p>
+<p><strong>Account-based representation:</strong> like banks that store your value for you, you have to trust them</p>
+
+<p>Bit-coin is <em>still an account-based system</em>, but it's distributed and less trust
+needs to be put in. No central authority.</p>
 
 <p>Let's think of what an electronic system would look like</p>
 
 <ul>
 <li>User <code>u</code> has some public key <code>pk_u</code> and some secret key <code>sk_u</code>.</li>
-<li>The bank (one global bank) would have its own public key <code>pk_b</code> and secret key <code>sk_b</code> and can certify user <code>u</code>
+<li>The bank (one global bank) would have its own public key <code>pk_b</code> and secret
+key <code>sk_b</code> and can certify user <code>u</code>
 <ul>
 <li>it signs a certificate <code>cert(u, pk_u) = sign_{sk_b}(u | pk_u)</code></li>
 </ul></li>
@@ -24,17 +27,20 @@ Account-based representation: like banks that store your value for you, you have
 <ul>
 <li><code>sign_{sk_u}("Pay Bob $100, date, ser #")</code>
 <ul>
-<li>serial number is used to prevent a merchant from charging user <code>u</code> multiple times using the same check</li>
+<li>serial number is used to prevent a merchant from charging user <code>u</code>
+multiple times using the same check</li>
 </ul></li>
 </ul></li>
 </ul>
 
-<p>Properties that a currency or monetary system might have that the check system above does not? Or properties in general!</p>
+<p>Properties that a currency or monetary system might have that the check system
+above does not? Or properties in general!</p>
 
 <ul>
 <li>No trusted third party (like the bank above)</li>
 <li>anonymity (a check would reveals payer and payee)</li>
-<li>unique coins (not sure what difference they are pointing at here between this currency and the electronic system above)</li>
+<li>unique coins (not sure what difference they are pointing at here between this
+currency and the electronic system above)</li>
 <li>no single point of failure</li>
 <li>fast transactions</li>
 <li>control of money supply
@@ -57,7 +63,8 @@ Account-based representation: like banks that store your value for you, you have
 <li>good for micropayments</li>
 </ul>
 
-<p>Can be hard to prevent system rollback, which can lead to double spending. Can you detect it?</p>
+<p>Can be hard to prevent system rollback, which can lead to double spending. Can
+you detect it?</p>
 
 <p>What would an electronic coin look like?</p>
 
@@ -84,7 +91,8 @@ withdrawal /           \ deposit
 <p>Coin:</p>
 
 <ul>
-<li>some random number <code>R</code> that is the coin's ID with a digital signature from the bank <code>s = sign_{sk_bank}(R)</code>
+<li>some random number <code>R</code> that is the coin's ID with a digital signature from
+the bank <code>s = sign_{sk_bank}(R)</code>
 <ul>
 <li>the coin is <code>c = R,s</code> </li>
 </ul></li>
@@ -92,7 +100,8 @@ withdrawal /           \ deposit
 <li>when Alice wants to pay Bob, she can just give the coin <code>c = R, s</code>
 <ul>
 <li>Bob cannot verify whether coin <code>c</code> is unspent, until it's too late</li>
-<li>Bank can tell if someone is double spending <code>c</code> but the bank cannot identify <em>who</em> is double spending the coin
+<li>Bank can tell if someone is double spending <code>c</code> but the bank cannot
+identify <em>who</em> is double spending the coin
 <ul>
 <li>it could be that Bob is double spending the coin <code>c</code> he got from Alice</li>
 </ul></li>
@@ -101,12 +110,16 @@ withdrawal /           \ deposit
 
 <h2>Bitcoin</h2>
 
-<p>Mixes a few ideas
- - electronic checks
- - HashCash
- - public ledger (blockchain) probably the most innovative idea</p>
+<p>Mixes a few ideas: </p>
 
-<p>The history of all transactions is public! Not maintained by trusted party, but via a broadcast system.</p>
+<ul>
+<li>electronic checks</li>
+<li>HashCash</li>
+<li>public ledger (blockchain) probably the most innovative idea</li>
+</ul>
+
+<p>The history of all transactions is public! Not maintained by trusted party, but
+via a broadcast system.</p>
 
 <p>How do you identify parties? What are the identities?</p>
 

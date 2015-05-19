@@ -7,7 +7,8 @@
 <pre><code>h : {0,1}^* -&gt; {0,1}^d
 </code></pre>
 
-<p>Given <code>y = h(x)</code> find <code>x</code> such that <code>h(x) = y</code> tends to take <code>O(2^d)</code> time, assuming <code>h</code> models a <em>random oracle</em> (each trial is correct with prob. <code>2^-d</code>)</p>
+<p>Given <code>y = h(x)</code> find <code>x</code> such that <code>h(x) = y</code> tends to take <code>O(2^d)</code> time,
+assuming <code>h</code> models a <em>random oracle</em> (each trial is correct with prob. <code>2^-d</code>)</p>
 
 <p>If <code>d</code> is small like 32, then it's feasible for adversary to invert.</p>
 
@@ -37,17 +38,20 @@
 <p>Use puzzles to solve this problem.</p>
 
 <ol>
-<li><p>Bob could make <code>n</code> puzzles (1 million/billion) of difficulty <code>D</code> controlled by Bob.</p></li>
-<li><p>Bob sends puzzles to Alice. Eve sees all of them.</p></li>
-<li><p>Alice picks one at random and solves it (let it be puzzle <code>i</code>). Neither Bob nor Eve knows which puzzle Alice picked.</p></li>
-<li><p>Alice lets Bob know which one she solved (careful with the details: can't let Eve know)</p></li>
-<li><p>So now they have a shared secret.</p></li>
+<li>Bob could make <code>n</code> puzzles (1 million/billion) of difficulty <code>D</code> controlled by Bob.</li>
+<li>Bob sends puzzles to Alice. Eve sees all of them.</li>
+<li>Alice picks one at random and solves it (let it be puzzle <code>i</code>). Neither Bob
+nor Eve knows which puzzle Alice picked.</li>
+<li>Alice lets Bob know which one she solved (careful with the details: can't
+let Eve know)</li>
+<li>So now they have a shared secret.</li>
 </ol>
 
 <p>Notes:</p>
 
 <ul>
-<li>work for Alice and Bob: <code>O(n)</code> to make the puzzles, plus <code>O(D)</code> for Alice to solve the puzzles.
+<li>work for Alice and Bob: <code>O(n)</code> to make the puzzles, plus <code>O(D)</code> for Alice to
+solve the puzzles.
 <ul>
 <li><code>D</code> and <code>n</code> tend to be the same, so total work is <code>O(n)</code></li>
 </ul></li>
@@ -58,16 +62,20 @@
 <ul>
 <li>how does she attack this?</li>
 <li>we're aiming at <code>O(nD) = O(n^2)</code> work for Eve</li>
-<li>if we make <code>n</code> 1 billion (feasible nowadays), then the gap between <code>O(n)</code> and <code>O(n^2)</code> could be good enough</li>
+<li>if we make <code>n</code> 1 billion (feasible nowadays), then the gap between
+<code>O(n)</code> and <code>O(n^2)</code> could be good enough</li>
 </ul></li>
 </ul></li>
 </ul>
 
-<p>Details:</p>
+<h3>Details</h3>
 
-<p>Puzzle <code>i</code> can be <code>P_i = (y_i, E_x_i(k_i), h(i, || x_i) = y_i)</code>, where <code>k_i</code> is a random 256bit key, encrypted under <code>x_i</code> which is what Alice needs to get by inverting <code>y_i = h(i || x_i)</code>.</p>
+<p>Puzzle <code>i</code> can be <code>P_i = (y_i, E_x_i(k_i), h(i, || x_i) = y_i)</code>, where <code>k_i</code> is
+a random 256bit key, encrypted under <code>x_i</code> which is what Alice needs to get by
+inverting <code>y_i = h(i || x_i)</code>.</p>
 
-<p>Let <code>x_i</code> be <code>\in {0,1}^d</code> and <code>y_i \in {0,1}^2d</code> (apparently for some collision reasons)</p>
+<p>Let <code>x_i</code> be <code>\in {0,1}^d</code> and <code>y_i \in {0,1}^2d</code> (apparently for some collision
+reasons)</p>
 
 <p>How does Alice tell Bob which one she solved? She can send <code>h(k_i)</code> to Bob.</p>
 
@@ -75,16 +83,20 @@
 
 <h3>The Merkle-Damgaard construction</h3>
 
-<p>Trying to build <code>h:{0,1}^* -&gt; {0,1}^d</code> that is collision-resistant (CR), one-way (OW), etc.</p>
+<p>Trying to build <code>h:{0,1}^* -&gt; {0,1}^d</code> that is collision-resistant (CR), one-way
+(OW), etc.</p>
 
 <p>Very long message, break it into blocks:</p>
 
 <p><code>c</code> = "chaining variable", <code>|c| = 512 bits</code>
 <code>b</code> = message block size (maybe 512 bits)</p>
 
-<p>Let <code>f : {0,1}^c \times {0,1}^b -&gt; {0, 1}^c</code> (a compression function) be a nice CR, OW primitive that can deal with <em>fixed-length inputs</em></p>
+<p>Let <code>f : {0,1}^c \times {0,1}^b -&gt; {0, 1}^c</code> (a compression function) be a nice
+CR, OW primitive that can deal with <em>fixed-length inputs</em></p>
 
-<p>Padding a message <code>M</code> to a multiple of <code>b</code> bits. Important that padding is invertible: otherwise multiple messages can pad to the same value and you'll easily be able to find collisions apparently.</p>
+<p>Padding a message <code>M</code> to a multiple of <code>b</code> bits. Important that padding is
+invertible: otherwise multiple messages can pad to the same value and you'll
+easily be able to find collisions apparently.</p>
 
 <pre><code>| |M| bits              |        | 64 bits
 ----------------------------------------
@@ -110,15 +122,19 @@
 
 <p><strong>Theorem:</strong> If <code>f</code> is collision resistant, then so is <code>h</code>.</p>
 
-<p><strong>Proof by contradiction:</strong> Assume that the big box is not CR, then prove that <code>f</code> is not CR and get a contradiction.</p>
+<p><strong>Proof by contradiction:</strong> Assume that the big box is not CR, then prove that
+<code>f</code> is not CR and get a contradiction.</p>
 
 <p>Assume we have two messages <code>m</code> and <code>m'</code> that give us a collision.</p>
 
-<p>If <code>c_n == c'_n</code> then since <code>f</code> is collision resistant that implies we've found a collision on <code>f</code> when we computed <code>f(m_n, c_n-1)</code> and <code>f(m'_n, c'_n-1)</code> OR when we computed something earlier.</p>
+<p>If <code>c_n == c'_n</code> then since <code>f</code> is collision resistant that implies we've found
+a collision on <code>f</code> when we computed <code>f(m_n, c_n-1)</code> and <code>f(m'_n, c'_n-1)</code> OR
+when we computed something earlier.</p>
 
 <h3>Davies-Meyer construction</h3>
 
-<p>Assuming you have a good block cipher: <code>f(c_{i-1}, M_i) = C_{i-1} \XOR E(M_i, C_{i-1})</code></p>
+<p>Assuming you have a good block cipher: <code>f(c_{i-1}, M_i) = C_{i-1} \XOR E(M_i,
+C_{i-1})</code></p>
 
 <pre><code>                     |---------------------|
                      |    |----------|    \|/
@@ -156,8 +172,12 @@ g(x,y,z) = {  xz  \or y*\not{z}    in pass 2
            {  y \xor x*\not{z}
 </code></pre>
 
-<p>Why is it 64 rounds? Seemed like enough at the time, but should be more actually.</p>
+<p>Why is it 64 rounds? Seemed like enough at the time, but should be more
+actually.</p>
 
-<p>Ron: This is sort of an ad-hoc construction, cause you're at the bottom of the food chain. No proofs here anymore. Can't do a reduction. So it becomes a bit of an art form. You ask people to break it and get confidence when they can't.</p>
+<p>Ron: This is sort of an ad-hoc construction, because we're at the bottom of the
+food chain. No proofs here anymore. Can't do a reduction. So it becomes a bit of
+an art form. You ask people to break it and get confidence when they can't.</p>
 
-<p>Ron: Maybe it would've been safe w/ 80 rounds. Even so, it has 128bit output and the birthday problem gives us <code>O(2^64)</code> tries to find a collision.</p>
+<p>Ron: Maybe it would've been safe w/ 80 rounds. Even so, it has 128bit output and
+the birthday problem gives us <code>O(2^64)</code> tries to find a collision.</p>

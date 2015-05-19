@@ -6,25 +6,31 @@ Atoms vs. Bits
 
 Bit-based system: bits can be copied (double spending)
 
-Token-based representation: like actual coins
-Account-based representation: like banks that store your value for you, you have to trust them
+**Token-based representation:** like actual coins
 
-Bit-coin is still an account-based system, but it's distributed and less trust needs to be put in. No central authority.
+**Account-based representation:** like banks that store your value for you, you have to trust them
+
+Bit-coin is _still an account-based system_, but it's distributed and less trust
+needs to be put in. No central authority.
 
 Let's think of what an electronic system would look like
 
  - User `u` has some public key `pk_u` and some secret key `sk_u`.
- - The bank (one global bank) would have its own public key `pk_b` and secret key `sk_b` and can certify user `u`
+ - The bank (one global bank) would have its own public key `pk_b` and secret
+   key `sk_b` and can certify user `u`
     + it signs a certificate `cert(u, pk_u) = sign_{sk_b}(u | pk_u)`
  - What is a check?
     + `sign_{sk_u}("Pay Bob $100, date, ser #")`
-       - serial number is used to prevent a merchant from charging user `u` multiple times using the same check
+       - serial number is used to prevent a merchant from charging user `u`
+         multiple times using the same check
 
-Properties that a currency or monetary system might have that the check system above does not? Or properties in general!
+Properties that a currency or monetary system might have that the check system
+above does not? Or properties in general!
 
  - No trusted third party (like the bank above)
  - anonymity (a check would reveals payer and payee)
- - unique coins (not sure what difference they are pointing at here between this currency and the electronic system above)
+ - unique coins (not sure what difference they are pointing at here between this
+   currency and the electronic system above)
  - no single point of failure
  - fast transactions
  - control of money supply
@@ -44,7 +50,8 @@ Properties that a currency or monetary system might have that the check system a
  - compelling for people to use?
  - good for micropayments
 
-Can be hard to prevent system rollback, which can lead to double spending. Can you detect it?
+Can be hard to prevent system rollback, which can lead to double spending. Can
+you detect it?
 
 What would an electronic coin look like?
 
@@ -53,7 +60,6 @@ What would an electronic coin look like?
  - Payee: Bob
  - Need authorization protocol for withdrawal
  - Need protocol for payment
-
 
 Diagram:
         
@@ -68,23 +74,27 @@ Diagram:
 
 Coin:
  
- - some random number `R` that is the coin's ID with a digital signature from the bank `s = sign_{sk_bank}(R)`
+ - some random number `R` that is the coin's ID with a digital signature from
+   the bank `s = sign_{sk_bank}(R)`
    + the coin is `c = R,s` 
  - bank has to keep an _unspent coins DB_ `{r1, r2, ...,}` to prevent double spending
  - when Alice wants to pay Bob, she can just give the coin `c = R, s`
    + Bob cannot verify whether coin `c` is unspent, until it's too late
-   + Bank can tell if someone is double spending `c` but the bank cannot identify *who* is double spending the coin
+   + Bank can tell if someone is double spending `c` but the bank cannot
+     identify *who* is double spending the coin
      - it could be that Bob is double spending the coin `c` he got from Alice
 
 Bitcoin
 -------
 
-Mixes a few ideas
+Mixes a few ideas: 
+
  - electronic checks
  - HashCash
  - public ledger (blockchain) probably the most innovative idea
 
-The history of all transactions is public! Not maintained by trusted party, but via a broadcast system.
+The history of all transactions is public! Not maintained by trusted party, but
+via a broadcast system.
 
 How do you identify parties? What are the identities?
 
