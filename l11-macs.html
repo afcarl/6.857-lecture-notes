@@ -10,7 +10,7 @@
 <li>EAX mode</li>
 <li>Encrypt then MAC</li>
 </ul></li>
-<li>Finite fields &amp; Number theory</li>
+<li>Finite fields &amp; number theory</li>
 </ul>
 
 <h2>MACs</h2>
@@ -103,15 +103,17 @@ susceptible to <em>length-extension attacks</em> where if you have
 
 <ul>
 <li>Eve is computationally unbounded</li>
-<li><p>Alice and Bob use new key for each MAC computation</p>
-
-<pre><code>                confidentiality     |    integrity
-               -----------------------------------------     
-unconditional   OTP                 |    OTMac
-conventional    block ciphers       |    MACs
-public-key      PK encryption       |    digital signatures
-</code></pre></li>
+<li>Alice and Bob use new key for each MAC computation</li>
 </ul>
+
+<p>Table:</p>
+
+<pre><code>                    confidentiality     |    integrity
+                   -----------------------------------------     
+    unconditional   OTP                 |    OTMac
+    conventional    block ciphers       |    MACs
+    public-key      PK encryption       |    digital signatures
+</code></pre>
 
 <h2>Authenticated Encryption with Associated Data</h2>
 
@@ -188,21 +190,32 @@ idea because the MAC could leak plaintext information</p>
 
 <h3>Finite fields</h3>
 
-<p><strong>Definition:</strong> <code>(S, +, *)</code>, where:
- - <code>S</code> is finite,
- - contains some notion of zero and one values (identity for addition and multiplication)
- - <code>(S, +)</code> is an abelian (commutative) group with identity zero
-   + associativity: <code>a + (b + c) = (a + b) +c</code>
-   + identity under zero: <code>a + 0 = 0 + a = a</code>
-   + inverses: <code>\forall a, \exists b, s.t. a + b = 0</code>
-     - <code>b = a^-1</code>
-   + commutativity (abelian)
- - <code>(S*, *)</code> is an abelian group with identity one
-   + <code>S* = S - {0}</code>
-   + same laws as before
- - distributive law (connecting these two groups)
-   + <code>a*(b+c) = a*b + a*c</code>
-   + <code>(b+c)*a = b*a + c*a</code></p>
+<p><strong>Definition:</strong> <code>(S, +, *)</code>, where:</p>
+
+<ul>
+<li><code>S</code> is finite,</li>
+<li>contains some notion of zero and one values (identity for addition and multiplication)</li>
+<li><code>(S, +)</code> is an abelian (commutative) group with identity zero
+<ul>
+<li>associativity: <code>a + (b + c) = (a + b) +c</code></li>
+<li>identity under zero: <code>a + 0 = 0 + a = a</code></li>
+<li>inverses: <code>\forall a, \exists b, s.t. a + b = 0</code>
+<ul>
+<li><code>b = a^-1</code></li>
+</ul></li>
+<li>commutativity (abelian)</li>
+</ul></li>
+<li><code>(S*, *)</code> is an abelian group with identity one
+<ul>
+<li><code>S* = S - {0}</code></li>
+<li>same laws as before</li>
+</ul></li>
+<li>distributive law (connecting these two groups)
+<ul>
+<li><code>a*(b+c) = a*b + a*c</code></li>
+<li><code>(b+c)*a = b*a + c*a</code></li>
+</ul></li>
+</ul>
 
 <p><code>GF(p)</code> - finite fields (a.k.a. Galois fields) on <code>p</code> elements <code>{0, 1, ..., p-1}</code></p>
 

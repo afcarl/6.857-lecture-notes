@@ -8,7 +8,7 @@ Today: Message Authentication Codes (MACs), Wed., March 11th
  - AEAD (Authenticated Encryption with Associated Data)
    + EAX mode
    + Encrypt then MAC
- - Finite fields & Number theory
+ - Finite fields & number theory
 
 MACs
 ----
@@ -81,6 +81,7 @@ Can we also have an information-theoretic secure _one-time MAC_?
  - Eve is computationally unbounded
  - Alice and Bob use new key for each MAC computation
 
+Table:
 
                         confidentiality     |    integrity
                        -----------------------------------------     
@@ -152,6 +153,7 @@ Finite fields & number theory
 ### Finite fields
 
 **Definition:** `(S, +, *)`, where:
+
  - `S` is finite,
  - contains some notion of zero and one values (identity for addition and multiplication)
  - `(S, +)` is an abelian (commutative) group with identity zero

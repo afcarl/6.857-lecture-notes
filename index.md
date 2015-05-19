@@ -21,9 +21,13 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
    operation, electronic codebook mode (ECB), counter mode (CTR), cipher-block 
    chaining mode (CBC), cipher feedback mode (CFB), indistinguishability under
    chosen-ciphertext attack (IND-CCA), unbalanced feistel encryption
- * Lecture 10: [Stream ciphers](l10-stream-ciphers.html):
- * Lecture 11: [Message authentication codes](l11-macs.html):
- * Lecture 12: [Crypto math I](l12-crypto-math-1.html):
+ * Lecture 10: [Stream ciphers](l10-stream-ciphers.html): RC4, Spritz, ChaCha
+ * Lecture 11: [Message authentication codes](l11-macs.html): HMAC, CBC-MAC,
+   PRF-MAC, One-time MAC (OTMac), authenticated encryption with associated data
+   (AEAD), EAX mode, encrypt-then-MAC, finite fields and number theory
+ * Lecture 12: [Crypto math I](l12-crypto-math-1.html): primality testing, one-time
+   MAC, the Totient function (phi), divisors, greatest common divisor (GCD),
+   (Extended) Euclid's algorithm, order of group elements, generators
  * Lecture 13: [Crypto math II](l13-crypto-math-2.html):
  * Lecture 14: [Public key crypto I](l14-public-key.html):
  * Lecture 15: [Public key crypto II](l15-more-public-key.html):
@@ -40,6 +44,15 @@ Papers we read in 6.857 ([directory here](papers/)):
 
  * [Bitcoin](papers/bitcoin.pdf)
  * [Research Perspectives and Challenges for Bitcoin and Cryptocurrencies](papers/princeton-bitcoin-overview.pdf)
+ * [AES Proposal: Rijndael](papers/rijndael.pdf)
+ * [How to share a secret](papers/shamir-secret-sharing.pdf), by Adi Shamir
+ * [The EAX mode of operation](papers/eax.pdf)
+ * [How to choose an authenticated encryption mode](papers/how-to-choose-an-ae-mode.pdf)
+ * [New paradigms for constructing symmetric encryption schemes secure under CCA](papers/desai.pdf), (via Unbalanced Feistel Encryption)
+ * [Spritz](papers/spritz-slides.pdf) slides
+ * [Unlinkable serial transactions: Protocol and applications](papers/unlinkable-serial-transactions.pdf)
+ * [Twenty years of attacks on the RSA cryptosystem](papers/rsa-attacks.pdf)
+ * [New directions in cryptography](papers/diffie-hellman.pdf) (public-key crypto)
 
 TODOs
 -----

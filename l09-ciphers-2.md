@@ -206,4 +206,4 @@ Ciphertext is $(c, \sigma)$
 
 How does he decrypt?
 
-
+See [this paper](papers/desai.pdf) for more details.

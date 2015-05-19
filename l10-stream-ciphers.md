@@ -1,5 +1,5 @@
-Today: Stream Ciphers, Monday. March 9th
-========================================
+Today: Stream Ciphers, Monday. March 9th, 2015
+==============================================
 
  - Stream ciphers
    + Definitions
