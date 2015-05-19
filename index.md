@@ -30,6 +30,7 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
    (Extended) Euclid's algorithm, order of group elements, generators, Fermat's
    little theorem, Lagrange's theorem, why we pick safe primes
  * Lecture 13: [Crypto math II](l13-crypto-math-2.pdf): group theory review,
+   Diffie-Hellman key-exchange, Zp*, Zn*, Qp, Qn
  * Lecture 14: [Public key crypto I](l14-public-key.html):
  * Lecture 15: [Public key crypto II](l15-more-public-key.html):
  * Lecture 16: [Digital signatures](l16-digital-sign.html):

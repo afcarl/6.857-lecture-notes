@@ -1,4 +1,5 @@
 \documentclass[11pt]{article}
+\usepackage{verbatim}   % \begin{verbatim}
 \usepackage{fullpage}
 \usepackage{parskip}    % do not indent paragraphs
 \usepackage{amsmath}    % \begin{gather*}
@@ -8,8 +9,9 @@
 %\usepackage{subfigure}
 
 \newcommand{\Zp}{\mathbb{Z}^{\ast}_p}
+\newcommand{\Zq}{\mathbb{Z}^{\ast}_q}
 \newcommand{\Zn}{\mathbb{Z}^{\ast}_n}
-\newcommand{\Qp}{\mathbb{Q}_n}
+\newcommand{\Qp}{\mathbb{Q}_p}
 \newcommand{\Qn}{\mathbb{Q}_n}
 \newcommand{\G}{\mathbb{G}}
 \newcommand{\gen}[1]{\langle #1 \rangle}
@@ -19,6 +21,7 @@
 \newcommand{\theorem}{\textbf{Theorem:} }
 \newcommand{\note}{\emph{Note:} }
 \newcommand{\example}{\emph{Example:} }
+\newcommand{\sz}[1]{\left|#1\right|}
 
 \begin{document}
 
@@ -112,7 +115,168 @@ chosen prime).
 
 In practice, we need to be able to translate \emph{bits of data} or
 \emph{messages} from a message space $M$ to group elements of $\G$. We need an
-one-to-one correspondence (injective, and surjective) function $f : M
+one-to-one (injective) function $f : M
 \rightarrow \G$ such that $f(m) \in \G$ can be chosen to represent message $m
 \in M$.
+
+\textbf{TODO:} Does $f$ need to be onto (surjective) as well? Are there cases
+where we need to reverse $f$?
+
+\example If we have $\Zp$ with $p > 2^k$, then we can represent any $k$-bit
+message $m$ as a number $x \in [0, 2^k)$ because if $x \in [0, 2^k)$, then $x
+\in \Zp$.
+
+\note For some groups, finding an easily-computable, space-efficient $f$ may
+be a little hard.
+
+\subsection{API for a group}
+
+Typically, any library that implements a group should provide the following calls:
+
+\begin{center}
+\begin{tabular}{ c | l | c }
+Operation & API call & Comments \\
+\hline\hline
+creation & $\G \leftarrow createGroup(\dots)$ &\\
+identity & $\G.identity()$ &\\
+random element & $x \leftarrow \G.random()$ &\\
+product & $x \cdot y$ & or $+$\\
+inverse & $x^{-1}$ & or $-x$\\
+power & $x^k, x \in \G, k \in \mathbb{Z}$ & or $k\cdot x$\\
+size & $\G.order()$ & $|G|$, not always implemented\\
+list & $\G.elements()$ & not always implemented\\
+represent & $x \leftarrow G.rep(m)$ &\\
+unrepresent & $m \leftarrow G.unrep(x)$ &\\
+generator & $\G.generator()$ &\\
+discrete log & $x \leftarrow \G.discreteLog(g, y)$ & s.t $g^x = y$, not always
+\emph{efficiently} possible \\
+\end{tabular}
+\end{center}
+
+\section{Diffie-Hellman key exchange (1976)}
+
+How can we establish a shared secret in the presence of a passive eavesdropper
+Eve?
+
+Let $\G$ be a cyclic group with generator $g$. $\G$ and $g$ are fixed and public.
+
+Alice and Bob can agree on a shared secret key $k$ as follows:
+
+\begin{enumerate}
+  \item Alice chooses secret $x$ randomly from $[0, \dots, |\G|-1]$. Note that
+  $x \notin \G$.
+  \item Alice computes $ g^x$ as her \emph{public key}. Note that $g^x \in \G$
+  and Alice is the only one who knows $x$, the \emph{discrete log} of $g^x$.
+  \item Bob, similarly picks a $y$ and computes $g^y$.
+  \item Alice and Bob exchange $g^y$ and $g^x$. Eve sees them.
+  \item Assuming discrete logs are hard to compute, Eve cannot learn neither $x$
+  nor $y$ because she will have a hard time computing the discrete log of $g^x$ or
+  $g^y$.
+  \item Alice computes $k = (g^y)^x = g^{xy}$
+  \item Bob computes (the same) $k = (g^x)^y = g^{xy}$
+  \item Alice and Bob have agreed on a shared key $k$
+  \item Can Eve compute $g^{xy}$ from $g^x$ and $g^y$? We assume she can't and
+  refer to this assumption as the \emph{Computational Diffie-Hellman} (CDH)
+  assumption.
+\end{enumerate}
+
+\theorem CDH is hard $\Rightarrow$ Diffie-Hellman key exchange is secure (i.e.
+Eve does not learn $k$)
+
+\note Can use $k$ to encrypt and/or MAC messages.
+
+\note If not using an authenticated encryption mode like EAX, derive separate keys
+for encryption and authentication $k_{enc} = PRF(k, enc)$ and $k_{mac} = PRF(k, mac)$.
+
+\note $g^x$ and $g^y$ are assumed to be the right public keys for Alice and Bob.
+What if Eve is active and changes them on their way to Alice and Bob?
+
+If Eve is \emph{active}, she can perform a \emph{man-in-the-middle attack}:
+
+\begin{enumerate}
+  \item Alice sends $g^x$ to Bob, but Eve replaces it with $g^e$, for which she
+  knows $e$. Eve records $g^x$.
+  \item Bob sends $g^y$ to Bob, but Eve replaces it with $g^v$, for which she
+  knows $v$. Eve records $g^y$.
+  \item Alice got $g^v$ from Eve, so she will compute shared key $k_1 = g^{xv}$
+  \item Bob got $g^e$ from Eve, so she will compute shared key $k_2 = g^{ye}$
+  \item Alice and Bob think they are talking to each other, but they agreed to
+  different keys.
+  \item Eve can compute $k_1 = g^{xv}$ herself: she knows $v$
+  \item Eve can compute $k_2 = g^{ye}$ herself: she knows $e$
+  \item When Alice sends a message to Bob, encrypted and/or MACd with $k_1$, Eve
+  can decrypt and tamper with the message and then reencrypt and MAC it under $k_2$
+  for Bob.
+  \item Eve can do the same for Bob's messages to Alice.
+\end{enumerate}
+
+To fix this problem, we need to prevent Eve from swapping Alice and Bob's public
+keys on the wire. One solution is to have a \emph{certification authority} (CA)
+digitally sign $g^x$ and $g^y$ so that Eve cannot replace them.
+
+\note Still not perfect. What if Eve colludes with the CA?
+
+\note What if Eve has friends with public keys signed by the CA. Those friends can maybe give Eve their private keys and Eve could still pull the attack $\Rightarrow$ the
+digital signature has to \emph{cryptographically bind} the user's identity (Alice)
+to her public keys $g^x$. This way, if Eve replaces Alice's public key with
+her friend's Diana public key, Bob will detect this when he verifies the signature
+on the public key: the signature will not verify against Alice's name.
+
+\section{The five groups}
+
+\subsection{$\Zp$}
+\definition $\Zp = \{ a : 1 \le a < p\}$, where $p$ is prime
+
+$\Zp$ is always cyclic (i.e. has a generator). There are non-constructive proofs
+for this.
+
+If $p = 2q + 1$ and $q$ is prime, then $p$ is a \emph{safe prime} and half of
+$\Zp$ elements are generators and the other half are squares $\Qp$.
+
+\textbf{TODO:} Proof?
+
+\subsection{$\Qp$, quadratic residues (squares) mod prime $p$}
+\definition $\Qp = \{a^2 : 1 \le a < p\} \subsetneq \Zp$
+
+\textbf{TODO:} Is $a < p$ or $a^2 < p$?
+
+\theorem $|\Qp| = \frac{1}{2}\sz{\Zp} = \frac{(p-1)}{2}$
+
+\theorem $\Qp$ is cyclic: If $\gen{g} = \Zp$, then $\gen{g^2} = \Qp$
+
+Thus, $\Qp = \{g^{2i} : 0 \le i < \frac{p-1}{2}\}$, if $\gen{g} = \Zp$
+
+If $p = 2q + 1$, then $\sz{\Qp} = \frac{(p-1)}{2} = q$ and \emph{any element} of
+$\Qp$ (other than 1) generates $\Qp$. To find a generator, take the square of
+any element $a \in \Zp - \{1, p-1\}$
+
+\textbf{TODO:} Proof for why $\Zp$ is split that way? Is $p-1$ the only generator
+that would generate a subgroup of size $2$? The identity (i.e. $1$) would generate
+the subgroup of size $1$, and apparently all squares generate $\Qp$ of size $q$,
+which means the rest either generate $\Zp$ or the subgroup of size $2$.
+
+\subsection{$\Zn$}
+
+\definition $\Zn = \{a : \gcd(a, n) = 1, \text{where } 1 \le a < n\}$
+
+\definition $\sz{\Zn} = \phi(n)$, the \emph{totient} function.
+
+If $n = pq$ where $p,q$ are distinct odd primes, then $\Zn$ is \emph{not} cyclic.
+
+...but the \emph{Chinese Remainder Theorem} says there exists an isomorphism
+from $\Zn$ to $\Zp \times \Zq$.
+
+\subsection{$\Qn$, quadratic residues (squares) mod (non-prime) $n$}
+
+\definition $\Qn = \{a^2 : 1 \le a < n, \text{where } \gcd(a, n) = 1\}$
+
+\textbf{TODO:} Is $a < p$ or $a^2 < p$?
+
+\textbf{TODO:} Is $\gcd(a, n) = 1$ or $\gcd(a^2, n) = 1$?
+
+\theorem If $n = pq$ where $p = 2r+1$ and $q = 2s+1$, then $\sz{\Qn} = rs$ and
+$\Qn$ is cyclic.
+
+\subsection{TODO: Elliptic curves}
+
 \end{document}
