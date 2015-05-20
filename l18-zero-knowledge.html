@@ -98,7 +98,7 @@ the verifier can just extract the solution and learn it.</p>
 
 <p>If we use commitments for each letter, then we can hide the solution.</p>
 
-<p>A challenge can be "open a commitment to a row/column/block". Note that know 
+<p>A challenge can be "open a commitment to a row/column/block". Note that now 
 the verifier will learn some mappings. So now the verifier will want to ask again,
 which means you'd better remap so that he does not start learning the actual
 numbers.</p>
@@ -122,10 +122,14 @@ Sudoku problem
 <li>he can do another in the next round, where you remap the numbers to letters
 to prevent him from learning anything</li>
 </ul></li>
+<li><strong>Key:</strong> the verifier can pick any row / column / cell <code>=&gt;</code> the prover better
+have all of them be correct or he risks being discovered!</li>
 </ul>
 
-<p>Note: seems like you need to make sure a unique set of 9 letters are used, otherwise
-the prover might use extra letters to cheat</p>
+<p>Note: Verifier needs to make sure a unique set of 9 letters are used, otherwise
+the prover might use extra letters to cheat. If prover uses a set of 9*9 letters,
+then all comparisons will yield "not equal", and a clueless verifier would think
+the puzzle is solved.</p>
 
 <h2>Graph 3-colorability</h2>
 
@@ -170,14 +174,36 @@ isomorphic to both of them (by just reordering the vertices randomly).</p>
 </code></pre>
 
 <p>Verifier can now ask you to reveal the isomorphism from <code>G</code> to <code>J</code> or from
-<code>H</code> to <code>J</code>, but not both.</p>
+<code>H</code> to <code>J</code>, but not both. Then the verifier <em>actually</em> checks the revealed
+isomorphism is correct: for every edge in <code>G</code> (or in <code>H</code>), he checks if that
+edge is also present in <code>J</code> (after remapping <code>G</code> nodes to <code>J</code> nodes according
+to the revealed isomorphism)</p>
 
-<p>ZK is complete </p>
+<p>Note: It seems that verifier also has to make sure <code>J</code> has the same # of edges
+as <code>G</code> and <code>H</code>. Otherwise, the prover could provide a fully connected <code>J</code> whose
+edge checks always pass => any isomorphism the prover picks would pass.</p>
 
-<p>ZK is sound. Suppose G and H are not isomorphic, or you don't know the isomorphism.
-You will have to pick one of G or H to derive J from. Suppose you pick G and H. 
-If the verifier asks you for the isomorphism between J and H, you do not know
-it and sending a fake one will not pass the verifier's check.</p>
+<p>ZK is complete. </p>
+
+<p>ZK is sound. </p>
+
+<p>Suppose G and H are not isomorphic, or the prover doesn't know the isomorphism (and
+doesn't have time to compute it). Can the prover trick the verifier? The prover 
+can only commit to a single graph <code>J</code> (<code>J</code> is supposed to be isomorphic to both
+<code>G</code> and <code>H</code>) and also commit to the actual isomorphisms: the map <code>mg</code> from
+<code>vertices(G) -&gt; vertices(J)</code> and the map <code>mh</code> from <code>vertices(H) -&gt; vertices(J)</code>.</p>
+
+<p>If the prover does not know the isomorphism between <code>G</code> and <code>H</code>, the best he can
+do is come up with a <code>J</code> that is isomorphic to one of them. (Note that he cannot
+hope to come up with <code>J</code> isomorphic to both <code>G</code> and <code>H</code> because then he would 
+have solved the isomorphism problem too fast). Then the prover commits to this
+<code>J</code> and to the <code>mh</code> and <code>mg</code> vertex maps, and hopes that the verifier picks the
+right map. Say prover chose <code>H</code>, then the prover hopes that the verifier will
+check <code>J</code> against <code>H</code> by asking for the <code>mh</code> vertex map. However, this cannot
+go on for too long. As tests are repeated <code>k</code> times, probability of the prover
+tricking the verifier is <code>1/2^k</code>. If the verifier asks to check <code>J</code> against <code>G</code>,
+then the prover has to reveal <code>mg</code>, and the edge check between <code>G</code> and <code>J</code> via
+<code>mg</code> will fail.</p>
 
 <h2>Hamiltonian cycle</h2>
 
@@ -195,9 +221,10 @@ G and H</li>
 <p>Schnorr protocol for showing knowledge of the discrete log of <code>y = g^x</code>.</p>
 
 <ul>
-<li><code>p</code> is a prime, <code>p = 2q+1</code>, <code>q</code> is prime, <code>g</code> generates <code>Z_q</code></li>
-<li>secret key <code>x</code> (in <code>Z_p</code> or <code>Z_q</code>?)</li>
-<li>public key <code>y = g^x</code> (<code>\in Z_q</code> because <code>g</code> generates <code>Z_q</code>?)</li>
+<li><code>p</code> is a prime, <code>p = 2q+1</code>, <code>q</code> is prime, <code>g</code> generates <code>G_q</code>, a subgroup
+of order <code>q</code> of <code>Z_p*</code></li>
+<li>secret key <code>x</code> (<code>x \in Z_q, 0 &lt; x &lt; q</code>)</li>
+<li>public key <code>y = g^x</code> (<code>y \in G_q</code> because <code>g</code> generates <code>G_q</code>)</li>
 </ul>
 
 <p>Schnorr protocol:</p>
@@ -213,7 +240,8 @@ r = cx + k              r
             ------------------------&gt; checks if
                                         y^c * a = g^r &lt;=&gt;
                                         (g^x)^c * g^k = g^(cx + k) &lt;=&gt;
-                                        g^(cx+k) = g^(cx+k)
+                                        g^(cx+k) = g^(cx+k) &lt;=&gt;
+                                        x = x
 </code></pre>
 
 <p>If I don't know <code>x</code> what are your chances of catching me? </p>
@@ -240,5 +268,5 @@ x = (r-r')/(c-c')
 <p><strong>Theorem:</strong> Protocol is zero-knowledge.</p>
 
 <p><strong>Proof:</strong> After a round is over, verifier has <code>a, c, r</code> and they are all
-random elements of <code>Z_q</code>. Prover hasn't given verifier any info because
+random elements of <code>G_q</code>. Prover hasn't given verifier any info because
 the verifier could compute <code>a</code> given <code>c</code> and <code>r</code>.</p>

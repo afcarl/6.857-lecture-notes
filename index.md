@@ -39,7 +39,9 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
    PKCS, RSA PSS, ElGamal, Digital Signature Algorithm (DSA)
  * Lecture 17: [Bilinear maps](l17-bilinear-maps.html): gap groups, bilinear maps,
    Boneh-Lynn-Shacham (BLS) signatures, 3-way key agreement (Joux), identity-based encryption (IBE)
- * Lecture 18: [Zero knowledge proofs](l18-zero-knowledge.html):
+ * Lecture 18: [Zero knowledge proofs](l18-zero-knowledge.html): zero-knowledge
+   proofs (ZKPs), interactive proofs, Sudoku, 3-colorability, graph isomorphism,
+   Hamiltonian cycle, discrete log
  * Lecture 19: **Computing on encrypted data** _[guest lecture](l19-computing-on-encrypted-data.html)_ by Vinod Vaikuntanathan: 
  * Lecture 20: [Electronic voting](l20-electronic-voting.html):
 

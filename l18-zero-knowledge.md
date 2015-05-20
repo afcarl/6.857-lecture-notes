@@ -85,7 +85,7 @@ the verifier can just extract the solution and learn it.
 
 If we use commitments for each letter, then we can hide the solution.
 
-A challenge can be "open a commitment to a row/column/block". Note that know 
+A challenge can be "open a commitment to a row/column/block". Note that now 
 the verifier will learn some mappings. So now the verifier will want to ask again,
 which means you'd better remap so that he does not start learning the actual
 numbers.
@@ -106,9 +106,13 @@ Stages:
    + verifier can only do only one check in this round
    + he can do another in the next round, where you remap the numbers to letters
      to prevent him from learning anything
+ - **Key:** the verifier can pick any row / column / cell `=>` the prover better
+   have all of them be correct or he risks being discovered!
 
-Note: seems like you need to make sure a unique set of 9 letters are used, otherwise
-the prover might use extra letters to cheat
+Note: Verifier needs to make sure a unique set of 9 letters are used, otherwise
+the prover might use extra letters to cheat. If prover uses a set of 9*9 letters,
+then all comparisons will yield "not equal", and a clueless verifier would think
+the puzzle is solved.
 
 Graph 3-colorability
 --------------------
@@ -152,14 +156,36 @@ isomorphic to both of them (by just reordering the vertices randomly).
     3 -> b -> s
 
 Verifier can now ask you to reveal the isomorphism from `G` to `J` or from
-`H` to `J`, but not both.
+`H` to `J`, but not both. Then the verifier _actually_ checks the revealed
+isomorphism is correct: for every edge in `G` (or in `H`), he checks if that
+edge is also present in `J` (after remapping `G` nodes to `J` nodes according
+to the revealed isomorphism)
 
-ZK is complete 
+Note: It seems that verifier also has to make sure `J` has the same # of edges
+as `G` and `H`. Otherwise, the prover could provide a fully connected `J` whose
+edge checks always pass => any isomorphism the prover picks would pass.
 
-ZK is sound. Suppose G and H are not isomorphic, or you don't know the isomorphism.
-You will have to pick one of G or H to derive J from. Suppose you pick G and H. 
-If the verifier asks you for the isomorphism between J and H, you do not know
-it and sending a fake one will not pass the verifier's check.
+ZK is complete. 
+
+ZK is sound. 
+
+Suppose G and H are not isomorphic, or the prover doesn't know the isomorphism (and
+doesn't have time to compute it). Can the prover trick the verifier? The prover 
+can only commit to a single graph `J` (`J` is supposed to be isomorphic to both
+`G` and `H`) and also commit to the actual isomorphisms: the map `mg` from
+`vertices(G) -> vertices(J)` and the map `mh` from `vertices(H) -> vertices(J)`.
+
+If the prover does not know the isomorphism between `G` and `H`, the best he can
+do is come up with a `J` that is isomorphic to one of them. (Note that he cannot
+hope to come up with `J` isomorphic to both `G` and `H` because then he would 
+have solved the isomorphism problem too fast). Then the prover commits to this
+`J` and to the `mh` and `mg` vertex maps, and hopes that the verifier picks the
+right map. Say prover chose `H`, then the prover hopes that the verifier will
+check `J` against `H` by asking for the `mh` vertex map. However, this cannot
+go on for too long. As tests are repeated `k` times, probability of the prover
+tricking the verifier is `1/2^k`. If the verifier asks to check `J` against `G`,
+then the prover has to reveal `mg`, and the edge check between `G` and `J` via
+`mg` will fail.
 
 Hamiltonian cycle
 -----------------
@@ -176,9 +202,10 @@ Discrete log
 
 Schnorr protocol for showing knowledge of the discrete log of `y = g^x`.
 
- - `p` is a prime, `p = 2q+1`, `q` is prime, `g` generates `Z_q`
- - secret key `x` (in `Z_p` or `Z_q`?)
- - public key `y = g^x` (`\in Z_q` because `g` generates `Z_q`?)
+ - `p` is a prime, `p = 2q+1`, `q` is prime, `g` generates `G_q`, a subgroup
+   of order `q` of `Z_p*`
+ - secret key `x` (`x \in Z_q, 0 < x < q`)
+ - public key `y = g^x` (`y \in G_q` because `g` generates `G_q`)
 
 Schnorr protocol:
 
@@ -193,7 +220,8 @@ Schnorr protocol:
                 ------------------------> checks if
                                             y^c * a = g^r <=>
                                             (g^x)^c * g^k = g^(cx + k) <=>
-                                            g^(cx+k) = g^(cx+k)
+                                            g^(cx+k) = g^(cx+k) <=>
+                                            x = x
 
 If I don't know `x` what are your chances of catching me? 
 
@@ -216,5 +244,5 @@ If can play the game, I know `x`:
 **Theorem:** Protocol is zero-knowledge.
 
 **Proof:** After a round is over, verifier has `a, c, r` and they are all
-random elements of `Z_q`. Prover hasn't given verifier any info because
+random elements of `G_q`. Prover hasn't given verifier any info because
 the verifier could compute `a` given `c` and `r`.
