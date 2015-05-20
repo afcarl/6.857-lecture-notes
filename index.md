@@ -31,8 +31,10 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
    little theorem, Lagrange's theorem, why we pick safe primes
  * Lecture 13: [Crypto math II](l13-crypto-math-2.pdf): group theory review,
    Diffie-Hellman key-exchange, Zp*, Zn*, Qp, Qn
- * Lecture 14: [Public key crypto I](l14-public-key.html):
- * Lecture 15: [Public key crypto II](l15-more-public-key.html):
+ * Lecture 14: [Public key crypto I](l14-public-key.html): commitment schemes,
+   Pedersen commitments, ElGamal, Decisional Diffie-Hellman (DDH) problem
+ * Lecture 15: [Public key crypto II](l15-more-public-key.html): IND-CCA2 security
+   Cramer-Shoup, RSA, making RSA IND-CCA2-secure, other RSA security aspects
  * Lecture 16: [Digital signatures](l16-digital-sign.html):
  * Lecture 17: [Bilinear maps](l17-bilinear-maps.html):
  * Lecture 18: [Zero knowledge proofs](l18-zero-knowledge.html):
@@ -51,6 +53,7 @@ Papers we read in 6.857 ([directory here](papers/)):
  * [The EAX mode of operation](papers/eax.pdf)
  * [New paradigms for constructing symmetric encryption schemes secure under CCA](papers/desai.pdf), via Unbalanced Feistel Encryption
  * [Unlinkable serial transactions: Protocol and applications](papers/unlinkable-serial-transactions.pdf)
+ * [A method for obtaining digital signatures and public-key cryptosystems](papers/rsa-paper.pdf), Rivest, Shamir, Adleman
  * [Twenty years of attacks on the RSA cryptosystem](papers/rsa-attacks.pdf), Dan Boneh
  * [New directions in cryptography](papers/diffie-hellman.pdf), Diffie-Hellman
  * [Sequences of Games: A Tool for Taming Complexity in Security Proofs](papers/games.pdf)

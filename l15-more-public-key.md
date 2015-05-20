@@ -47,6 +47,8 @@ An extension of ElGamal.
 
 We have `G_q` a group of prime order `q` (remember `g^q = 1`).
 
+**TODO:** Are `g1/g2` generators of `G_q`?
+
     Keygen(G_q):
         g1, g2           <--R-- G_q
         x1,x2, y1,y2, z  <--R-- Z_q (additive group mod q)
@@ -57,7 +59,7 @@ We have `G_q` a group of prime order `q` (remember `g^q = 1`).
         pk = (g1, g2,  c,  d, h)
         sk = (x1, x2, y1, y2, z)
 
-        Let H be a hash function which maps G_q triples to Z_q
+Let `H` be a hash function which maps `G_q` triples to `Z_q`
 
     Enc(m \in G_q):
         r <--R--- Z_q
@@ -73,21 +75,25 @@ We have `G_q` a group of prime order `q` (remember `g^q = 1`).
     Decrypt(ctext = u1, u2, e, v):
         \alpha = H(u1, u2, e)
 
-        [ u1^x1 u2^x2 = g^rx1 g^rx2 = c^r ]
+        [ u1^x1 u2^x2 = g1^rx1 g2^rx2 = c^r ]
         [ u1^y1 u2^y2 = d^r ]
-        [ u1^(x1+y1*\alpha) * u2^(x2*y2*\alpha) = 
-        checks that u1^(x1+y1*\alpha) * u2^(x2*y2*\alpha) == v
+        [ u1^(x1+y1*\alpha) * u2^(x2+y2*\alpha) =
+          u1^x1 u2^x2 * u1^(y1*\alpha) * u2^(y2*\alpha) =
+          u1^x1 u2^x2 * (u1^y1 * u2^y2)^\alpha = c^r * (d^r)^alpha = v ]
+
+        checks that u1^(x1+y1*\alpha) * u2^(x2+y2*\alpha) == v
             if not equal, then reject
 
-        [ need to invert h^r to get m out of e ]
-        [ don't have r, have z, so have h = g1^z ]
-        [ u1 = g1^r, u1^z = (g1^z)^r = h^r ]
+        [ need to divide by (invert) h^r to get m out of e ]
+        [ don't have r, have z => have h = g1^z ]
+        [ u1 = g1^r, u1^z = (g1^r)^z = h^r ]
         return e/u1^z
 
 **Theorem:** Cramer-Shoup is IND-CCA2 secure, assuming:
 
- - Decisional Diffie-Hellman (CDH) is hard in `G_q` (Why not CDH? Not clear,
-   maybe read paper?)
+ - Decisional Diffie-Hellman (CDH) is hard in `G_q` (Why not CDH? ElGamal needed
+   DDH as well so as to maintain indistinguishability under chosen-plaintext `=>`
+   Cramer-Shoup, based on ElGamal will need it as well)
  - H is "target collision resistant"
    + **TODO** Is this assuming less than _one-way hash functions_ exist?
 
@@ -101,17 +107,17 @@ RSA (1977)
 
     Keygen: 
         find large *random* primes p, q
-        n <- pq
+        let n = pq
 
-        \phi(n) = |Z_n*| = (p-q)(q-1)
+        \phi(n) = |Z_n*| = (p-1)(q-1)
             this is unknown to the adversary
-            knowing \phi(n) <=> knowing factorization of n
+            knowing \phi(n) <=> knowing factorization of n 
 
         e <--R-- Z*_\phi(n)
             just means that gcd(e, \phi(n)) = 1
 
         d <- e^-1 (mod \phi(n))
-            compute using extended Euclidian Algorithm
+            computed using Extended Euclidian Algorithm
         
         pk <- (n, e)
         sk <- (p, q, d)
@@ -123,13 +129,12 @@ RSA (1977)
         m = c^d (mod n)
 
 **Note:** `m` and `c` need to be `\in Z_n* =>` need to be relatively prime to
-`n`, so certain messages cannot be encrypted? The
-only messages that cannot be encrypted are `p` and `q` and their multiples. Note
-that if an adversary wanted to encrypt such messages, he would _literally_ have
-the factorization of `n`
+`n`, so certain messages cannot be encrypted? The only messages that cannot be
+encrypted are `p` and `q` and their multiples. Note that if an adversary wanted
+to encrypt such messages, he would _literally_ have the factorization of `n`
 
 We can prove using the _Chinese Remainder Theorem_ that RSA works even for 
-`m \notin Z_n*, but m \in Z_n (i.e. m does not need to be coprime to n)`
+`m \notin Z_n*`, but `m \in Z_n` (i.e. `m` does not need to be coprime to `n`)
 
 _Chinese Remainder Theorem:_
 
@@ -149,7 +154,7 @@ Theorem.
 
     m^(p-1) = 1 (mod p)     [ element of group raised to group order == identity]
                             [ or Fermat's theorem ]
-    m^(ed) = m^(1 + u*(p-1)) = m*(m^(p-1))^u = m*1^u = m (mod p)
+    m^(ed) = m^(1 + u*(p-1)) = m^1 * (m^(p-1))^u = m * 1^u = m (mod p)
 
 Security of RSA
 ---------------
@@ -160,6 +165,34 @@ primes.
 Best factoring algorithms today have running time `exp(c*(ln(n))^(1/3) * ln(ln(n))^(2/3))`, 
 where `n` is the number of bits in the `N = pq` number, subexponential time. (According to Wikipedia, 
 it's the number of bits in `n`.)
+
+Q: Why is it important to keep `\phi(n)` secret?  
+A: You can factor `n` knowing `\phi(n)`?
+
+        \phi(n) = (p-1)(q-1) => \phi(n) = pq - p - q + 1 =>
+        p + q = pq - \phi(n) + 1 => p + q = n - \phi(n) + 1
+
+        We expect p and q to be about the same size, so we can
+        guess them easily? Sure, but we can do better
+
+        We have:
+        (1) n = pq
+        (2) p + q = n - \phi(n) + 1
+          => 
+        q = (n - \phi(n) + 1) - p
+          => (substitute in (1))
+        n = p((n - \phi(n) + 1) - p)
+          = - p^2 * p((n+1) - \phi(n))
+          <=>
+        p^2 - p((n+1) - \phi(n)) + n = 0
+          <=> (2nd degree equation w/ a,b,c coeff.)
+        p = (-b +/- sqrt(b^2 - 4ac))/(2a)
+          = ...
+
+Q: If `d` is lost, can you factor `n`?  
+A: You can definitely decrypt and sign messages arbitrarily with `d`. The 
+[RSA paper](papers/rsa-paper.pdf) in section IX.C says that you can also efficiently factor `n` with
+knowledge of `e` and `d`.
 
 OAEP: Optimal Asymmetric Encryption Padding
 -------------------------------------------

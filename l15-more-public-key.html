@@ -47,6 +47,8 @@ playing with the homomorphic property, etc.</p>
 
 <p>We have <code>G_q</code> a group of prime order <code>q</code> (remember <code>g^q = 1</code>).</p>
 
+<p><strong>TODO:</strong> Are <code>g1/g2</code> generators of <code>G_q</code>?</p>
+
 <pre><code>Keygen(G_q):
     g1, g2           &lt;--R-- G_q
     x1,x2, y1,y2, z  &lt;--R-- Z_q (additive group mod q)
@@ -56,10 +58,11 @@ playing with the homomorphic property, etc.</p>
 
     pk = (g1, g2,  c,  d, h)
     sk = (x1, x2, y1, y2, z)
+</code></pre>
 
-    Let H be a hash function which maps G_q triples to Z_q
+<p>Let <code>H</code> be a hash function which maps <code>G_q</code> triples to <code>Z_q</code></p>
 
-Enc(m \in G_q):
+<pre><code>Enc(m \in G_q):
     r &lt;--R--- Z_q
     u1 &lt;- g1^r          (ElGamal-like)
     u2 &lt;- g2^r          (for the checking portion)
@@ -73,23 +76,27 @@ Enc(m \in G_q):
 Decrypt(ctext = u1, u2, e, v):
     \alpha = H(u1, u2, e)
 
-    [ u1^x1 u2^x2 = g^rx1 g^rx2 = c^r ]
+    [ u1^x1 u2^x2 = g1^rx1 g2^rx2 = c^r ]
     [ u1^y1 u2^y2 = d^r ]
-    [ u1^(x1+y1*\alpha) * u2^(x2*y2*\alpha) = 
-    checks that u1^(x1+y1*\alpha) * u2^(x2*y2*\alpha) == v
+    [ u1^(x1+y1*\alpha) * u2^(x2+y2*\alpha) =
+      u1^x1 u2^x2 * u1^(y1*\alpha) * u2^(y2*\alpha) =
+      u1^x1 u2^x2 * (u1^y1 * u2^y2)^\alpha = c^r * (d^r)^alpha = v ]
+
+    checks that u1^(x1+y1*\alpha) * u2^(x2+y2*\alpha) == v
         if not equal, then reject
 
-    [ need to invert h^r to get m out of e ]
-    [ don't have r, have z, so have h = g1^z ]
-    [ u1 = g1^r, u1^z = (g1^z)^r = h^r ]
+    [ need to divide by (invert) h^r to get m out of e ]
+    [ don't have r, have z =&gt; have h = g1^z ]
+    [ u1 = g1^r, u1^z = (g1^r)^z = h^r ]
     return e/u1^z
 </code></pre>
 
 <p><strong>Theorem:</strong> Cramer-Shoup is IND-CCA2 secure, assuming:</p>
 
 <ul>
-<li>Decisional Diffie-Hellman (CDH) is hard in <code>G_q</code> (Why not CDH? Not clear,
-maybe read paper?)</li>
+<li>Decisional Diffie-Hellman (CDH) is hard in <code>G_q</code> (Why not CDH? ElGamal needed
+DDH as well so as to maintain indistinguishability under chosen-plaintext <code>=&gt;</code>
+Cramer-Shoup, based on ElGamal will need it as well)</li>
 <li>H is "target collision resistant"
 <ul>
 <li><strong>TODO</strong> Is this assuming less than <em>one-way hash functions</em> exist?</li>
@@ -105,17 +112,17 @@ IND-CCA2-secure public key encryption schemes exist.</p>
 
 Keygen: 
     find large *random* primes p, q
-    n &lt;- pq
+    let n = pq
 
-    \phi(n) = |Z_n*| = (p-q)(q-1)
+    \phi(n) = |Z_n*| = (p-1)(q-1)
         this is unknown to the adversary
-        knowing \phi(n) &lt;=&gt; knowing factorization of n
+        knowing \phi(n) &lt;=&gt; knowing factorization of n 
 
     e &lt;--R-- Z*_\phi(n)
         just means that gcd(e, \phi(n)) = 1
 
     d &lt;- e^-1 (mod \phi(n))
-        compute using extended Euclidian Algorithm
+        computed using Extended Euclidian Algorithm
 
     pk &lt;- (n, e)
     sk &lt;- (p, q, d)
@@ -128,13 +135,12 @@ Dec(c \in Z_n*):
 </code></pre>
 
 <p><strong>Note:</strong> <code>m</code> and <code>c</code> need to be <code>\in Z_n* =&gt;</code> need to be relatively prime to
-<code>n</code>, so certain messages cannot be encrypted? The
-only messages that cannot be encrypted are <code>p</code> and <code>q</code> and their multiples. Note
-that if an adversary wanted to encrypt such messages, he would <em>literally</em> have
-the factorization of <code>n</code></p>
+<code>n</code>, so certain messages cannot be encrypted? The only messages that cannot be
+encrypted are <code>p</code> and <code>q</code> and their multiples. Note that if an adversary wanted
+to encrypt such messages, he would <em>literally</em> have the factorization of <code>n</code></p>
 
 <p>We can prove using the <em>Chinese Remainder Theorem</em> that RSA works even for 
-<code>m \notin Z_n*, but m \in Z_n (i.e. m does not need to be coprime to n)</code></p>
+<code>m \notin Z_n*</code>, but <code>m \in Z_n</code> (i.e. <code>m</code> does not need to be coprime to <code>n</code>)</p>
 
 <p><em>Chinese Remainder Theorem:</em></p>
 
@@ -155,7 +161,7 @@ Theorem.</p>
 
 <pre><code>m^(p-1) = 1 (mod p)     [ element of group raised to group order == identity]
                         [ or Fermat's theorem ]
-m^(ed) = m^(1 + u*(p-1)) = m*(m^(p-1))^u = m*1^u = m (mod p)
+m^(ed) = m^(1 + u*(p-1)) = m^1 * (m^(p-1))^u = m * 1^u = m (mod p)
 </code></pre>
 
 <h2>Security of RSA</h2>
@@ -166,6 +172,35 @@ primes.</p>
 <p>Best factoring algorithms today have running time <code>exp(c*(ln(n))^(1/3) * ln(ln(n))^(2/3))</code>, 
 where <code>n</code> is the number of bits in the <code>N = pq</code> number, subexponential time. (According to Wikipedia, 
 it's the number of bits in <code>n</code>.)</p>
+
+<p>Q: Why is it important to keep <code>\phi(n)</code> secret? <br />
+A: You can factor <code>n</code> knowing <code>\phi(n)</code>?</p>
+
+<pre><code>    \phi(n) = (p-1)(q-1) =&gt; \phi(n) = pq - p - q + 1 =&gt;
+    p + q = pq - \phi(n) + 1 =&gt; p + q = n - \phi(n) + 1
+
+    We expect p and q to be about the same size, so we can
+    guess them easily? Sure, but we can do better
+
+    We have:
+    (1) n = pq
+    (2) p + q = n - \phi(n) + 1
+      =&gt; 
+    q = (n - \phi(n) + 1) - p
+      =&gt; (substitute in (1))
+    n = p((n - \phi(n) + 1) - p)
+      = - p^2 * p((n+1) - \phi(n))
+      &lt;=&gt;
+    p^2 - p((n+1) - \phi(n)) + n = 0
+      &lt;=&gt; (2nd degree equation w/ a,b,c coeff.)
+    p = (-b +/- sqrt(b^2 - 4ac))/(2a)
+      = ...
+</code></pre>
+
+<p>Q: If <code>d</code> is lost, can you factor <code>n</code>? <br />
+A: You can definitely decrypt and sign messages arbitrarily with <code>d</code>. The 
+<a href="papers/rsa-paper.pdf">RSA paper</a> in section IX.C says that you can also efficiently factor <code>n</code> with
+knowledge of <code>e</code> and <code>d</code>.</p>
 
 <h2>OAEP: Optimal Asymmetric Encryption Padding</h2>
 
