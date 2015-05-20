@@ -7,7 +7,7 @@
 <li>very simple</li>
 <li>short signatures</li>
 </ul></li>
-<li><a href="http://cgi.di.uoa.gr/~aggelos/crypto/page4/assets/joux-tripartite.pdf">3-way key agreement</a> (Joux)
+<li>3-way key agreement: <a href="http://cgi.di.uoa.gr/~aggelos/crypto/page4/assets/joux-tripartite.pdf">A One Round Protocol for Tripartite Diffie-Hellman</a> (Joux)
 <ul>
 <li>Joux brought bilinear maps into the crypto world</li>
 </ul></li>
@@ -28,20 +28,32 @@
 
 <p><strong>Definition:</strong> A <em>gap group</em> is a group where Decisional Diffie Hellman (DDH) is <em>easy</em> but where Computational Diffie Hellman is <em>hard</em></p>
 
-<p>How do you construct one? Using this notion of a bilinear map.</p>
+<p>How do you construct one? Using this notion of a <em>bilinear map</em>.</p>
 
-<p>Suppose we have a main group <code>G1</code> and a shadow group <code>G2</code>.</p>
+<p>Suppose we have a main group <code>G1</code> and a <em>shadow group</em> <code>G2</code>, both multiplicative
+groups of order <code>q</code></p>
 
-<pre><code>G1 is a group of prime order q, has generator g (main group)
-G2 is a group of prime order q, has generator h (shadow group)
-</code></pre>
+<ul>
+<li><code>G1</code> is a group of prime order <code>q</code>, has generator <code>g</code> (main group)</li>
+<li><code>G2</code> is a group of prime order <code>q</code>, has generator <code>h</code> (shadow group)</li>
+</ul>
 
 <p>We have a pairing function <code>e</code>, or a bilinear map, such that it
 takes two elements from <code>G1</code> and gives you one in <code>G2</code>:</p>
 
-<pre><code>    e : G1 x G1 -&gt; G2
-    e(g,g) = h
-</code></pre>
+<ul>
+<li><code>e : G1 x G1 -&gt; G2</code></li>
+<li><code>e(g,g) = h</code></li>
+</ul>
+
+<p>What are all the properties of this function?</p>
+
+<ul>
+<li><code>e : G1 x G1 -&gt; G2</code></li>
+<li><code>e(g,g) = h</code></li>
+<li>Bilinear: <code>\forall u, v \in G1, and a,b \in Z</code>, we have <code>e(u^a, v^b) = e(u,v)^ab</code></li>
+<li>Non-degenerate: <code>e(g,g) != 1</code></li>
+</ul>
 
 <p>Picture to illustrate this shadowing operation:</p>
 
@@ -52,34 +64,36 @@ G2  h   h^a     h^b     h^b     h^ab
 (except the mapping function takes two args, not one)
 
 \forall (a,b), e(g^a, g^b) = h^ab
+</code></pre>
 
-The shadowing operation can be implemented as:
-e(g, g) = h
+<p>The shadowing operations can be implemented as:</p>
+
+<pre><code>e(g, g) = h
 e(g^a, g) = h^a
 e(g^b, g) = h^b
 e(g^a, g^b) = h^ab
 </code></pre>
 
-<p>Google for <a href="http://www.larc.usp.br/~pbarreto/pblounge.html">"pairing-based crypto lounge"</a>, to see
-applications of bilinear maps.</p>
+<p>Google for <a href="http://www.larc.usp.br/~pbarreto/pblounge.html">"pairing-based crypto lounge"</a>, to see applications of bilinear maps.</p>
 
 <p>In practice <code>G1</code> is an elliptic curve group and <code>G2</code> is a finite field like
-<code>Z_{p^6}</code>. Won't go into a discussion of what the bilinear map actually is (complicated apparently).</p>
+<code>Z_{p^6}</code>. Won't go into a discussion of what the bilinear map actually is
+(complicated apparently).</p>
 
 <p>You can compute a pairing function in like 25ms apparently.</p>
 
 <p><strong>Theorem:</strong> DDH is easy in G1, if you have G2 and a bilinear map from G1 to G2.</p>
 
-<p>To check if <code>g^a, g^b</code> and <code>g^c (could be g^r or g^ab)</code> are related, we can check if <code>e(g^a, g^b) = e(g, g^c)</code> (i.e., if <code>h^ab = h^c &lt;=&gt; ab = c (mod q)</code>)</p>
+<p>To check if <code>g^a, g^b</code> and <code>g^c</code> (could be <code>g^r</code> or <code>g^ab</code>) are related, we can check if <code>e(g^a, g^b) = e(g, g^c)</code> (i.e., if <code>h^ab = h^c &lt;=&gt; ab = c (mod q)</code>)</p>
 
 <p>Properties:</p>
 
 <pre><code>e(g^a,g^b) = e(g^a, g)^b = e(g, g)^ab, = e(g, g^b)^a
 </code></pre>
 
-<p><strong>Note:</strong> If DLP is easy in <code>G2</code> it is also easy in <code>G1</code> (can map <code>g^a =&gt; h^a</code>, can compute <code>a</code> from <code>h^a =&gt;</code> have <code>a</code> from <code>g^a</code>) . </p>
+<p><strong>Note:</strong> If DLP is easy in <code>G2</code> it is also easy in <code>G1</code> (can map <code>g^a =&gt; h^a</code>, can compute <code>a</code> from <code>h^a =&gt;</code> have <code>a</code> for <code>g^a</code>) . </p>
 
-<p>Q: Why do you need a prime order <code>q</code> group?</p>
+<p><strong>Q:</strong> Why do you need a prime order <code>q</code> group?</p>
 
 <h3>How to implement a gap group</h3>
 
@@ -103,23 +117,34 @@ applications of bilinear maps.</p>
 
 <p>We're gonna have a setup sort of like ElGamal. Assume all notation from previous section.</p>
 
-<p>Let <code>H : messages -&gt; G1</code> be collision-resistant (CR) hash function that maps messages to our <code>G1</code> group.</p>
+<p>Let <code>H : messages -&gt; G1</code> be collision-resistant (CR) hash function that maps
+messages to our <code>G1</code> group.</p>
 
 <p>Secret key is some value <code>x, 0 &lt; x &lt; q</code> picked randomly.
 Public key is <code>g^x</code> (in <code>G1</code>)</p>
 
 <p>To sign <code>M</code>, output <code>s_x(M) = (H(M))^x</code></p>
 
-<p>How to verify? Let <code>m = H(M)</code>, signature will be <code>m^x</code></p>
+<p>How to verify this signature? If we let <code>m = H(M)</code>, signature will be equal to 
+<code>m^x</code>.</p>
+
+<p>Bilinear maps allow us to "move betwen" these values:</p>
 
 <pre><code>g   g^x     m       m^x
 \   \-------/       /
  \-----------------/
 </code></pre>
 
-<p>Check that <code>e(g, m^x) = e(g^x, m) &lt;=&gt; e(g, g^tx) = e(g^x, g^t) &lt;=&gt; h^tx = h^tx
-&lt;=&gt; tx = tx</code> (note that since <code>m \in G1 =&gt; m = g^t</code>, for some <code>t</code>, we don't need
-to find <code>t</code>, we just use it here to show that we should get equality)</p>
+<p>To verify, we have to check that <code>e(g, m^x) = e(g^x, m)</code></p>
+
+<pre><code>e(g, m^x) = e(g^x, m) &lt;=&gt; (m = g^t, for some t, since G1 is cyclic) 
+e(g, g^tx) = e(g^x, g^t) &lt;=&gt;
+h^tx = h^tx &lt;=&gt; 
+tx = tx
+</code></pre>
+
+<p>Note that since <code>m \in G1 =&gt; m = g^t</code>, for some <code>t</code>, we don't need
+to find <code>t</code>, we just use it here to show that we should get equality.</p>
 
 <p>A general remark about elliptic curves, is that the DLP problem gets harder faster
 relative to the size of the group (compared to <code>Z_p*</code>)</p>
@@ -186,17 +211,17 @@ H2 : G2 -&gt; {0,1}^* (an element in G2 can be used to generate a keystream)
 TTP.</p>
 
 <pre><code>encrypt(M, name, y):
-    r &lt;-R- Z_q*
-    Q_A &lt;- H1(name), Q_A \in G1
-    g_A &lt;- e(Q_A, y), g_A \in G2
+    r   &lt;--R-- Z_q*
+    Q_A   &lt;--  H1(name),  Q_A \in G1
+    g_A   &lt;--  e(Q_A, g^s), g_A \in G2 
 
     ctext &lt;- (g^r, M \xor H2(g_A^r))
 
-my secret is sk = d_A = Q_A^s
+my secret is sk = d_A = H1(name)^s = Q_A^s
     gotta get it from the TTP, because I don't know s
 
 decrypt(d_A = Q_A^s, (u = g^r, v = M \xor H2(g_A^r))):
-    I have g, g^r, Q_A^s
+    I have g, g^s, g^r, Q_A^s
 
     v \xor H2(e(d_A, u)) = v \xor H2(e(Q_A^s, g^r))
 
@@ -207,4 +232,4 @@ decrypt(d_A = Q_A^s, (u = g^r, v = M \xor H2(g_A^r))):
 
 <p><strong>Note:</strong> You can encrypt to me, before I even have my secret...</p>
 
-<p>Can be shown to be semantically secure in the ROM</p>
+<p>Can be shown to be semantically secure in the Random Oracle Model.</p>

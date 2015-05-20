@@ -5,7 +5,7 @@ Today: Bilinear maps, April 8th
  - BLS (Boneh, Lynn, Shacham) signatures
    + very simple
    + short signatures
- - [3-way key agreement](http://cgi.di.uoa.gr/~aggelos/crypto/page4/assets/joux-tripartite.pdf) (Joux)
+ - 3-way key agreement: [A One Round Protocol for Tripartite Diffie-Hellman](http://cgi.di.uoa.gr/~aggelos/crypto/page4/assets/joux-tripartite.pdf) (Joux)
    + Joux brought bilinear maps into the crypto world
  - Identity-based encryption (IBE) (by Boneh, Franklin)
    + Example: encrypt using your email address as your public key
@@ -20,18 +20,26 @@ Today: Bilinear maps, April 8th
 
 **Definition:** A _gap group_ is a group where Decisional Diffie Hellman (DDH) is _easy_ but where Computational Diffie Hellman is _hard_
 
-How do you construct one? Using this notion of a bilinear map.
+How do you construct one? Using this notion of a _bilinear map_.
 
-Suppose we have a main group `G1` and a shadow group `G2`.
+Suppose we have a main group `G1` and a _shadow group_ `G2`, both multiplicative
+groups of order `q`
 
-    G1 is a group of prime order q, has generator g (main group)
-    G2 is a group of prime order q, has generator h (shadow group)
-    
+ - `G1` is a group of prime order `q`, has generator `g` (main group)
+ - `G2` is a group of prime order `q`, has generator `h` (shadow group)
+
 We have a pairing function `e`, or a bilinear map, such that it
 takes two elements from `G1` and gives you one in `G2`:
 
-        e : G1 x G1 -> G2
-        e(g,g) = h
+ - `e : G1 x G1 -> G2`
+ - `e(g,g) = h`
+
+What are all the properties of this function?
+
+ - `e : G1 x G1 -> G2`
+ - `e(g,g) = h`
+ - Bilinear: `\forall u, v \in G1, and a,b \in Z`, we have `e(u^a, v^b) = e(u,v)^ab`
+ - Non-degenerate: `e(g,g) != 1`
 
 Picture to illustrate this shadowing operation:
 
@@ -43,31 +51,32 @@ Picture to illustrate this shadowing operation:
 
     \forall (a,b), e(g^a, g^b) = h^ab
 
-    The shadowing operation can be implemented as:
+The shadowing operations can be implemented as:
+
     e(g, g) = h
     e(g^a, g) = h^a
     e(g^b, g) = h^b
     e(g^a, g^b) = h^ab
 
-Google for ["pairing-based crypto lounge"](http://www.larc.usp.br/~pbarreto/pblounge.html), to see
-applications of bilinear maps.
+Google for ["pairing-based crypto lounge"](http://www.larc.usp.br/~pbarreto/pblounge.html), to see applications of bilinear maps.
 
 In practice `G1` is an elliptic curve group and `G2` is a finite field like
-`Z_{p^6}`. Won't go into a discussion of what the bilinear map actually is (complicated apparently).
+`Z_{p^6}`. Won't go into a discussion of what the bilinear map actually is
+(complicated apparently).
 
 You can compute a pairing function in like 25ms apparently.
 
 **Theorem:** DDH is easy in G1, if you have G2 and a bilinear map from G1 to G2.
 
-To check if `g^a, g^b` and `g^c (could be g^r or g^ab)` are related, we can check if `e(g^a, g^b) = e(g, g^c)` (i.e., if `h^ab = h^c <=> ab = c (mod q)`)
+To check if `g^a, g^b` and `g^c` (could be `g^r` or `g^ab`) are related, we can check if `e(g^a, g^b) = e(g, g^c)` (i.e., if `h^ab = h^c <=> ab = c (mod q)`)
 
 Properties:
 
     e(g^a,g^b) = e(g^a, g)^b = e(g, g)^ab, = e(g, g^b)^a
 
-**Note:** If DLP is easy in `G2` it is also easy in `G1` (can map `g^a => h^a`, can compute `a` from `h^a => ` have `a` from `g^a`) . 
+**Note:** If DLP is easy in `G2` it is also easy in `G1` (can map `g^a => h^a`, can compute `a` from `h^a => ` have `a` for `g^a`) . 
 
-Q: Why do you need a prime order `q` group?
+**Q:** Why do you need a prime order `q` group?
 
 ### How to implement a gap group
 
@@ -90,22 +99,32 @@ BLS (Boneh, Lynn, Shacham) signatures
 
 We're gonna have a setup sort of like ElGamal. Assume all notation from previous section.
 
-Let `H : messages -> G1` be collision-resistant (CR) hash function that maps messages to our `G1` group.
+Let `H : messages -> G1` be collision-resistant (CR) hash function that maps
+messages to our `G1` group.
 
 Secret key is some value `x, 0 < x < q` picked randomly.
 Public key is `g^x` (in `G1`)
 
 To sign `M`, output `s_x(M) = (H(M))^x`
 
-How to verify? Let `m = H(M)`, signature will be `m^x`
+How to verify this signature? If we let `m = H(M)`, signature will be equal to 
+`m^x`.
+
+Bilinear maps allow us to "move betwen" these values:
 
     g   g^x     m       m^x
     \   \-------/       /
      \-----------------/
 
-Check that `e(g, m^x) = e(g^x, m) <=> e(g, g^tx) = e(g^x, g^t) <=> h^tx = h^tx
-<=> tx = tx` (note that since `m \in G1 => m = g^t`, for some `t`, we don't need
-to find `t`, we just use it here to show that we should get equality)
+To verify, we have to check that `e(g, m^x) = e(g^x, m)`
+
+    e(g, m^x) = e(g^x, m) <=> (m = g^t, for some t, since G1 is cyclic) 
+    e(g, g^tx) = e(g^x, g^t) <=>
+    h^tx = h^tx <=> 
+    tx = tx 
+
+Note that since `m \in G1 => m = g^t`, for some `t`, we don't need
+to find `t`, we just use it here to show that we should get equality.
 
 A general remark about elliptic curves, is that the DLP problem gets harder faster
 relative to the size of the group (compared to `Z_p*`)
@@ -171,17 +190,17 @@ You want to encrypt a message `M` to `name` using `y` as the public key of the
 TTP.
 
     encrypt(M, name, y):
-        r <-R- Z_q*
-        Q_A <- H1(name), Q_A \in G1
-        g_A <- e(Q_A, y), g_A \in G2
+        r   <--R-- Z_q*
+        Q_A   <--  H1(name),  Q_A \in G1
+        g_A   <--  e(Q_A, g^s), g_A \in G2 
 
         ctext <- (g^r, M \xor H2(g_A^r))
     
-    my secret is sk = d_A = Q_A^s
+    my secret is sk = d_A = H1(name)^s = Q_A^s
         gotta get it from the TTP, because I don't know s
 
     decrypt(d_A = Q_A^s, (u = g^r, v = M \xor H2(g_A^r))):
-        I have g, g^r, Q_A^s
+        I have g, g^s, g^r, Q_A^s
         
         v \xor H2(e(d_A, u)) = v \xor H2(e(Q_A^s, g^r))
 
@@ -191,4 +210,4 @@ TTP.
 
 **Note:** You can encrypt to me, before I even have my secret...
 
-Can be shown to be semantically secure in the ROM
+Can be shown to be semantically secure in the Random Oracle Model.
