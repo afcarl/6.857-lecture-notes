@@ -43,7 +43,11 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
    proofs (ZKPs), interactive proofs, Sudoku, 3-colorability, graph isomorphism,
    Hamiltonian cycle, discrete log
  * Lecture 19: **Computing on encrypted data** _[guest lecture](l19-computing-on-encrypted-data.html)_ by Vinod Vaikuntanathan: 
- * Lecture 20: [Electronic voting](l20-electronic-voting.html):
+ * Lecture 20: [Electronic voting](l20-electronic-voting.html): public voting,
+   paper ballots, lever machines, punch cards, optical scan, Direct Recording by
+   Electronics (DRE), Voter Verified Paper Audit Trail (VVPAT), DRE+VVPAT, vote 
+   by mail, internet voting (oh dear God), voting requirements, security threats,
+   end-to-end voting security, Twin (Rivest and Smith), Scantegrity (Chaum et al)
 
 Papers
 ------

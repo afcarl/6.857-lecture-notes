@@ -5,7 +5,7 @@ Interesting application of cryptography. Challenging primarily because of the
 need for a secret ballot (how individual people voted).
 
 Voting is not just about producing an answer, but also evidence that the
-answer is correct: convince losers that they lost fair and square
+answer is correct: convince losers that they lost fair and square.
 
 Voting tech survey
 ------------------
@@ -32,7 +32,6 @@ Voting tech survey
    + first used in 1970s
    + essentially a standalone computer
    + no state other than counts, produces no evidence
-
  - DRE + Voter-verified Paper Audit Trail (VVPAT)
    + "really terrible technology"
  - Vote by mail
@@ -82,7 +81,7 @@ Voting requirements
  - Accessibility: for voters with disabilities
  - Assurance: verifiable integrity
 
-Security threads
+Security threats
 ----------------
 
 Adversaries:
@@ -133,7 +132,7 @@ what happens
  - "academic" proposal
  - each paper ballot has a copy made that is put in mixer bin
  - voter casts original paper ballot (which is scanned and published
-   on web) and takes home from mixr bin a copy of some previous voter's ballot
+   on web) and takes home from mixer bin a copy of some previous voter's ballot
    as a receipt
  - then voter can check that the receipt he got is on the web
  - can detect fraud, but you'd better have a plan for what to do
@@ -150,9 +149,8 @@ Twin has all the "end-to-end" properties.
      - officials post revealed CCs
      - voters can confirm posting (uses ballot serial number for lookup) and
        protest if incorrect
-   + web  site
+   + web site
    + crypto in the back end
  - ballots can be scanned by ordinary scanners
  - ballots can be recounted by hand as usual
  
-
