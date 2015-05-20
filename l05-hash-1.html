@@ -1,0 +1,215 @@
+<h1>Today: Cryptographic hash functions</h1>
+
+<p>Today:</p>
+
+<ul>
+<li>definition</li>
+<li>random oracle model (ROM)</li>
+<li>desirable properties (CR, OW, ...)</li>
+<li>application</li>
+<li>construction</li>
+</ul>
+
+<h2>Hash functions</h2>
+
+<p><strong>Definition:</strong> A cryptographic hash function <code>h</code> maps bit-strings of arbitrary
+length to a fixed-length output in an efficient, deterministic, public,
+"random", manner</p>
+
+<pre><code>h : {0,1}* -&gt; {0,1}^d
+      /\        /\
+       \         \
+        \         \--------- all strings of length d
+         \
+          \---- all strings of any length &gt;= 0
+</code></pre>
+
+<ul>
+<li>Sometimes they are called <em>message digest</em> functions.</li>
+<li>Typical output lengths are: 128, 160, 256, 512 bits.</li>
+<li><strong>No</strong> secret key. Anyone can compute <code>h</code></li>
+<li>Computation is efficient</li>
+<li>Examples: 
+<ul>
+<li>MD4, 128 bits, broken w.r.t. collision resistance</li>
+<li>MD5, 128 bits, broken w.r.t. collision resistance</li>
+<li>SHA-1, 160 bits, possibly broken w.r.t to col. resist.?</li>
+<li>SHA-256, 256 bits,</li>
+<li>SHA-512, 512 bits,</li>
+<li>SHA-3 (a.k.a. Keccak), 224/256/384/512 bits</li>
+</ul></li>
+</ul>
+
+<h2>Ideal hash function: Random oracle (RO)</h2>
+
+<p>Random oracle theoretical model not achievable in practice (some proofs on the
+storage requirements I think are out there)</p>
+
+<p>Oracle "in the sky":</p>
+
+<ul>
+<li>receives inputs <code>x</code> and returns output <code>h(x)</code>, for any <code>x \in {0,1}*</code> such
+that <code>|h(x)| = d</code> bits</li>
+<li>on input <code>x</code>, if <code>x</code> is not in the oracle's book:
+<ul>
+<li>flip a coin <code>d</code> times to determine <code>h(x)</code></li>
+<li>record <code>(x, h(x))</code> in the book</li>
+</ul></li>
+<li>...else, return <code>y</code> where <code>(x,y)</code> is in the book</li>
+<li>gives a random answer every time, but uses this "book" to record answers so
+it is deterministic &amp; consistent</li>
+</ul>
+
+<p>Many cryptographic schemes are proved secure in the Random Oracle Model (ROM),
+which assumes the existence of such an RO. Then, we assumes it is fine (a big
+assumption that some cryptographers don't like) to replace the RO with a normal
+hash function like SHA in practice.</p>
+
+<h2>Hash function properties</h2>
+
+<p>These properties are expressed informally here:</p>
+
+<ol>
+<li><strong>One way (OW)</strong> (pre-image resistance)
+<ul>
+<li>"infeasible," given <code>y</code> to find any <code>x'</code> such that <code>h(x') = y</code></li>
+<li><code>x</code> is a <em>preimage</em> of <code>y</code></li>
+<li>in ROM, an <code>x'</code> can be found by brute-force in <code>\theta(2^d)</code> time</li>
+</ul></li>
+<li><strong>(Strong) Collision-resistance (CR)</strong>
+<ul>
+<li>"infeasible," to find <code>x, x'</code> s.t. <code>x != x</code> and <code>h(x) = h(x')</code></li>
+<li>this is known as a <em>collision</em></li>
+<li>in ROM, requires trying about <code>2^d/2 x</code> values before a pair of two <code>x</code> 
+values is found such that <code>h(x1) = h(x2), x1 != x2</code>
+<ul>
+<li>the "birthday paradox"</li>
+</ul></li>
+<li>note that collisions are unavoidable (<code>h</code> cannot be injective) because
+the domain of the function is infinite while the codomain/image is of
+cardinality <code>2^d</code></li>
+</ul></li>
+<li><strong>Target (or weak) collision resistance (TCR)</strong> (2nd preimage resistance)
+<ul>
+<li>"infeasible" given <code>x</code> to find <code>x' != x</code> such that <code>h(x) = h(x')</code></li>
+<li>in ROM, an <code>x'</code> can be found by brute-force in <code>\theta(2^d)</code> time</li>
+</ul></li>
+<li><strong>Pseudo-randomness (PRF)</strong>
+<ul>
+<li>"<code>h</code> is indistinguishable under black-box access from a random oracle"</li>
+<li>(to make this notion workable, we need a <em>family</em> of hash functions, one
+of which is picked at random. A single, fixed, public, hash function will
+be easy to distinguish otherwise: just remember what <code>h(0)</code> is for
+instance, and with high probability, the RO will output a different value
+on input <code>0</code>)</li>
+</ul></li>
+<li><strong>Non-malleability (NM)</strong>
+<ul>
+<li>"infeasible," given <code>h(x)</code>, to produce <code>h(x')</code> where <code>x</code> and <code>x'</code> are <em>related</em>
+such as <code>x' = f(x)</code>, for some function <code>f</code></li>
+</ul></li>
+</ol>
+
+<p><strong>Theorem:</strong> If <code>h</code> is CR, then <code>h</code> is TCR.
+<strong>Theorem:</strong> <code>h</code> is OW does not imply <code>h</code> is CR
+<strong>Theorem:</strong> <code>h</code> is CR does not imply <code>h</code> is OW
+<strong>Theorem:</strong> <code>h</code> is CR <em>and</em> <code>h</code> "compresses" implies <code>h</code> is OW</p>
+
+<h2>Applications</h2>
+
+<h3>Password storage</h3>
+
+<ul>
+<li>store <code>h(password)</code>, not <code>password</code> on server</li>
+<li>when user logs in, check hash of his password against table of hashed passwords</li>
+<li>disclosure of <code>h(password)</code> should not reveal <code>password</code> (or any equivalent
+preimage)</li>
+<li>Need <code>h</code> to be <strong>one-way (OW)</strong></li>
+<li>If goal is to not let other users who don't know the password log in, then
+we also need <strong>target collision resistance (TCR)</strong>, so that an adversary
+cannot come up with a <code>p'</code> such that <code>h(p') = h(password)</code></li>
+</ul>
+
+<h3>File modification detector</h3>
+
+<ul>
+<li>for each file <code>f</code> store <code>h(f)</code> securely</li>
+<li>can check if <code>f</code> has been modified by recomputing <code>h(f)</code>
+<ul>
+<li>need to be sure this is the same <code>h(f)</code> as the one I stored, otherwise
+attacker can modify <code>f -&gt; f'</code> and <code>h(f) -&gt; h(f')</code></li>
+</ul></li>
+<li>need <strong>target collision resistance (TCR)</strong>
+<ul>
+<li>prevents adversary from coming up with an <code>f'</code> such that <code>h(f') = h(f)</code></li>
+</ul></li>
+</ul>
+
+<h3>Digital signatures</h3>
+
+<ul>
+<li>signing large <code>M</code> is done by signing <code>m = H(M)</code> instead (<em>hash &amp; sign</em>)
+<ul>
+<li>some signature <code>s</code> is computed as <code>s = sign(M, secret_key)</code></li>
+</ul></li>
+<li>verifier computes <code>h(M)</code> from  <code>M</code> then verifies signature <code>s</code>
+<ul>
+<li>verifier calls <code>verify(M, s, public_key)</code></li>
+</ul></li>
+<li>need <strong>collision resistance (CR)</strong>
+<ul>
+<li>otherwise, if Alice finds a collision <code>x, x'</code> with <code>h(x) = h(x')</code>, then
+Alice can ask Bob to sign <code>x</code> and claim (or prove to Charlie) that Bob
+signed <code>x'</code></li>
+<li>don't need one-way because <code>h(x) = x</code> is still correct (just not as 
+space efficient as we might want)</li>
+</ul></li>
+</ul>
+
+<h3>Commitments</h3>
+
+<ul>
+<li>Alice wants to commit to a value <code>x</code> to Bob and then reveal it later to Bob</li>
+<li>Alice has value <code>x</code> (e.g. auction bid)</li>
+<li>Alice commits to her value <code>x</code> by computing <code>C(x)</code></li>
+<li>Alice submits <code>C(x)</code> as her sealed commitment (i.e. sealed bit)</li>
+<li>Alice can <em>open</em> <code>C(x)</code> later and reveal <code>x</code> to whomever she committed to</li>
+</ul>
+
+<p>Properties:</p>
+
+<ul>
+<li><strong>Binding:</strong> Alice should not be able to open <code>C(x)</code> in more than one way (she
+is committed to just one <code>x</code>)</li>
+<li><strong>Secrecy (hiding):</strong> No one seeing <code>C(x)</code> learns anything about <code>x</code></li>
+<li><strong>Non-malleability:</strong> Given <code>C(x)</code>, it shouldn't be possible to produce 
+<code>C(f(x))</code> for some function <code>f</code></li>
+</ul>
+
+<p>How can we build a commitment scheme?</p>
+
+<p>Let the commitment be equal to <code>C(x)</code>, where <code>C(x) = h(r||x), r &lt;--R-- {0,1}^256</code></p>
+
+<ul>
+<li>To commit, we send <code>C(x)</code> to Bob but <strong>not</strong> <code>r</code></li>
+<li>To reveal it, we just send <code>r</code> to Bob</li>
+<li>The randomization using <code>r</code> allows us to maintain the <em>secrecy</em> property</li>
+</ul>
+
+<p>Need: </p>
+
+<ul>
+<li><strong>OW</strong> so that Bob cannot learn possible values for <code>x</code> 
+<ul>
+<li>need more for secrecy though, because if <code>h(r||x)</code> leaks info about <code>x</code>
+that could be good enough for Bob</li>
+<li>seems like we need pseudo-randomness (PRF) as well</li>
+</ul></li>
+<li><strong>CR</strong> so that Alice cannot come up with <code>x, x'</code> where <code>h(x) = h(x')</code>, commit
+to <code>x</code> and then reveal <code>x'</code> instead of <code>x</code>
+<ul>
+<li>CR implies TCR</li>
+</ul></li>
+<li><strong>NM</strong> so that Bob, or Mallory sitting between Alice and Bob, cannot change
+Alice's commitment in any way</li>
+</ul>

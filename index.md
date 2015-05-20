@@ -5,11 +5,15 @@ Lectures
 --------
 Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail.mit.edu/rivest/). Some lecture notes are exactly the ones posted on the 6.857 [course website](https://courses.csail.mit.edu/6.857/2015/)
 
- * Lecture 1: Introduction:
+ * Lecture 1: [Introduction](lec-slides/L01-course-introduction.pdf)
  * Lecture 2: (Cancelled):
- * Lecture 3: Security principles: growth of cryptography: original notes
- * Lecture 4: One-time pad:
- * Lecture 5: Hash functions I:
+ * Lecture 3: [Security principles](lec-slides/L03-security-principles.pdf) and
+   [Growth of crypto](lec-slides/L03-growth-of-crypto.pdf)
+ * Lecture 4: [One-time pad](lec-slides/L04-one-time-pad.pdf)
+ * Lecture 5: [Hash functions I](l05-hash-1.html): random oracle model (ROM),
+   one-way, collision-resistance, target collision resistance, preimage attack,
+   second preimage attack, pseudo-randomness, non-malleability, hashed passwords,
+   digital signatures, commitment schemes
  * Lecture 6: [Hash functions II](l06-hash-2.html): puzzles, Hashcash ('97), 
    Merkle's public-key crypto using puzzles, Merkle-Damgaard construction, 
    Davies-Meyer construction, MD5
