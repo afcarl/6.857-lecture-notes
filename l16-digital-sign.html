@@ -186,12 +186,14 @@ Verify(M, y = g^x, (r, s)):
 
 <p>Why does verification work?</p>
 
-<pre><code>y^r = g^rx
-r^s = (g^k)^s
+<pre><code>y^r = g^(rx)
+r^s = (g^k)^s = g^k*((m-rx)/k) = g^(m-r*x)
 
-y^r * r^s = g^(rs + sk) = ??? = g^m (mod p)
+y^r * r^s = g^(rx + m - rx) = g^m (mod p)
 
-&lt;=&gt; rs + sk = m (mod p-1) &lt;=&gt; s = (m-rx)/k
+or alternatively,
+y^r * r^s = g^m (mod p) &lt;=&gt; g^(rx) * g^(sk) = g^m (mod p) &lt;=&gt;
+rx + sk = m (mod p-1) &lt;=&gt; s = (m-rx)/k
 </code></pre>
 
 <p>Why the p-1? The order of <code>g</code> is <code>p-1</code>, so things repeat after raising <code>g^{p-1} = 1</code></p>
@@ -200,7 +202,7 @@ y^r * r^s = g^(rs + sk) = ??? = g^m (mod p)
 
 <p>Note that the identity function is CR hash function.</p>
 
-<p><strong>Theorem:</strong> ElGamal digital signatures are existentially forgeable.
+<p><strong>Theorem:</strong> ElGamal digital signatures are existentially forgeable. <br />
 <strong>Proof:</strong> </p>
 
 <ul>
@@ -237,6 +239,8 @@ chosen message attack in the Random Oracle Model assuming discrete log problem
 
 <h2>Digital Signature Algorithm</h2>
 
+<p>Read <a href="papers/dsa.pdf">DSA FIPS standard here</a>.</p>
+
 <ul>
 <li>DSA (NIST 1991)</li>
 <li>based on ElGamal</li>
@@ -256,27 +260,32 @@ g0 generates Z_p*
 g = g0^n generates subgroup G_q of order q
  - hard to tell appart G_q and Z_p*, given a random element
 
-x &lt;- R - Z_q        // 160 bits
-y &lt; g^x mod p       // 1024 bits
+x &lt;--R-- Z_q*       // 160 bits, x \in [1, q) (not in G_q)
+y &lt;-- g^x mod p     // 1024 bits
 
 SK = x, PK = y
 
-Sign():
-    k &lt;-R- Z_q*     // 1 &lt;= k &lt; q
-    r &lt;- ((g^k mod p) mod q)    // |r| = 160 bits
+Sign(M):
+    k &lt;--R-- Z_q*               // 1 &lt;= k &lt; q
+    r &lt;-- ((g^k mod p) mod q)   // |r| = 160 bits
 
-    m &lt;- h(M)
+    m &lt;-- h(M)
 
-    s &lt;- (m+rx)/k mod q     // + instead of -, |s| = 160 bits
+    s &lt;-- (m+rx)/k mod q        // + instead of -, |s| = 160 bits
     redo if r = 0 or s = 0
 
     output (r, s)
 
-Verify():
+Verify(M, r, s):
+    m &lt;-- h(M)
+
     check that 0 &lt; r &lt; q &amp; 0 &lt; s &lt; q 
+
     check that y^(r/s) g^(m/s) (mod p)(mod q) = r
-        g^(rx + m)/s = r (mod p)(mod q)
-        note that k = (rx + m)/s and r = g^k
+
+    [ note that s = (rx + m)/k and r = g^k
+      y^(r/s) = g^(rx/s) =&gt;
+      y^(r/s) * g^(m/s) = g^(rx + m)/s = g^(m+rx)/((m+rx/k)) = g^k = r ]
 </code></pre>
 
 <p>As before, it's forgeable with certain hash functions. Fix is the same.</p>

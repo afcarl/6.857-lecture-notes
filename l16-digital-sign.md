@@ -175,12 +175,14 @@ ElGamal Digital Signatures
 
 Why does verification work?
 
-    y^r = g^rx
-    r^s = (g^k)^s
+    y^r = g^(rx)
+    r^s = (g^k)^s = g^k*((m-rx)/k) = g^(m-r*x)
 
-    y^r * r^s = g^(rs + sk) = ??? = g^m (mod p)
-
-    <=> rs + sk = m (mod p-1) <=> s = (m-rx)/k
+    y^r * r^s = g^(rx + m - rx) = g^m (mod p)
+    
+    or alternatively,
+    y^r * r^s = g^m (mod p) <=> g^(rx) * g^(sk) = g^m (mod p) <=>
+    rx + sk = m (mod p-1) <=> s = (m-rx)/k
 
 Why the p-1? The order of `g` is `p-1`, so things repeat after raising `g^{p-1} = 1`
 
@@ -188,7 +190,7 @@ Can you forge signatures? Yes you can.
 
 Note that the identity function is CR hash function.
 
-**Theorem:** ElGamal digital signatures are existentially forgeable.
+**Theorem:** ElGamal digital signatures are existentially forgeable.  
 **Proof:** 
 
  - Pick `h(x) = x` as the hash function
@@ -223,6 +225,8 @@ Foundation for other schemes, such as the DSA scheme.
 Digital Signature Algorithm
 ---------------------------
 
+Read [DSA FIPS standard here](papers/dsa.pdf).
+
  - DSA (NIST 1991)
  - based on ElGamal
  - had the same bug as ElGamal
@@ -240,26 +244,32 @@ Diagram:
     g = g0^n generates subgroup G_q of order q
      - hard to tell appart G_q and Z_p*, given a random element
 
-    x <- R - Z_q        // 160 bits
-    y < g^x mod p       // 1024 bits
+    x <--R-- Z_q*       // 160 bits, x \in [1, q) (not in G_q)
+    y <-- g^x mod p     // 1024 bits
 
     SK = x, PK = y
 
-    Sign():
-        k <-R- Z_q*     // 1 <= k < q
-        r <- ((g^k mod p) mod q)    // |r| = 160 bits
+    Sign(M):
+        k <--R-- Z_q*               // 1 <= k < q
+        r <-- ((g^k mod p) mod q)   // |r| = 160 bits
 
-        m <- h(M)
+        m <-- h(M)
 
-        s <- (m+rx)/k mod q     // + instead of -, |s| = 160 bits
+        s <-- (m+rx)/k mod q        // + instead of -, |s| = 160 bits
         redo if r = 0 or s = 0
 
         output (r, s)
 
-    Verify():
+    Verify(M, r, s):
+        m <-- h(M)
+
         check that 0 < r < q & 0 < s < q 
+
         check that y^(r/s) g^(m/s) (mod p)(mod q) = r
-            g^(rx + m)/s = r (mod p)(mod q)
-            note that k = (rx + m)/s and r = g^k
+
+        [ note that s = (rx + m)/k and r = g^k
+          y^(r/s) = g^(rx/s) =>
+          y^(r/s) * g^(m/s) = g^(rx + m)/s = g^(m+rx)/((m+rx/k)) = g^k = r ]
+          
 
 As before, it's forgeable with certain hash functions. Fix is the same.

@@ -35,7 +35,8 @@ Lecture notes from 6.857, taught by [Prof. Ronald L. Rivest](http://people.csail
    Pedersen commitments, ElGamal, Decisional Diffie-Hellman (DDH) problem
  * Lecture 15: [Public key crypto II](l15-more-public-key.html): IND-CCA2 security
    Cramer-Shoup, RSA, making RSA IND-CCA2-secure, other RSA security aspects
- * Lecture 16: [Digital signatures](l16-digital-sign.html):
+ * Lecture 16: [Digital signatures](l16-digital-sign.html): hash and sign, RSA
+   PKCS, RSA PSS, ElGamal, Digital Signature Algorithm (DSA)
  * Lecture 17: [Bilinear maps](l17-bilinear-maps.html):
  * Lecture 18: [Zero knowledge proofs](l18-zero-knowledge.html):
  * Lecture 19: **Computing on encrypted data** _[guest lecture](l19-computing-on-encrypted-data.html)_ by Vinod Vaikuntanathan: 
@@ -56,6 +57,7 @@ Papers we read in 6.857 ([directory here](papers/)):
  * [A method for obtaining digital signatures and public-key cryptosystems](papers/rsa-paper.pdf), Rivest, Shamir, Adleman
  * [Twenty years of attacks on the RSA cryptosystem](papers/rsa-attacks.pdf), Dan Boneh
  * [New directions in cryptography](papers/diffie-hellman.pdf), Diffie-Hellman
+ * [FIPS PUB 186-4: Digital Signature Standard (DSS)](papers/dsa.pdf)
  * [Sequences of Games: A Tool for Taming Complexity in Security Proofs](papers/games.pdf)
 
 Slides, articles
