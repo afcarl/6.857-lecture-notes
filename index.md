@@ -68,6 +68,8 @@ Papers we read in 6.857 ([directory here](papers/)):
  * [A method for obtaining digital signatures and public-key cryptosystems](papers/rsa-paper.pdf), Rivest, Shamir, Adleman
  * [Twenty years of attacks on the RSA cryptosystem](papers/rsa-attacks.pdf), Dan Boneh
  * [New directions in cryptography](papers/diffie-hellman.pdf), Diffie-Hellman
+ * [Cramer-Shoup cryptosystem](papers/cramer-shoup.pdf)
+ * [ElGamal cryptosystem](papers/elgamal.pdf)
  * [FIPS PUB 186-4: Digital Signature Standard (DSS)](papers/dsa.pdf)
  * [Sequences of Games: A Tool for Taming Complexity in Security Proofs](papers/games.pdf)
 
@@ -82,5 +84,3 @@ TODOs
 -----
 
  * Lecture 6: MD5 drawing
- * Lecture 13: write from scratch
-
