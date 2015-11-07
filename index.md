@@ -79,6 +79,7 @@ Slides, articles
  * [Spritz](papers/spritz-slides.pdf) slides
  * [How to choose an authenticated encryption mode](papers/how-to-choose-an-ae-mode.pdf), Matthew Green
  * [Intro to Bilinear Maps](papers/bilinear-maps.pdf)
+ * [How to Explain Zero-Knowledge Protocols to Your Children](http://pages.cs.wisc.edu/~mkowalcz/628.pdf)
 
 TODOs
 -----

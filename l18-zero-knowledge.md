@@ -12,6 +12,8 @@ Today:
 Zero-knowledge proof
 --------------------
 
+**Brilliant explanation for 3 year olds:** [How to Explain Zero-Knowledge Protocols to Your Children](http://pages.cs.wisc.edu/~mkowalcz/628.pdf)
+
 We have a _prover_ (Peggy) and a _verifier_ (Victor) and some common input 
 `x` which is the statement to be proved.
 
