@@ -85,7 +85,7 @@ Suppose we make up codes for the numbers, s.t. each number is a letter
 But this is a one to one mapping, so if we just translated our solution to this
 the verifier can just extract the solution and learn it.
 
-If we use commitments for each letter, then we can hide the solution.
+If we use _non-deterministic_ commitments for each letter, then we can hide the solution.
 
 A challenge can be "open a commitment to a row/column/block". Note that now 
 the verifier will learn some mappings. So now the verifier will want to ask again,
@@ -111,10 +111,9 @@ Stages:
  - **Key:** the verifier can pick any row / column / cell `=>` the prover better
    have all of them be correct or he risks being discovered!
 
-Note: Verifier needs to make sure a unique set of 9 letters are used, otherwise
-the prover might use extra letters to cheat. If prover uses a set of 9*9 letters,
-then all comparisons will yield "not equal", and a clueless verifier would think
-the puzzle is solved.
+**Note:** Verifier needs to make sure a unique set of 9 letters are used by the prover.
+Otherwise, the prover might use extra letters to cheat.
+If prover uses a set of 9*9 letters and carefully commits to the 9x9 table such that each row and column has unique letters, then, a clueless verifier would think the puzzle is solved no matter which (and how many) row or column he asked for.
 
 Graph 3-colorability
 --------------------
@@ -126,7 +125,8 @@ The prover's solution is the mapping from vertex to color.
 
 Phase I:
 
- - prover commits to all colors and sends it to the verifier
+ - prover _non-deterministically_ commits to a coloring (i.e. `\forall v \in VertexSet, commit(v, color(v)`) and sends it to the verifier
+   + and to the colors (i.e.
  - verifier picks an edge and asks prover to open the two commitments
    and the commitments of the colors
  - note that the verifier could learn the vertex colors if we just repeat this
@@ -163,7 +163,7 @@ isomorphism is correct: for every edge in `G` (or in `H`), he checks if that
 edge is also present in `J` (after remapping `G` nodes to `J` nodes according
 to the revealed isomorphism)
 
-Note: It seems that verifier also has to make sure `J` has the same # of edges
+**Note:** It seems that verifier also has to make sure `J` has the same # of edges
 as `G` and `H`. Otherwise, the prover could provide a fully connected `J` whose
 edge checks always pass => any isomorphism the prover picks would pass.
 

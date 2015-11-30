@@ -98,7 +98,7 @@ O B F H I E G C A
 <p>But this is a one to one mapping, so if we just translated our solution to this
 the verifier can just extract the solution and learn it.</p>
 
-<p>If we use commitments for each letter, then we can hide the solution.</p>
+<p>If we use <em>non-deterministic</em> commitments for each letter, then we can hide the solution.</p>
 
 <p>A challenge can be "open a commitment to a row/column/block". Note that now 
 the verifier will learn some mappings. So now the verifier will want to ask again,
@@ -128,10 +128,9 @@ to prevent him from learning anything</li>
 have all of them be correct or he risks being discovered!</li>
 </ul>
 
-<p>Note: Verifier needs to make sure a unique set of 9 letters are used, otherwise
-the prover might use extra letters to cheat. If prover uses a set of 9*9 letters,
-then all comparisons will yield "not equal", and a clueless verifier would think
-the puzzle is solved.</p>
+<p><strong>Note:</strong> Verifier needs to make sure a unique set of 9 letters are used by the prover.
+Otherwise, the prover might use extra letters to cheat.
+If prover uses a set of 9*9 letters and carefully commits to the 9x9 table such that each row and column has unique letters, then, a clueless verifier would think the puzzle is solved no matter which (and how many) row or column he asked for.</p>
 
 <h2>Graph 3-colorability</h2>
 
@@ -143,7 +142,10 @@ assigned a color out of 3 colors s.t. no two adjacent vertices have the same col
 <p>Phase I:</p>
 
 <ul>
-<li>prover commits to all colors and sends it to the verifier</li>
+<li>prover <em>non-deterministically</em> commits to a coloring (i.e. <code>\forall v \in VertexSet, commit(v, color(v)</code>) and sends it to the verifier
+<ul>
+<li>and to the colors (i.e.</li>
+</ul></li>
 <li>verifier picks an edge and asks prover to open the two commitments
 and the commitments of the colors</li>
 <li>note that the verifier could learn the vertex colors if we just repeat this</li>
@@ -181,7 +183,7 @@ isomorphism is correct: for every edge in <code>G</code> (or in <code>H</code>),
 edge is also present in <code>J</code> (after remapping <code>G</code> nodes to <code>J</code> nodes according
 to the revealed isomorphism)</p>
 
-<p>Note: It seems that verifier also has to make sure <code>J</code> has the same # of edges
+<p><strong>Note:</strong> It seems that verifier also has to make sure <code>J</code> has the same # of edges
 as <code>G</code> and <code>H</code>. Otherwise, the prover could provide a fully connected <code>J</code> whose
 edge checks always pass => any isomorphism the prover picks would pass.</p>
 
