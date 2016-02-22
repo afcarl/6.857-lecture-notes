@@ -1,57 +1,45 @@
-<h1>Cryptographic hash functions II</h1>
-
-<p>One value: <code>h(x) = y</code>, y "represents" x</p>
-
-<h2>Puzzles</h2>
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<h1 id="cryptographic-hash-functions-ii">Cryptographic hash functions II</h1>
+<p>One value: <code>h(x) = y</code>, y “represents” x</p>
+<h2 id="puzzles">Puzzles</h2>
 <pre><code>h : {0,1}^* -&gt; {0,1}^d
-</code></pre>
-
-<p>Given <code>y = h(x)</code> find <code>x</code> such that <code>h(x) = y</code> tends to take <code>O(2^d)</code> time,
-assuming <code>h</code> models a <em>random oracle</em> (each trial is correct with prob. <code>2^-d</code>)</p>
-
-<p>If <code>d</code> is small like 32, then it's feasible for adversary to invert.</p>
-
+    </code></pre>
+<p>Given <code>y = h(x)</code> find <code>x</code> such that <code>h(x) = y</code> tends to take <code>O(2^d)</code> time, assuming <code>h</code> models a <em>random oracle</em> (each trial is correct with prob. <code>2^-d</code>)</p>
+<p>If <code>d</code> is small like 32, then it’s feasible for adversary to invert.</p>
 <p>Easy to create many puzzles with <em>keyed hash functions</em>: <code>h_k(x) = h(k || x)</code></p>
-
 <p>Puzzle spec: <code>(k, d, y)</code>, find <code>x</code> s.t. <code>h(x) = y</code></p>
-
-<h2>Hashcash (Adam Back, 97')</h2>
-
-<p>Fight spam. Make people "pay" for sending an email.</p>
-
+<h2 id="hashcash-adam-back-97">Hashcash (Adam Back, 97’)</h2>
+<p>Fight spam. Make people “pay” for sending an email.</p>
 <p>Solve for <code>r</code>: <code>h(k || r), where k = sender|receiver|date|time</code></p>
-
 <p>Verifier checks the date/time match current time and verifies hash checks out.</p>
-
-<p>Spammers have botnets nowadays that can compute these hashes, so "proof-of-work" mechanisms don't really work that well anymore.</p>
-
-<h2>Merkle's idea for public key crypto using puzzles</h2>
-
+<p>Spammers have botnets nowadays that can compute these hashes, so “proof-of-work” mechanisms don’t really work that well anymore.</p>
+<h2 id="merkles-idea-for-public-key-crypto-using-puzzles">Merkle’s idea for public key crypto using puzzles</h2>
+<p>See paper <a href="papers/PuzzlesAsPublished.pdf">here</a>.</p>
 <p>How can Alice and Bob establish a secret here, if Eve can listen in?</p>
-
 <pre><code>Alice *-----------------------------*---------------------------------* Bob
                                      \
-                                      \-&gt; Eve (passive, listens)
-</code></pre>
-
+                                      \-&gt; Eve (passive, listens)</code></pre>
 <p>Use puzzles to solve this problem.</p>
-
-<ol>
+<ol style="list-style-type: decimal">
 <li>Bob could make <code>n</code> puzzles (1 million/billion) of difficulty <code>D</code> controlled by Bob.</li>
 <li>Bob sends puzzles to Alice. Eve sees all of them.</li>
-<li>Alice picks one at random and solves it (let it be puzzle <code>i</code>). Neither Bob
-nor Eve knows which puzzle Alice picked.</li>
-<li>Alice lets Bob know which one she solved (careful with the details: can't
-let Eve know)</li>
+<li>Alice picks one at random and solves it (let it be puzzle <code>i</code>). Neither Bob nor Eve knows which puzzle Alice picked.</li>
+<li>Alice lets Bob know which one she solved (careful with the details: can’t let Eve know)</li>
 <li>So now they have a shared secret.</li>
 </ol>
-
 <p>Notes:</p>
-
 <ul>
-<li>work for Alice and Bob: <code>O(n)</code> to make the puzzles, plus <code>O(D)</code> for Alice to
-solve the puzzles.
+<li>work for Alice and Bob: <code>O(n)</code> to make the puzzles, plus <code>O(D)</code> for Alice to solve the puzzles.
 <ul>
 <li><code>D</code> and <code>n</code> tend to be the same, so total work is <code>O(n)</code></li>
 </ul></li>
@@ -61,94 +49,51 @@ solve the puzzles.
 <li>she hears some secret indication about which puzzle was solved
 <ul>
 <li>how does she attack this?</li>
-<li>we're aiming at <code>O(nD) = O(n^2)</code> work for Eve</li>
-<li>if we make <code>n</code> 1 billion (feasible nowadays), then the gap between
-<code>O(n)</code> and <code>O(n^2)</code> could be good enough</li>
+<li>we’re aiming at <code>O(nD) = O(n^2)</code> work for Eve</li>
+<li>if we make <code>n</code> 1 billion (feasible nowadays), then the gap between <code>O(n)</code> and <code>O(n^2)</code> could be good enough</li>
 </ul></li>
 </ul></li>
 </ul>
-
-<h3>Details</h3>
-
-<p>Puzzle <code>i</code> can be <code>P_i = (y_i, E_x_i(k_i), h(i, || x_i) = y_i)</code>, where <code>k_i</code> is
-a random 256bit key, encrypted under <code>x_i</code> which is what Alice needs to get by
-inverting <code>y_i = h(i || x_i)</code>.</p>
-
-<p>Let <code>x_i</code> be <code>\in {0,1}^d</code> and <code>y_i \in {0,1}^2d</code> (apparently for some collision
-reasons)</p>
-
-<p>How does Alice tell Bob which one she solved? She can send <code>h(k_i)</code> to Bob.</p>
-
-<h2>How do you build a good hash function?</h2>
-
-<h3>The Merkle-Damgaard construction</h3>
-
-<p>Trying to build <code>h:{0,1}^* -&gt; {0,1}^d</code> that is collision-resistant (CR), one-way
-(OW), etc.</p>
-
+<h3 id="details">Details</h3>
+<p>Puzzle <span class="math">\(i\)</span> can be <span class="math">\(P_i = (y_i, E_{x_i}(k_i), h(i \mid\mid x_i) = y_i)\)</span>, where <span class="math">\(k_i\)</span> is a random 256bit key, encrypted under <span class="math">\(x_i\)</span> which is what Alice needs to get by inverting <span class="math">\(y_i = h(i \mid\mid x_i)\)</span>.</p>
+<p>Let <span class="math">\(x_i\in \{0,1\}^d\)</span> and <span class="math">\(y_i \in \{0,1\}^{2d}\)</span> (apparently for some collision reasons) be two binary strings.</p>
+<p>How does Alice tell Bob which one she solved? She can send <span class="math">\(h(k_i)\)</span> to Bob.</p>
+<h2 id="how-do-you-build-a-good-hash-function">How do you build a good hash function?</h2>
+<h3 id="the-merkle-damgaard-construction">The Merkle-Damgaard construction</h3>
+<p>Trying to build <code>h:{0,1}^* -&gt; {0,1}^d</code> that is collision-resistant (CR), one-way (OW), etc.</p>
 <p>Very long message, break it into blocks:</p>
-
-<p><code>c</code> = "chaining variable", <code>|c| = 512 bits</code>
-<code>b</code> = message block size (maybe 512 bits)</p>
-
-<p>Let <code>f : {0,1}^c \times {0,1}^b -&gt; {0, 1}^c</code> (a compression function) be a nice
-CR, OW primitive that can deal with <em>fixed-length inputs</em></p>
-
-<p>Padding a message <code>M</code> to a multiple of <code>b</code> bits. Important that padding is
-invertible: otherwise multiple messages can pad to the same value and you'll
-easily be able to find collisions apparently.</p>
-
+<p><code>c</code> = “chaining variable”, <code>|c| = 512 bits</code> <code>b</code> = message block size (maybe 512 bits)</p>
+<p>Let <code>f : {0,1}^c \times {0,1}^b -&gt; {0, 1}^c</code> (a compression function) be a nice CR, OW primitive that can deal with <em>fixed-length inputs</em></p>
+<p>Padding a message <code>M</code> to a multiple of <code>b</code> bits. Important that padding is invertible: otherwise multiple messages can pad to the same value and you’ll easily be able to find collisions apparently.</p>
 <pre><code>| |M| bits              |        | 64 bits
 ----------------------------------------
 | M                     | 100000 | |M| |
-----------------------------------------
-</code></pre>
-
+----------------------------------------</code></pre>
 <p>We have our compression function <code>f</code></p>
-
 <pre><code>   m_1      *-*    m_2       *-*         m_1       *-*   
     |       |  \    |        |  \         |        |  \ 
     |-----&gt; |   \   |-----&gt;  |   \        |-----&gt;  |   \
       c_0   | f |     c_1    | f |         c_{n-1} | f |   c_n
  IV  -----&gt; |   |    -----&gt;  |   |  ....   -----&gt;  |   |  -----&gt;
-            *---*            *---*                 *---*
-</code></pre>
-
+            *---*            *---*                 *---*</code></pre>
 <p>Then, <code>h(m) = c_n</code></p>
-
-<h3>Why is this a good method?</h3>
-
+<h3 id="why-is-this-a-good-method">Why is this a good method?</h3>
 <p><code>f(c_i, m_{i+1}) = c_{i+1}</code></p>
-
 <p><strong>Theorem:</strong> If <code>f</code> is collision resistant, then so is <code>h</code>.</p>
-
-<p><strong>Proof by contradiction:</strong> Assume that the big box is not CR, then prove that
-<code>f</code> is not CR and get a contradiction.</p>
-
+<p><strong>Proof by contradiction:</strong> Assume that the big box is not CR, then prove that <code>f</code> is not CR and get a contradiction.</p>
 <p>Assume we have two messages <code>m</code> and <code>m'</code> that give us a collision.</p>
-
-<p>If <code>c_n == c'_n</code> then since <code>f</code> is collision resistant that implies we've found
-a collision on <code>f</code> when we computed <code>f(m_n, c_n-1)</code> and <code>f(m'_n, c'_n-1)</code> OR
-when we computed something earlier.</p>
-
-<h3>Davies-Meyer construction</h3>
-
-<p>Assuming you have a good block cipher: <code>f(c_{i-1}, M_i) = C_{i-1} \XOR E(M_i,
-C_{i-1})</code></p>
-
+<p>If <code>c_n == c'_n</code> then since <code>f</code> is collision resistant that implies we’ve found a collision on <code>f</code> when we computed <code>f(m_n, c_n-1)</code> and <code>f(m'_n, c'_n-1)</code> OR when we computed something earlier.</p>
+<h3 id="davies-meyer-construction">Davies-Meyer construction</h3>
+<p>Assuming you have a good block cipher: <code>f(c_{i-1}, M_i) = C_{i-1} \XOR E(M_i, C_{i-1})</code></p>
 <pre><code>                     |---------------------|
                      |    |----------|    \|/
         C_{i-1}  --------&gt;|    E     |-------&gt;
                           |----------|
                                /|\
                                 |
-                                M_i (key)
-</code></pre>
-
-<h3>MD5</h3>
-
+                                M_i (key)</code></pre>
+<h3 id="md5">MD5</h3>
 <p>Incomplete diagram, see notes.</p>
-
 <pre><code>            -----       -----       -----        -----
             | A |       | B |       | C |        | D |      128 = c = d
             -----       -----       -----        -----
@@ -161,23 +106,14 @@ C_{i-1})</code></p>
 const  k_i  | + |
               |
 
-rotation    |   |
-</code></pre>
-
+rotation    |   |</code></pre>
 <p>What is g?</p>
-
 <pre><code>           {  x*y \or \not{x}*z    in pass 1
 g(x,y,z) = {  xz  \or y*\not{z}    in pass 2
            {  x \xor \y \xor \z    in pass 3
-           {  y \xor x*\not{z}
-</code></pre>
-
-<p>Why is it 64 rounds? Seemed like enough at the time, but should be more
-actually.</p>
-
-<p>Ron: This is sort of an ad-hoc construction, because we're at the bottom of the
-food chain. No proofs here anymore. Can't do a reduction. So it becomes a bit of
-an art form. You ask people to break it and get confidence when they can't.</p>
-
-<p>Ron: Maybe it would've been safe w/ 80 rounds. Even so, it has 128bit output and
-the birthday problem gives us <code>O(2^64)</code> tries to find a collision.</p>
+           {  y \xor x*\not{z}</code></pre>
+<p>Why is it 64 rounds? Seemed like enough at the time, but should be more actually.</p>
+<p>Ron: This is sort of an ad-hoc construction, because we’re at the bottom of the food chain. No proofs here anymore. Can’t do a reduction. So it becomes a bit of an art form. You ask people to break it and get confidence when they can’t.</p>
+<p>Ron: Maybe it would’ve been safe w/ 80 rounds. Even so, it has 128bit output and the birthday problem gives us <code>O(2^64)</code> tries to find a collision.</p>
+</body>
+</html>

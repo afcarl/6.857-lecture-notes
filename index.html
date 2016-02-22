@@ -1,69 +1,47 @@
-<h1>Computer and Network Security (6.857, Spring 2015)</h1>
-
-<h2>Lectures</h2>
-
-<p>Lecture notes from 6.857, taught by <a href="http://people.csail.mit.edu/rivest/">Prof. Ronald L. Rivest</a>. Some lecture notes are exactly the ones posted on the 6.857 <a href="https://courses.csail.mit.edu/6.857/2015/">course website</a></p>
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<h1 id="computer-and-network-security-6.857-spring-2015">Computer and Network Security (6.857, Spring 2015)</h1>
+<h2 id="lectures">Lectures</h2>
+<p>Lecture notes from 6.857, taught by <a href="http://people.csail.mit.edu/rivest/">Prof. Ronald L. Rivest</a>. Some lecture notes are exactly the ones posted on the 6.857 <a href="https://courses.csail.mit.edu/6.857/2015/">course website</a></p>
 <ul>
 <li>Lecture 1: <a href="lec-slides/L01-course-introduction.pdf">Introduction</a></li>
 <li>Lecture 2: (Cancelled):</li>
-<li>Lecture 3: <a href="lec-slides/L03-security-principles.pdf">Security principles</a> and
-<a href="lec-slides/L03-growth-of-crypto.pdf">Growth of crypto</a></li>
+<li>Lecture 3: <a href="lec-slides/L03-security-principles.pdf">Security principles</a> and <a href="lec-slides/L03-growth-of-crypto.pdf">Growth of crypto</a></li>
 <li>Lecture 4: <a href="lec-slides/L04-one-time-pad.pdf">One-time pad</a></li>
-<li>Lecture 5: <a href="l05-hash-1.html">Hash functions I</a>: random oracle model (ROM),
-one-way, collision-resistance, target collision resistance, preimage attack,
-second preimage attack, pseudo-randomness, non-malleability, hashed passwords,
-digital signatures, commitment schemes</li>
-<li>Lecture 6: <a href="l06-hash-2.html">Hash functions II</a>: puzzles, Hashcash ('97), 
-Merkle's public-key crypto using puzzles, Merkle-Damgaard construction, 
-Davies-Meyer construction, MD5</li>
-<li>Lecture 7: <a href="l07-bitcoin.html">Cryptocurrencies</a>: atoms vs. bits, Bitcoin,
-public ledger, multiple-in multiple out (MIMO) transactions, </li>
-<li>Lecture 8: <a href="l08-ciphers-1.html">Ciphers I</a>: Shamir's secret sharing, block
-ciphers, DES, AES</li>
-<li>Lecture 9: <a href="l09-ciphers-2.html">Ciphers II</a>: ideal block cipher, modes of 
-operation, electronic codebook mode (ECB), counter mode (CTR), cipher-block 
-chaining mode (CBC), cipher feedback mode (CFB), indistinguishability under
-chosen-ciphertext attack (IND-CCA), unbalanced feistel encryption</li>
+<li>Lecture 5: <a href="l05-hash-1.html">Hash functions I</a>: random oracle model (ROM), one-way, collision-resistance, target collision resistance, preimage attack, second preimage attack, pseudo-randomness, non-malleability, hashed passwords, digital signatures, commitment schemes</li>
+<li>Lecture 6: <a href="l06-hash-2.html">Hash functions II</a>: puzzles, Hashcash (’97), Merkle’s public-key crypto using puzzles, Merkle-Damgaard construction, Davies-Meyer construction, MD5</li>
+<li>Lecture 7: <a href="l07-bitcoin.html">Cryptocurrencies</a>: atoms vs. bits, Bitcoin, public ledger, multiple-in multiple out (MIMO) transactions,</li>
+<li>Lecture 8: <a href="l08-ciphers-1.html">Ciphers I</a>: Shamir’s secret sharing, block ciphers, DES, AES</li>
+<li>Lecture 9: <a href="l09-ciphers-2.html">Ciphers II</a>: ideal block cipher, modes of operation, electronic codebook mode (ECB), counter mode (CTR), cipher-block chaining mode (CBC), cipher feedback mode (CFB), indistinguishability under chosen-ciphertext attack (IND-CCA), unbalanced feistel encryption</li>
 <li>Lecture 10: <a href="l10-stream-ciphers.html">Stream ciphers</a>: RC4, Spritz, ChaCha</li>
-<li>Lecture 11: <a href="l11-macs.html">Message authentication codes</a>: HMAC, CBC-MAC,
-PRF-MAC, One-time MAC (OTMac), authenticated encryption with associated data
-(AEAD), EAX mode, encrypt-then-MAC, finite fields and number theory</li>
-<li>Lecture 12: <a href="l12-crypto-math-1.html">Crypto math I</a>: primality testing, one-time
-MAC, the Totient function (phi), divisors, greatest common divisor (GCD),
-(Extended) Euclid's algorithm, order of group elements, generators, Fermat's
-little theorem, Lagrange's theorem, why we pick safe primes</li>
-<li>Lecture 13: <a href="l13-crypto-math-2.pdf">Crypto math II</a>: group theory review,
-Diffie-Hellman key-exchange, Zp<em>, Zn</em>, Qp, Qn</li>
-<li>Lecture 14: <a href="l14-public-key.html">Public key crypto I</a>: commitment schemes,
-Pedersen commitments, ElGamal, Decisional Diffie-Hellman (DDH) problem</li>
-<li>Lecture 15: <a href="l15-more-public-key.html">Public key crypto II</a>: IND-CCA2 security
-Cramer-Shoup, RSA, making RSA IND-CCA2-secure, other RSA security aspects</li>
-<li>Lecture 16: <a href="l16-digital-sign.html">Digital signatures</a>: hash and sign, RSA
-PKCS, RSA PSS, ElGamal, Digital Signature Algorithm (DSA)</li>
-<li>Lecture 17: <a href="l17-bilinear-maps.html">Bilinear maps</a>: gap groups, bilinear maps,
-Boneh-Lynn-Shacham (BLS) signatures, 3-way key agreement (Joux), identity-based encryption (IBE)</li>
-<li>Lecture 18: <a href="l18-zero-knowledge.html">Zero knowledge proofs</a>: zero-knowledge
-proofs (ZKPs), interactive proofs, Sudoku, 3-colorability, graph isomorphism,
-Hamiltonian cycle, discrete log</li>
-<li>Lecture 19: <strong>Computing on encrypted data</strong> <em><a href="l19-computing-on-encrypted-data.html">guest lecture</a></em> by Vinod Vaikuntanathan: </li>
-<li>Lecture 20: <a href="l20-electronic-voting.html">Electronic voting</a>: public voting,
-paper ballots, lever machines, punch cards, optical scan, Direct Recording by
-Electronics (DRE), Voter Verified Paper Audit Trail (VVPAT), DRE+VVPAT, vote 
-by mail, internet voting (oh dear God), voting requirements, security threats,
-end-to-end voting security, Twin (Rivest and Smith), Scantegrity (Chaum et al)</li>
+<li>Lecture 11: <a href="l11-macs.html">Message authentication codes</a>: HMAC, CBC-MAC, PRF-MAC, One-time MAC (OTMac), authenticated encryption with associated data (AEAD), EAX mode, encrypt-then-MAC, finite fields and number theory</li>
+<li>Lecture 12: <a href="l12-crypto-math-1.html">Crypto math I</a>: primality testing, one-time MAC, the Totient function (phi), divisors, greatest common divisor (GCD), (Extended) Euclid’s algorithm, order of group elements, generators, Fermat’s little theorem, Lagrange’s theorem, why we pick safe primes</li>
+<li>Lecture 13: <a href="l13-crypto-math-2.pdf">Crypto math II</a>: group theory review, Diffie-Hellman key-exchange, Zp<em>, Zn</em>, Qp, Qn</li>
+<li>Lecture 14: <a href="l14-public-key.html">Public key crypto I</a>: commitment schemes, Pedersen commitments, ElGamal, Decisional Diffie-Hellman (DDH) problem</li>
+<li>Lecture 15: <a href="l15-more-public-key.html">Public key crypto II</a>: IND-CCA2 security Cramer-Shoup, RSA, making RSA IND-CCA2-secure, other RSA security aspects</li>
+<li>Lecture 16: <a href="l16-digital-sign.html">Digital signatures</a>: hash and sign, RSA PKCS, RSA PSS, ElGamal, Digital Signature Algorithm (DSA)</li>
+<li>Lecture 17: <a href="l17-bilinear-maps.html">Bilinear maps</a>: gap groups, bilinear maps, Boneh-Lynn-Shacham (BLS) signatures, 3-way key agreement (Joux), identity-based encryption (IBE)</li>
+<li>Lecture 18: <a href="l18-zero-knowledge.html">Zero knowledge proofs</a>: zero-knowledge proofs (ZKPs), interactive proofs, Sudoku, 3-colorability, graph isomorphism, Hamiltonian cycle, discrete log</li>
+<li>Lecture 19: <strong>Computing on encrypted data</strong> <em><a href="l19-computing-on-encrypted-data.html">guest lecture</a></em> by Vinod Vaikuntanathan:</li>
+<li>Lecture 20: <a href="l20-electronic-voting.html">Electronic voting</a>: public voting, paper ballots, lever machines, punch cards, optical scan, Direct Recording by Electronics (DRE), Voter Verified Paper Audit Trail (VVPAT), DRE+VVPAT, vote by mail, internet voting (oh dear God), voting requirements, security threats, end-to-end voting security, Twin (Rivest and Smith), Scantegrity (Chaum et al)</li>
 </ul>
-
-<h2>Papers</h2>
-
+<h2 id="papers">Papers</h2>
 <p>Papers we read in 6.857 (<a href="papers/">directory here</a>):</p>
-
 <ul>
 <li><a href="papers/bitcoin.pdf">Bitcoin</a>, Satoshi Nakamoto</li>
 <li><a href="papers/princeton-bitcoin-overview.pdf">Research Perspectives and Challenges for Bitcoin and Cryptocurrencies</a>, Princeton University</li>
 <li><a href="papers/rijndael.pdf">AES Proposal: Rijndael</a></li>
 <li><a href="papers/shamir-secret-sharing.pdf">How to share a secret</a>, Adi Shamir</li>
 <li><a href="papers/eax.pdf">The EAX mode of operation</a></li>
+<li><a href="papers/PuzzlesAsPublished.pdf">Secure communications over insecure channels</a>, Ralph Merkle</li>
 <li><a href="papers/desai.pdf">New paradigms for constructing symmetric encryption schemes secure under CCA</a>, via Unbalanced Feistel Encryption</li>
 <li><a href="papers/unlinkable-serial-transactions.pdf">Unlinkable serial transactions: Protocol and applications</a></li>
 <li><a href="papers/rsa-paper.pdf">A method for obtaining digital signatures and public-key cryptosystems</a>, Rivest, Shamir, Adleman</li>
@@ -74,18 +52,16 @@ end-to-end voting security, Twin (Rivest and Smith), Scantegrity (Chaum et al)</
 <li><a href="papers/dsa.pdf">FIPS PUB 186-4: Digital Signature Standard (DSS)</a></li>
 <li><a href="papers/games.pdf">Sequences of Games: A Tool for Taming Complexity in Security Proofs</a></li>
 </ul>
-
-<h2>Slides, articles</h2>
-
+<h2 id="slides-articles">Slides, articles</h2>
 <ul>
 <li><a href="papers/spritz-slides.pdf">Spritz</a> slides</li>
 <li><a href="papers/how-to-choose-an-ae-mode.pdf">How to choose an authenticated encryption mode</a>, Matthew Green</li>
 <li><a href="papers/bilinear-maps.pdf">Intro to Bilinear Maps</a></li>
 <li><a href="http://pages.cs.wisc.edu/~mkowalcz/628.pdf">How to Explain Zero-Knowledge Protocols to Your Children</a></li>
 </ul>
-
-<h2>TODOs</h2>
-
+<h2 id="todos">TODOs</h2>
 <ul>
 <li>Lecture 6: MD5 drawing</li>
 </ul>
+</body>
+</html>

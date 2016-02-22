@@ -31,6 +31,8 @@ Spammers have botnets nowadays that can compute these hashes, so "proof-of-work"
 Merkle's idea for public key crypto using puzzles
 -------------------------------------------------
 
+See paper [here](papers/PuzzlesAsPublished.pdf).
+
 How can Alice and Bob establish a secret here, if Eve can listen in?
 
     Alice *-----------------------------*---------------------------------* Bob
@@ -51,26 +53,26 @@ Notes:
 
  - work for Alice and Bob: `O(n)` to make the puzzles, plus `O(D)` for Alice to
    solve the puzzles.
-   + `D` and `n` tend to be the same, so total work is `O(n)`
+    + `D` and `n` tend to be the same, so total work is `O(n)`
  - work for Eve
-   + she hears all the puzzles
-   + she hears some secret indication about which puzzle was solved
-     - how does she attack this?
-     - we're aiming at `O(nD) = O(n^2)` work for Eve
-       + if we make `n` 1 billion (feasible nowadays), then the gap between
-         `O(n)` and `O(n^2)` could be good enough
+    + she hears all the puzzles
+    + she hears some secret indication about which puzzle was solved
+         - how does she attack this?
+         - we're aiming at `O(nD) = O(n^2)` work for Eve
+         + if we make `n` 1 billion (feasible nowadays), then the gap between
+           `O(n)` and `O(n^2)` could be good enough
        
 
 ### Details
 
-Puzzle `i` can be `P_i = (y_i, E_x_i(k_i), h(i, || x_i) = y_i)`, where `k_i` is
-a random 256bit key, encrypted under `x_i` which is what Alice needs to get by
-inverting `y_i = h(i || x_i)`.
+Puzzle $i$ can be $P_i = (y_i, E_{x_i}(k_i), h(i \mid\mid x_i) = y_i)$, where $k_i$ is
+a random 256bit key, encrypted under $x_i$ which is what Alice needs to get by
+inverting $y_i = h(i \mid\mid x_i)$.
 
-Let `x_i` be `\in {0,1}^d` and `y_i \in {0,1}^2d` (apparently for some collision
-reasons)
+Let $x_i\in \{0,1\}^d$ and $y_i \in \{0,1\}^{2d}$ (apparently for some collision
+reasons) be two binary strings.
 
-How does Alice tell Bob which one she solved? She can send `h(k_i)` to Bob.
+How does Alice tell Bob which one she solved? She can send $h(k_i)$ to Bob.
 
 How do you build a good hash function?
 --------------------------------------

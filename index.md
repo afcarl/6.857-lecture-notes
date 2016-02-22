@@ -63,6 +63,7 @@ Papers we read in 6.857 ([directory here](papers/)):
  * [AES Proposal: Rijndael](papers/rijndael.pdf)
  * [How to share a secret](papers/shamir-secret-sharing.pdf), Adi Shamir
  * [The EAX mode of operation](papers/eax.pdf)
+ * [Secure communications over insecure channels](papers/PuzzlesAsPublished.pdf), Ralph Merkle
  * [New paradigms for constructing symmetric encryption schemes secure under CCA](papers/desai.pdf), via Unbalanced Feistel Encryption
  * [Unlinkable serial transactions: Protocol and applications](papers/unlinkable-serial-transactions.pdf)
  * [A method for obtaining digital signatures and public-key cryptosystems](papers/rsa-paper.pdf), Rivest, Shamir, Adleman
