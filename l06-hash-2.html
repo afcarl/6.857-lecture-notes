@@ -55,9 +55,9 @@
 </ul></li>
 </ul>
 <h3 id="details">Details</h3>
-<p>Puzzle <span class="math">\(i\)</span> can be <span class="math">\(P_i = (y_i, E_{x_i}(k_i), h(i \mid\mid x_i) = y_i)\)</span>, where <span class="math">\(k_i\)</span> is a random 256bit key, encrypted under <span class="math">\(x_i\)</span> which is what Alice needs to get by inverting <span class="math">\(y_i = h(i \mid\mid x_i)\)</span>.</p>
+<p>Puzzle <span class="math">\(i\)</span> can be <span class="math">\(P_i = (E_{x_i}(k_i), y_i = h(i \mid\mid x_i))\)</span>, where <span class="math">\(k_i\)</span> is a random 256bit key, encrypted under <span class="math">\(x_i\)</span> which is what Alice needs to get by inverting <span class="math">\(y_i = h(i \mid\mid x_i)\)</span>.</p>
 <p>Let <span class="math">\(x_i\in \{0,1\}^d\)</span> and <span class="math">\(y_i \in \{0,1\}^{2d}\)</span> (apparently for some collision reasons) be two binary strings.</p>
-<p>How does Alice tell Bob which one she solved? She can send <span class="math">\(h(k_i)\)</span> to Bob.</p>
+<p>How does Alice tell Bob which one she solved? She can just send <span class="math">\(h(k_i)\)</span> to Bob.</p>
 <h2 id="how-do-you-build-a-good-hash-function">How do you build a good hash function?</h2>
 <h3 id="the-merkle-damgaard-construction">The Merkle-Damgaard construction</h3>
 <p>Trying to build <code>h:{0,1}^* -&gt; {0,1}^d</code> that is collision-resistant (CR), one-way (OW), etc.</p>

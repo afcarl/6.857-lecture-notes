@@ -65,14 +65,14 @@ Notes:
 
 ### Details
 
-Puzzle $i$ can be $P_i = (y_i, E_{x_i}(k_i), h(i \mid\mid x_i) = y_i)$, where $k_i$ is
+Puzzle $i$ can be $P_i = (E_{x_i}(k_i), y_i = h(i \mid\mid x_i))$, where $k_i$ is
 a random 256bit key, encrypted under $x_i$ which is what Alice needs to get by
 inverting $y_i = h(i \mid\mid x_i)$.
 
 Let $x_i\in \{0,1\}^d$ and $y_i \in \{0,1\}^{2d}$ (apparently for some collision
 reasons) be two binary strings.
 
-How does Alice tell Bob which one she solved? She can send $h(k_i)$ to Bob.
+How does Alice tell Bob which one she solved? She can just send $h(k_i)$ to Bob.
 
 How do you build a good hash function?
 --------------------------------------
