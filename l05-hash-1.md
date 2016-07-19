@@ -88,10 +88,10 @@ These properties are expressed informally here:
  5. **Non-malleability (NM)**
     + "infeasible," given `h(x)`, to produce `h(x')` where `x` and `x'` are _related_ such as `x' = f(x)`, for some function `f`
 
-**Theorem:** If `h` is CR, then `h` is TCR.
-**Theorem:** `h` is OW does not imply `h` is CR
-**Theorem:** `h` is CR does not imply `h` is OW
-**Theorem:** `h` is CR _and_ `h` "compresses" implies `h` is OW
+**Theorem:** If `h` is CR, then `h` is TCR.  
+**Theorem:** `h` is OW does not imply `h` is CR.  
+**Theorem:** `h` is CR does not imply `h` is OW.  
+**Theorem:** `h` is CR _and_ `h` "compresses" implies `h` is OW.  
 
 See [Phillip Rogaway's paper](papers/rogaway-hashes.pdf) for proofs and for more interesting properties of hash functions.
 
