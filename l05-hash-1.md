@@ -62,37 +62,38 @@ Hash function properties
 
 These properties are expressed informally here:
 
-1. **One way (OW)** (pre-image resistance)
-   + "infeasible," given `y` to find any `x'` such that `h(x') = y`
-   + `x` is a _preimage_ of `y`
-   + in ROM, an `x'` can be found by brute-force in `\theta(2^d)` time
-2. **(Strong) Collision-resistance (CR)**
-   + "infeasible," to find `x, x'` s.t. `x != x` and `h(x) = h(x')`
-   + this is known as a _collision_
-   + in ROM, requires trying about `2^d/2 x` values before a pair of two `x` 
-     values is found such that `h(x1) = h(x2), x1 != x2`
-     - the "birthday paradox"
-   + note that collisions are unavoidable (`h` cannot be injective) because
-     the domain of the function is infinite while the codomain/image is of
-     cardinality `2^d`
-3. **Target (or weak) collision resistance (TCR)** (2nd preimage resistance)
-   + "infeasible" given `x` to find `x' != x` such that `h(x) = h(x')`
-   + in ROM, an `x'` can be found by brute-force in `\theta(2^d)` time
-4. **Pseudo-randomness (PRF)**
-   + "`h` is indistinguishable under black-box access from a random oracle"
-   + (to make this notion workable, we need a _family_ of hash functions, one
-      of which is picked at random. A single, fixed, public, hash function will
-      be easy to distinguish otherwise: just remember what `h(0)` is for
-      instance, and with high probability, the RO will output a different value
-      on input `0`)
-5. **Non-malleability (NM)**
-   + "infeasible," given `h(x)`, to produce `h(x')` where `x` and `x'` are _related_
-     such as `x' = f(x)`, for some function `f`
+ 1. **One way (OW)** (pre-image resistance)
+    + "infeasible," given `y` to find any `x'` such that `h(x') = y`
+    + `x` is a _preimage_ of `y`
+    + in ROM, an `x'` can be found by brute-force in `\theta(2^d)` time
+ 2. **(Strong) Collision-resistance (CR)**
+    + "infeasible," to find `x, x'` s.t. `x != x` and `h(x) = h(x')`
+    + this is known as a _collision_
+    + in ROM, requires trying about `2^{d/2} x` values before a pair of two `x` 
+      values is found such that `h(x1) = h(x2), x1 != x2`
+        - the "birthday paradox"
+    + note that collisions are unavoidable (`h` cannot be injective) because
+      the domain of the function is infinite while the codomain/image is of
+      cardinality `2^d`
+ 3. **Target (or weak) collision resistance (TCR)** (2nd preimage resistance)
+    + "infeasible" given `x` to find `x' != x` such that `h(x) = h(x')`
+    + in ROM, an `x'` can be found by brute-force in `\theta(2^d)` time
+ 4. **Pseudo-randomness (PRF)**
+    + "`h` is indistinguishable under black-box access from a random oracle"
+    + (to make this notion workable, we need a _family_ of hash functions, one
+       of which is picked at random. A single, fixed, public, hash function will
+       be easy to distinguish otherwise: just remember what `h(0)` is for
+       instance, and with high probability, the RO will output a different value
+       on input `0`)
+ 5. **Non-malleability (NM)**
+    + "infeasible," given `h(x)`, to produce `h(x')` where `x` and `x'` are _related_ such as `x' = f(x)`, for some function `f`
 
 **Theorem:** If `h` is CR, then `h` is TCR.
 **Theorem:** `h` is OW does not imply `h` is CR
 **Theorem:** `h` is CR does not imply `h` is OW
 **Theorem:** `h` is CR _and_ `h` "compresses" implies `h` is OW
+
+See [Phillip Rogaway's paper](papers/rogaway-hashes.pdf) for proofs and for more interesting properties of hash functions.
 
 Applications
 ------------

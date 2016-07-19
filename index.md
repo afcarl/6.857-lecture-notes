@@ -73,6 +73,7 @@ Papers we read in 6.857 ([directory here](papers/)):
  * [ElGamal cryptosystem](papers/elgamal.pdf)
  * [FIPS PUB 186-4: Digital Signature Standard (DSS)](papers/dsa.pdf)
  * [Sequences of Games: A Tool for Taming Complexity in Security Proofs](papers/games.pdf)
+ - [Cryptographic Hash-Function Basics: Definitions, Implications, and Separations for Preimage Resistance, Second-Preimage Resistance, and Collision Resistance](papers/rogaway-hashes.pdf), Phillip Rogaway
 
 Slides, articles
 ----------------
