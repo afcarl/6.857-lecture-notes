@@ -104,10 +104,7 @@ Applications
  - when user logs in, check hash of his password against table of hashed passwords
  - disclosure of `h(password)` should not reveal `password` (or any equivalent
    preimage)
- - Need `h` to be **one-way (OW)**
- - If goal is to not let other users who don't know the password log in, then
-   we also need **target collision resistance (TCR)**, so that an adversary
-   cannot come up with a `p'` such that `h(p') = h(password)`
+ - Need `h` to be **one-way (OW)**: guarantees (1) adversary doesn't learn anything about password and (2) adversary cannot come up with a `p'` such that `h(p') = h(password)`
 
 ### File modification detector
 
@@ -163,6 +160,7 @@ Need:
    + seems like we need pseudo-randomness (PRF) as well
  - **CR** so that Alice cannot come up with `x, x'` where `h(x) = h(x')`, commit
    to `x` and then reveal `x'` instead of `x`
+   B
    + CR implies TCR
  - **NM** so that Bob, or Mallory sitting between Alice and Bob, cannot change
    Alice's commitment in any way

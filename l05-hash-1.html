@@ -84,7 +84,10 @@
 <li>“infeasible,” given <code>h(x)</code>, to produce <code>h(x')</code> where <code>x</code> and <code>x'</code> are <em>related</em> such as <code>x' = f(x)</code>, for some function <code>f</code></li>
 </ul></li>
 </ol>
-<p><strong>Theorem:</strong> If <code>h</code> is CR, then <code>h</code> is TCR.<br /><strong>Theorem:</strong> <code>h</code> is OW does not imply <code>h</code> is CR.<br /><strong>Theorem:</strong> <code>h</code> is CR does not imply <code>h</code> is OW.<br /><strong>Theorem:</strong> <code>h</code> is CR <em>and</em> <code>h</code> “compresses” implies <code>h</code> is OW.</p>
+<p><strong>Theorem:</strong> If <code>h</code> is CR, then <code>h</code> is TCR.<br />
+<strong>Theorem:</strong> <code>h</code> is OW does not imply <code>h</code> is CR.<br />
+<strong>Theorem:</strong> <code>h</code> is CR does not imply <code>h</code> is OW.<br />
+<strong>Theorem:</strong> <code>h</code> is CR <em>and</em> <code>h</code> “compresses” implies <code>h</code> is OW.</p>
 <p>See <a href="papers/rogaway-hashes.pdf">Phillip Rogaway’s paper</a> for proofs and for more interesting properties of hash functions.</p>
 <h2 id="applications">Applications</h2>
 <h3 id="password-storage">Password storage</h3>
@@ -92,8 +95,7 @@
 <li>store <code>h(password)</code>, not <code>password</code> on server</li>
 <li>when user logs in, check hash of his password against table of hashed passwords</li>
 <li>disclosure of <code>h(password)</code> should not reveal <code>password</code> (or any equivalent preimage)</li>
-<li>Need <code>h</code> to be <strong>one-way (OW)</strong></li>
-<li>If goal is to not let other users who don’t know the password log in, then we also need <strong>target collision resistance (TCR)</strong>, so that an adversary cannot come up with a <code>p'</code> such that <code>h(p') = h(password)</code></li>
+<li>Need <code>h</code> to be <strong>one-way (OW)</strong>: guarantees (1) adversary doesn’t learn anything about password and (2) adversary cannot come up with a <code>p'</code> such that <code>h(p') = h(password)</code></li>
 </ul>
 <h3 id="file-modification-detector">File modification detector</h3>
 <ul>
@@ -139,7 +141,7 @@
 <li><strong>OW</strong> so that Bob cannot learn possible values for <code>x</code></li>
 <li>need more for secrecy though, because if <code>h(r||x)</code> leaks info about <code>x</code> that could be good enough for Bob</li>
 <li>seems like we need pseudo-randomness (PRF) as well</li>
-<li><strong>CR</strong> so that Alice cannot come up with <code>x, x'</code> where <code>h(x) = h(x')</code>, commit to <code>x</code> and then reveal <code>x'</code> instead of <code>x</code></li>
+<li><strong>CR</strong> so that Alice cannot come up with <code>x, x'</code> where <code>h(x) = h(x')</code>, commit to <code>x</code> and then reveal <code>x'</code> instead of <code>x</code> B</li>
 <li>CR implies TCR</li>
 <li><strong>NM</strong> so that Bob, or Mallory sitting between Alice and Bob, cannot change Alice’s commitment in any way</li>
 </ul>
