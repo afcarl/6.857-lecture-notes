@@ -160,7 +160,6 @@ Need:
    + seems like we need pseudo-randomness (PRF) as well
  - **CR** so that Alice cannot come up with `x, x'` where `h(x) = h(x')`, commit
    to `x` and then reveal `x'` instead of `x`
-   B
    + CR implies TCR
  - **NM** so that Bob, or Mallory sitting between Alice and Bob, cannot change
    Alice's commitment in any way
